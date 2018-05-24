@@ -16,7 +16,7 @@ install:
     - source activate test-environment
     - pip install behave coverage coveralls huey hyperopt ldap3 nose-exclude tensorflow toyplot
 script:
-    - coverage run --source samlab -m behave
+    - coverage run --source samlab -m behave --tags=-wip
     - coverage report
 after_script:
     - coveralls
