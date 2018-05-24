@@ -17,12 +17,18 @@ Documentation
 .. toctree::
     :maxdepth: 2
 
+    installation.rst
+    dependencies.rst
+    compatibility.rst
     overview.rst
     tutorials.rst
+    contributing.rst
+    release-notes.rst
     python.rst
     javascript.rst
     widgets.rst
     support.rst
+    credits.rst
 
 Indices and tables
 ==================
