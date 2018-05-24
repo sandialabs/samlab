@@ -105,7 +105,7 @@ class Server(object):
 
         # Initialize the replica set
         client = pymongo.MongoClient(self.uri)
-        client.admin.command("replSetInitiate", {})
+        client.admin.command("replSetInitiate", {"_id": "samlab", "members": [{"_id": 0, "host": "%s:%s" % (host, port)}]})
 
     def __repr__(self):
         return "samlab.database.Server(dbpath=%r, host=%r, port=%r, reset=%r)" % (self._dbpath, self._host, self._port, self._reset)
