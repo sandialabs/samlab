@@ -21,7 +21,7 @@ Samlab stores all of its data in a MongoDB database for efficient indexing and
 retrieval.  You must have a running MongoDB instance and open a connection to
 it using :func:`samlab.database.connect` before using the rest of the Samlab
 API.  You can use :class:`samlab.database.Server` to get MongoDB up-and-running
-quickly.
+quickly.  Note that Samlab requires MongoDB 3.6 or later.
 
 
 .. _observations:
