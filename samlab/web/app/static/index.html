@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html style="overflow-y: scroll!">
+    <head>
+        <meta charset="utf-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <link rel="stylesheet" href="/static/bootstrap.min.css"/>
+        <link rel="stylesheet" href="/static/animate.css"/>
+        <link rel="stylesheet" href="/static/css/font-awesome.min.css"/>
+        <link rel="stylesheet" href="/static/samlab-manager.css"/>
+        <script type="text/javascript" src="/static/require.min.js"></script>
+        <script type="text/javascript" src="/static/samlab-require-config.js"></script>
+        <title>Samlab Manager</title>
+    </head>
+    <body>
+        <div id="samlab-dashboard"></div>
+
+        <script type="text/javascript">
+            require(["jquery", "jquery.ui", "bootstrap"], function()
+            {
+                require(["samlab-browser"], function(browser)
+                {
+                    if(!browser.compatible())
+                    {
+                        browser.complain();
+                        return;
+                    }
+
+                    require(["samlab-dashboard", "samlab-notify", "samlab-collapse-binding", "samlab-tooltip-binding"], function(dashboard)
+                    {
+                        // The UI is ready-to-go here.
+                    });
+                });
+            });
+        </script>
+    </body>
+</html>

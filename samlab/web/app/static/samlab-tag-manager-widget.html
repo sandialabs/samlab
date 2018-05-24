@@ -1,0 +1,34 @@
+<div class="widget-content">
+    <div class="container-fluid">
+        <div class="grid-stack-item-handle">
+            <h1 class="h2" data-bind="text: title"></h1>
+        </div>
+        <form>
+            <fieldset data-bind="attr: {disabled: disabled}">
+                <div class="form-group">
+                    <small class="form-text text-muted">Click to toggle tags:</small>
+                    <!-- ko foreach: tags -->
+                    <button type="button" class="btn btn-secondary btn-sm m-1" data-bind="click: $parent.toggle_tag">
+                        <kbd data-bind="text: shortcut, visible: shortcut"></kbd>
+                        <span class="fa fa-tag fa-fw"></span>&nbsp;<span data-bind="text: tag"></span>
+                    </button>
+                    <!-- /ko -->
+                </div>
+
+                <div class="form-group" data-bind="if: tags().length">
+                    <small class="form-text text-muted"><span data-bind="text: tags().length"></span> tags.</small>
+                </div>
+
+                <div class="form-group">
+                    <small class="form-text text-muted">Add a new tag:</small>
+                    <div class="input-group">
+                        <input type="text" class="form-control" data-bind="value: new_tag" placeholder="New tag"></input>
+                        <div class="input-group-append">
+                            <button type="button" class="btn btn-success" data-bind="click: add_tag">+</button>
+                        </div>
+                    </div>
+                </div>
+            <fieldset>
+        </form>
+    </div>
+</div>

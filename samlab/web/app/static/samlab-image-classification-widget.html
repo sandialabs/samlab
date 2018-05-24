@@ -1,0 +1,49 @@
+<div class="widget-content">
+    <div class="container-fluid">
+        <div class="grid-stack-item-handle">
+            <h1 class="h2">Image Classification</h1>
+        </div>
+        <hr></hr>
+        <div data-bind="if: loading">
+            <p>Loading and evaluating images &hellip;</p>
+            <div class="progress">
+                <div class="progress-bar-striped progress-bar-animated bg-primary" style="width: 100%"></div>
+            </div>
+        </div>
+        <div data-bind="if: error()">
+            <p class="text-danger">There was an error evaluating the model.  Perhaps this model doesn't contain all the required roles?</p>
+        </div>
+        <form class="form-inline" data-bind="if: !loading() && !error()">
+            <label class="mr-2">Show:</label>
+            <div class="dropdown mr-2">
+                <button type="button" class="btn btn-sm btn-outline-secondary dropdown-toggle" data-toggle="dropdown" data-boundary="window" data-bind="text: selection_formatted"></button>
+                <div class="dropdown-menu" data-bind="foreach: selections">
+                    <a class="dropdown-item" data-bind="click: $component.set_selection, text: label"></a>
+                </div>
+            </div>
+            <span data-bind="text: filtered_images().length"></span>
+        </form>
+        <div id="grid-viewport" class="datagrid-viewport mt-2" data-bind="style: {width: grid.viewport_width() + 'px', height: grid.viewport_height() + 'px'}, event: {scroll: grid.on_scroll}">
+            <div class="datagrid-grid" data-bind="style: {width: grid.width() + 'px', height: grid.height() + 'px'}, template: {name: cell_template, foreach: grid.cells()}">
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/html" id="image-cell">
+    <div class="datagrid-cell image-classification-image-cell" data-bind="click: $parent.show_observation, style: {top: top + 'px', height: height + 'px', left: left + 'px', width: width + 'px'}">
+        <img data-bind="attr: {src: '/observations/' + observation + '/content/' + image_role + '/data'}, style: {height: (height - 4) + 'px'}"></img>
+    </div>
+</script>
+
+<script type="text/html" id="truth-cell">
+    <div class="datagrid-cell" data-bind="css: {'image-classification-incorrect': !match}, style: {top: top + 'px', height: height + 'px', left: left + 'px', width: width + 'px'}">
+        <span>Truth:</span>&nbsp;<span data-bind="text: output"></span>
+    </div>
+</script>
+
+<script type="text/html" id="prediction-cell">
+    <div class="datagrid-cell" data-bind="css: {'image-classification-incorrect': !match}, style: {top: top + 'px', height: height + 'px', left: left + 'px', width: width + 'px'}">
+        <span>Predicted:</span>&nbsp;<span data-bind="text: Number(prediction).toFixed(3)"></span>
+    </div>
+</script>

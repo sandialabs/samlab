@@ -1,0 +1,47 @@
+<div class="widget-content">
+    <div class="container-fluid">
+        <div class="grid-stack-item-handle">
+            <h1 class="h2" data-bind="text: label"></h1>
+            <p class="lead">
+                <span data-bind="text: role"></span> <small class="text-muted" data-bind="text: content_type"></small>
+                <span class="small text-muted" data-bind="text: oid"></span>
+            </p>
+        </div>
+        <hr></hr>
+        <dl class="row">
+            <dt class="col-sm-3">dtype</dt>
+            <dd class="col-sm-9" data-bind="text:metadata.dtype"></dd>
+
+            <dt class="col-sm-3">image size</dt>
+            <dd class="col-sm-9" data-bind="text:metadata.size_formatted"></dd>
+
+            <dt class="col-sm-3">min</dt>
+            <dd class="col-sm-9" data-bind="text:metadata.min_formatted"></dd>
+
+            <dt class="col-sm-3">mean</dt>
+            <dd class="col-sm-9" data-bind="text:metadata.mean_formatted"></dd>
+
+            <dt class="col-sm-3">max</dt>
+            <dd class="col-sm-9" data-bind="text:metadata.max_formatted"></dd>
+
+            <dt class="col-sm-3">sum</dt>
+            <dd class="col-sm-9" data-bind="text:metadata.sum_formatted"></dd>
+        </dl>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="dropdown mb-2">
+                    <button type="button" class="btn btn-sm btn-outline-secondary dropdown-toggle" data-toggle="dropdown" data-boundary="window" data-bind="text: colormap.name"></button>
+                    <div class="dropdown-menu" data-bind="foreach: colormaps">
+                        <h6 class="dropdown-header" data-bind="text: label"></h6>
+                        <!-- ko foreach: children -->
+                        <small><a class="dropdown-item" data-bind="click: $component.set_colormap, text: name"></a></small>
+                        <!-- /ko -->
+                    </div>
+                </div>
+                <figure class="figure">
+                    <img class="figure-img img-fluid rounded" data-bind="attr: {src: uri}"></img>
+                </figure>
+            </div>
+        </div>
+    </div>
+</div>

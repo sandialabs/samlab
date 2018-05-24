@@ -1,0 +1,27 @@
+.datagrid-viewport
+{
+    overflow: auto;
+}
+
+.datagrid-grid
+{
+    position: relative;
+}
+
+.datagrid-cell
+{
+    align-items: center;
+    display: flex;
+    justify-content: center;
+    position: absolute;
+}
+
+.tooltip-inner
+{
+    max-width: 320px;
+}
+
+.table td, .table th
+{
+    border: none;
+}

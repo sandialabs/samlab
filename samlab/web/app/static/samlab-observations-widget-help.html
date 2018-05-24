@@ -1,0 +1,55 @@
+<div>
+    <h1 class="h2 text-success">Observations Help</h1>
+    <hr></hr>
+    <dl>
+        <dt>Search</dt>
+        <dd>Search for observations based on text in any field, including attribute values and tag names (note that all searches are case-insensitive):
+            <table class="table table-sm text-muted m-3">
+                <tr><td>foo</td><td>Match observations that contain 'foo'.</td></tr>
+                <tr><td>"foo bar"</td><td>Match observations that contain the phrase 'foo bar'.</td></tr>
+                <tr><td>foo and bar</td><td>Match observations that contain 'foo' and 'bar'.</td></tr>
+                <tr><td>foo or bar</td><td>Match observations that contain 'foo' and observations that contain 'bar'.</td></tr>
+                <tr><td>not foo</td><td>Match observations that do not contain 'foo'.</td></tr>
+                <tr><td>foo and not bar</td><td>Match observations that contain 'foo', but do not contain 'bar'.</td></tr>
+            </table>
+        </dd>
+
+        <dt>Sort By</dt>
+        <dd>
+            <table class="table table-sm text-muted m-3">
+                <tr><td>ID</td><td>Sort matched observations using the unique observation ID, in ascending order.</td></tr>
+                <tr><td>Modified</td><td>Sort matched observations using the last modification time of the observation, if any, in descending order (so the most recently modified observations appear first).</td></tr>
+                <tr><td>Modified by</td><td>Sort matched observations by the username of the person who last modified the observation, if any, in ascending order.</td></tr>
+                <tr><td>Original filename</td><td>Sort matched observations using the filename(s) of the original content, if any, in ascending order.</td></tr>
+                <tr><td>Tags</td><td>Sort matched observations so that observations that share the same set of tags are grouped together.</td></tr>
+            </table>
+        </dd>
+
+        <dt>First, Prev, Next, Last</dt>
+        <dd>Use the navigation buttons to move through the set of matched
+            observations.  You may also use the <kbd>left</kbd> and
+            <kbd>right</kbd> keyboard shortcuts to change the current observation.
+        </dd>
+
+        <dt>Operations > View Observation</dt>
+        <dd>Opens the current observation in a separate widget, handy if you wish to compare two observations side-by-side.</dd>
+
+        <dt>Operations > Manage Attributes</dt>
+        <dd>Opens the <a href="static/samlab-attribute-manager-widget-help.html">Attribute Manager</a>, where you can modify the current observation's attributes.</dd>
+
+        <dt>Operations > Manage Tags</dt>
+        <dd>Opens the <a href="static/samlab-tag-manager-widget-help.html">Tag Manager</a>, where you can modify the current observation's tags.</dd>
+
+        <dt>Operations > Export Observations</em>
+        <dd>Exports the current set of matched observations to a zipfile containing each observation's content, plus a CSV manifest file.
+            Note that the export process can be time-consuming, so the export zipfile is downloaded separately using the <em>Deliveries Widget</em>.
+            You will receive a notification when the delivery is ready.
+        </dd>
+
+        <dt>Operations > Delete Observation</em>
+        <dd>Deletes the current observation and closes any related widgets.</dd>
+
+        <dt>Operations > Help</dt>
+        <dd>Opens this help.</dd>
+    </dl>
+</div>

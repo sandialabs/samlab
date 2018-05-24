@@ -1,0 +1,22 @@
+<div class="widget-content">
+    <div class="container-fluid">
+        <div class="grid-stack-item-handle">
+            <h1 class="h2">Keyboard Test</h1>
+        </div>
+        <hr></hr>
+        <p>Use the left and right arrow keys to test keyboard functionality.</p>
+        <p>Last key:
+            <small class="text-muted" data-bind="text: last_time"></small>
+            <span class="text-capitalize font-weight-bold" data-bind="text: last_key"></span>
+        </p>
+        <form>
+            <div class="form-group">
+                <small class="form-text text-muted">This control captures all keyboard input:</small>
+                <input class="form-control"></input>
+                <small class="form-text text-muted">This control does not:</small>
+                <input class="form-control mousetrap"></input>
+            </div>
+        </form>
+        <button type="button" class="btn btn-primary" data-bind="click: modal_test">Modal Test</button>
+    </div>
+</div>

@@ -1,0 +1,27 @@
+<div class="widget-content">
+    <div class="container-fluid">
+        <div class="grid-stack-item-handle">
+            <h1 class="h2">Training Accuracy</h1>
+            <p class="lead">
+                <span data-bind="text: model.name"></span>
+                <span class="small text-muted" data-bind="text: model.id"></span>
+            </p>
+        </div>
+        <hr></hr>
+        <div style="display: flex; justify-content: center; align-items: center;" data-bind="html: plot"></div>
+        <table class="table table-sm table-hover">
+            <tr>
+                <th scope="row">Maximum training accuracy</th>
+                <td data-bind="text:new Number(maximum_training_accuracy()).toFixed(4)"></td>
+            </tr>
+            <tr>
+                <th scope="row">Maximum validation accuracy</th>
+                <td data-bind="text:new Number(maximum_validation_accuracy()).toFixed(4)"></td>
+            </tr>
+            <tr>
+                <th scope="row">Maximum test accuracy</th>
+                <td data-bind="text:new Number(maximum_test_accuracy()).toFixed(4)"></td>
+            </tr>
+        </table>
+    </div>
+</div>

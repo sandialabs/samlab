@@ -1,0 +1,61 @@
+<div class="widget-content">
+    <div class="container-fluid">
+        <div class="grid-stack-item-handle">
+            <h1 class="h2">Model</h1>
+            <p class="lead">
+                <span data-bind="text: model.name"></span>
+                <span class="small text-muted" data-bind="text: model.id"></span>
+                <samlab-favorite-control params="otype: 'models', oid: model.id"></samlab-favorite-control>
+            </p>
+        </div>
+        <hr></hr>
+        <div class="dropdown">
+            <button type="button" class="btn btn-outline-secondary dropdown-toggle" data-toggle="dropdown" data-boundary="window">Operations</button>
+            <div class="dropdown-menu">
+                <!-- ko foreach: groups -->
+                    <!-- ko if: $index -->
+                    <div class="dropdown-divider"></div>
+                    <!-- /ko -->
+                    <h6 class="dropdown-header" data-bind="text: label"></h6>
+                    <!-- ko foreach: children -->
+                    <a class="dropdown-item" data-bind="click: $component.activate_item"><span class="fa fa-fw" data-bind="css: icon"></span>&nbsp;<span data-bind="text: label"></span></a>
+                    <!-- /ko -->
+                <!-- /ko -->
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item" data-bind="click: $component.manage_attributes"><span class="fa fa-pencil fa-fw"></span>&nbsp;Manage Attributes</a>
+                <a class="dropdown-item" data-bind="click: $component.manage_tags"><span class="fa fa-tags fa-fw"></span>&nbsp;Manage Tags</a>
+                <a class="dropdown-item text-danger" data-bind="click: $component.delete_model"><span class="fa fa-trash fa-fw"></span>&nbsp;Delete Model</a>
+            </div>
+        </div>
+
+        <dl class="row mt-3">
+            <dt class="col-md-3">Created:</dt>
+            <dd class="col-md-9" data-bind="text:model.created_formatted"></dd>
+
+            <!-- ko if: model.modified -->
+            <dt class="col-md-3">Modified:</dt>
+            <dd class="col-md-9" data-bind="text:model.modified_formatted"></dd>
+            <!-- /ko -->
+
+            <!-- ko if: model['modified-by'] -->
+            <dt class="col-md-3">Modified By:</dt>
+            <dd class="col-md-9" data-bind="text:model['modified-by']"></dd>
+            <!-- /ko -->
+
+            <dt class="col-md-3">Attributes:</dt>
+            <dd class="col-md-9">
+                <a href="#" data-bind="click: view_attributes">
+                    <pre class="mt-1 text-primary" data-bind="text:model['attributes-pre']"></pre>
+                </a>
+            </dd>
+
+            <dt class="col-md-3">Tags:</dt>
+            <dd class="col-md-9" data-bind="foreach: model.tags">
+                <span class="badge badge-secondary"><span class="fa fa-tag"></span>&nbsp;<span data-bind="text: $data"></span></span>
+            </dd>
+        </dl>
+
+        <b>Content:</b>
+        <samlab-content-list-control class="mt-2" params="otype: 'models', oid: model.id, content: model.content"></samlab-content-list-control>
+    </div>
+</div>

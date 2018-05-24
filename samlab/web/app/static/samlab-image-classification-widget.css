@@ -1,0 +1,11 @@
+.image-classification-image-cell
+{
+    cursor: pointer;
+}
+
+.image-classification-incorrect
+{
+    background: red;
+    color: white;
+}
+

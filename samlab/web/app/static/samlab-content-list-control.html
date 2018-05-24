@@ -1,0 +1,19 @@
+<ul class="list-group" data-bind="foreach: content">
+    <li class="list-group-item d-flex">
+        <div>
+            <a href="#" data-bind="click: $parent.show_content">
+                <span data-bind="text: role"></span><br>
+                <small data-bind="text: $data['content-type']"></small>
+                &nbsp;<small data-bind="text: filename"></small>
+            </a>
+        </div>
+        <div class="ml-auto dropdown">
+            <button type="button" class="btn btn-sm btn-outline-secondary dropdown-toggle" data-toggle="dropdown" data-boundary="window"></button>
+            <div class="dropdown-menu">
+                <a class="dropdown-item text-primary" data-bind="click: $parent.download_content"><span class="fa fa-download fa-fw"></span>&nbsp;Download Content</a>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item text-danger" data-bind="click: $parent.delete_content"><span class="fa fa-trash fa-fw"></span>&nbsp;Delete Content</a>
+            <div>
+        </div>
+    </li>
+</ul>

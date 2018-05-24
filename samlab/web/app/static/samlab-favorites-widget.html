@@ -1,0 +1,14 @@
+<div class="widget-content">
+    <div class="container-fluid">
+        <div class="grid-stack-item-handle">
+            <h1 class="h2">Favorites</h1>
+        </div>
+        <hr></hr>
+        <div data-bind="foreach: groups">
+            <h6 class="text-muted mt-3" data-bind="text: label"></h6>
+            <!-- ko foreach: items -->
+            <p class="mb-1 ml-3"><a href="#" data-bind="click: $component.show_favorite, text: name"></a></p>
+            <!-- /ko -->
+        </div>
+    </div>
+</div>

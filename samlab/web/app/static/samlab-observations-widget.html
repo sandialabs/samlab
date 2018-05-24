@@ -1,0 +1,100 @@
+<div class="widget-content">
+    <div class="container-fluid">
+        <div class="grid-stack-item-handle">
+            <h1 class="h2">Observations <small class="text-muted" data-bind="text: database"></small></h1>
+        </div>
+        <form class="form-inline" onSubmit="return false">
+            <div class="input-group">
+                <input type="search" class="form-control form-control-sm" placeholder="Search" data-bind="textInput: search">
+            </div>
+            <span class="ml-2" data-bind="text: position, visible: !loading()"></span>
+            <label class="ml-2">Sort By</label>
+            <div class="dropdown ml-2">
+                <button type="button" class="btn btn-sm btn-outline-secondary dropdown-toggle" data-toggle="dropdown" data-boundary="window" data-bind="text: sort_label"></button>
+                <div class="dropdown-menu" data-bind="foreach: sort_options">
+                    <a class="dropdown-item" data-bind="click: $component.set_sort, text: label"></a>
+                </div>
+            </div>
+            <span class="fa fa-circle-o-notch fa-spin fa-fw ml-2" data-bind="visible: loading()"></span>
+            <button type="button" class="btn btn-sm btn-secondary ml-auto" data-bind="click: first_observation"><span class="fa fa-fast-backward"></span>&nbsp;First</button>
+            <button type="button" class="btn btn-sm btn-secondary ml-2" data-bind="click: previous_observation"><span class="fa fa-step-backward"></span>&nbsp;Prev</button>
+            <button type="button" class="btn btn-sm btn-secondary ml-2" data-bind="click: random_observation"><span class="fa fa-random"></span>&nbsp;Random</button>
+            <button type="button" class="btn btn-sm btn-secondary ml-2" data-bind="click: next_observation">Next&nbsp;<span class="fa fa-step-forward"></span></button>
+            <button type="button" class="btn btn-sm btn-secondary ml-2" data-bind="click: last_observation">Last&nbsp;<span class="fa fa-fast-forward"></span></button>
+        </form>
+        <div class="mt-2" data-bind="if: search_error">
+            <p class="small text-danger">Invalid search.  Use quotation marks for multi-word matches, and <b>and</b> / <b>or</b> / <b>not</b> to combine search terms.</p>
+        </div>
+        <hr></hr>
+        <div class="dropdown">
+            <button type="button" class="btn btn-outline-secondary dropdown-toggle" data-toggle="dropdown" data-boundary="window">Operations</button>
+            <div class="dropdown-menu">
+                <a class="dropdown-item" data-bind="click: $component.view_observation"><span class="fa fa-eye fa-fw"></span>&nbsp;View Observation</a>
+                <a class="dropdown-item" data-bind="click: $component.manage_attributes"><span class="fa fa-pencil fa-fw"></span>&nbsp;Manage Attributes</a>
+                <a class="dropdown-item" data-bind="click: $component.manage_tags"><span class="fa fa-tags fa-fw"></span>&nbsp;Manage Tags</a>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item" data-bind="click: $component.export_observations"><span class="fa fa-download fa-fw"></span>&nbsp;Export Observations</a>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item text-danger" data-bind="click: $component.delete_observation"><span class="fa fa-trash fa-fw"></span>&nbsp;Delete Observation</a>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item text-success" data-bind="click: $component.help"><span class="fa fa-question-circle fa-fw"></span>&nbsp;Help</a>
+            </div>
+        </div>
+
+        <dl class="row mt-3">
+            <dt class="col-md-3">ID:</dt>
+            <dd class="col-md-9">
+                <span data-bind="text:observation.id"></span>
+                <samlab-favorite-control params="otype: 'observations', oid: observation.id"></samlab-favorite-control>
+            </dd>
+
+            <dt class="col-md-3">Created:</dt>
+            <dd class="col-md-9" data-bind="text:observation.created_formatted"></dd>
+
+            <!-- ko if: observation.modified -->
+            <dt class="col-md-3">Modified:</dt>
+            <dd class="col-md-9" data-bind="text:observation.modified_formatted"></dd>
+            <!-- /ko -->
+
+            <!-- ko if: observation['modified-by'] -->
+            <dt class="col-md-3">Modified By:</dt>
+            <dd class="col-md-9" data-bind="text:observation['modified-by']"></dd>
+            <!-- /ko -->
+
+            <dt class="col-md-3">Attributes:</dt>
+            <dd class="col-md-9">
+                <pre class="mt-1" data-bind="text:observation['attributes-pre']"></pre>
+            </dd>
+
+            <dt class="col-md-3">Tags:</dt>
+            <dd class="col-md-9" data-bind="foreach: observation.tags">
+                <span class="badge badge-secondary"><span class="fa fa-tag"></span>&nbsp;<span data-bind="text: $data"></span></span>
+            </dd>
+        </dl>
+
+
+        <div class="mt-3">
+            <b>Images:</b>
+            <!-- ko foreach: observation.images -->
+            <div class="row mt-2">
+                <div class="col-md-12">
+                    <figure class="figure">
+                        <img class="figure-img img-fluid rounded"  data-bind="attr: { src: '/observations/' + $parent.observation.id() + '/content/' + $data.role() + '/data' }"></img>
+                        <figcaption class="figure-caption">
+                            <a href="#" data-bind="click: $parent.show_content">
+                                <strong class="mr-2" data-bind="text: role"></strong>
+                                <span class="mr-2" data-bind="text: $data['content-type']"></span>
+                                <span class="mr-2" data-bind="text: filename"></span>
+                            </a>
+                        </figcaption>
+                    </figure>
+                </div>
+            </div>
+            <!-- /ko -->
+        </div>
+
+        <b>Content:</b>
+        <samlab-content-list-control class="mt-2" params="otype: 'observations', oid: observation.id, content: observation.content"></samlab-content-list-control>
+
+    </div>
+</div>
