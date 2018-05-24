@@ -1,0 +1,15 @@
+sphinx_rtd_theme
+sphinxcontrib-napoleon
+arrow
+Flask
+Flask-socketio
+huey
+hyperopt
+ldap3
+nose
+pymongo>=3.6
+pyparsing
+redis
+requests
+six
+toyplot
