@@ -1,3 +1,4 @@
+sphinx-js
 sphinx_rtd_theme
 sphinxcontrib-napoleon
 arrow
