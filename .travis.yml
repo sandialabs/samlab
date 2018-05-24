@@ -14,7 +14,7 @@ install:
     - conda info -a
     - conda create -q -n test-environment python=$TRAVIS_PYTHON_VERSION arrow flask flask-socketio mock mongodb nose numpy networkx pip pymongo pyparsing redis requests six
     - source activate test-environment
-    - pip install behave coverage coveralls huey hyperopt ldap3 nose-exclude toyplot
+    - pip install behave coverage coveralls huey hyperopt ldap3 nose-exclude tensorflow toyplot
 script:
     - coverage run --source buildcat -m behave
     - coverage report
