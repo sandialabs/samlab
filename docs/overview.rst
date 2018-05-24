@@ -261,5 +261,5 @@ The Samlab manager is a web server providing a graphical user interface for
 viewing and modifying existing observations, trials, and models.  Using a web
 browser, you can search for observations, trials, and models by their labels
 and attributes, edit tags and attributes, provide ground-truth labels for
-newly-acquired observations, explore trained models using inteeractive
+newly-acquired observations, explore trained models using interactive
 visualizations, and more.
