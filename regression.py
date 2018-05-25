@@ -12,3 +12,4 @@ subprocess.call(["coverage", "run", "--source", "samlab", "-m", "behave"])
 subprocess.call(["coverage", "report"])
 subprocess.call(["coverage", "html", "--directory", ".cover"])
 
+
