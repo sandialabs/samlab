@@ -31,30 +31,32 @@ Observations
 
 Observations are the individual datums that you will use to train and evaluate
 your machine learning algorithms.  An observation might be an image, a
-timeseries, a text document, or anything else from which you can extract
-features.
+timeseries, a text document, a video, or anything else from which you can
+extract features.
 
-Each observation has `content`, which is serialized representations of the
-underlying data. The content could be an image, an n-dimensional array, a block
-of text, or any other data that represents the observation.  Observation
-content can store multiple representations, known as `roles`, which allows a
-single observation to contain e.g.: a full-sized image and a resampled version,
-or a word processing document and text that has been extracted from it. This
-makes it convenient to store raw observation data alongside preprocessed
-representations that have been optimized for analysis.
+Each observation includes `content`, which is one-or-more serialized
+representations of the underlying data. The content could be an image, an
+n-dimensional array, a block of text, a video, or any other data that
+represents the observation.  Observation content can include multiple
+representations, which allows a single observation to contain e.g.: a
+full-sized image and a resampled version, or a word processing document and
+text that has been extracted from it. This makes it convenient to store raw
+observation data alongside preprocessed representations that have been
+optimized for analysis.
 
 In addition to content, each observation includes `created` and `modified`
 timestamps, a set of categorical `tags`, and `attributes` that can store
-arbitrary metadata.  Tags can be used to label observations for classification,
-but they are available for any purpose - you can use tags anywhere you need to
-identify subsets in your data, such as setting aside a subset for training, or
-keeping track of which observations have been reviewed by a human.  Attributes
-allow you to associate any metadata you want with an observation, such as a
-value to be used for regression, the time and location where an image was
-taken, a hyperlink from which an original document was retrieved, etc.
+arbitrary metadata.  Tags are an obvious choice to label observations for
+classification, but they are available for any purpose - you can use tags
+anywhere you need to identify subsets in your data, such as setting aside a
+subset for training, or keeping track of which observations have been manually
+reviewed by a human.  Attributes allow you to associate any metadata you want
+with an observation, such as a value to be used for regression, the time and
+location where an image was taken, a hyperlink from which an original document
+was retrieved, a set of regions-of-interest in an image or video, etc.
 
-To load observations into the database, you should use the
-:func:`samlab.observation.create_many` function.  Use :func:`samlab.observation.set_tag`
+To load observations into the database, use :func:`samlab.observation.create` or
+:func:`samlab.observation.create_many`.  Use :func:`samlab.observation.set_tag`
 to set and clear per-observation tags using your own criteria.
 Use :func:`samlab.observation.resize_images` to scale original images into
 versions suitable for machine learning models with fixed-size inputs.
@@ -71,8 +73,8 @@ a `created` time, categorical `tags`, and metadata `attributes` that can be
 used to organize your trials in any way that suits you, much like observations.
 
 Note that a trial can contain more than one model - so a 5 by 2 cross
-validation experiment could be stored as a single trial containing ten
-models.
+validation experiment would be stored as a single trial containing ten
+models.  Trials can contain `content`, too.
 
 Use :func:`samlab.trial.create` to create trials.
 
@@ -83,18 +85,18 @@ Models
 ------
 
 Models are the individual machine learning models that you train as part of a
-trial.  Each model will have `content` that stores a serialized version of the
+trial.  Each model will have `content` that stores serialized representations of the
 model (so that you can reload the model to make inferences later), along with
 its `created` time, categorical `tags`, and metadata `attributes` that you can
 use however you like.  Typically, a model's `attributes` will include the
 hyperparameters used to train the model.
 
-Just as observations use `roles` to store multiple representations of a single
-observation, models can have multiple `roles` storing different facets of a
-trained model.  For example, a typical Samlab model might store a serialized
-version of the underlying machine learning model, along with references to the
-observations that were used for training, hyperparameters used during training,
-performance metrics collected during training, and-so-on.
+Just as observations can store multiple representations of a single
+observation, models can store different facets of a trained model.  For
+example, a typical Samlab model might store a serialized version of the
+underlying machine learning model, along with references to the observations
+that were used for training, hyperparameters used during training, performance
+metrics collected during training, and-so-on.
 
 Use :func:`samlab.model.create` to create models.
 
@@ -104,14 +106,14 @@ Use :func:`samlab.model.create` to create models.
 Trial Generators
 ----------------
 
-A trial generator is a function you create that will generate a single trial.
+A trial generator is a function you create that generates a single trial.
 Typically, a trial generator will load a set of observations from the database,
 extract input and output features, partition the data for training, validation,
 and test, and train one-or-more models on the data.  Samlab provides simple
 components to make this process easy, but it is up to you to decide which steps
-are necessary - for example, some problems might require streaming the data to
-reduce memory consumption and repeating it for data augmentation, while for
-other problems you simply want to load the data and use it directly.
+are needed for your task - for example, some problems might require streaming
+the data to reduce memory consumption and repeating it for data augmentation,
+while for other problems you simply want to load the data and use it directly.
 
 A trial generator function should take a single `parameters` argument as input,
 and return a single scalar value as output.  The `parameters` argument will be
@@ -143,7 +145,7 @@ predict from their :ref:`inputs`.  Typically, you will use
 :func:`samlab.static.load` to load observations from the database and
 :func:`samlab.static.map` to extract outputs for each observation.  Keep
 in mind that outputs can be arbitrary-length vectors - they might be single
-values for a regression problem, or they could be multiple "one-hot" values for
+values for a regression problem, they could be multiple "one-hot" values for
 a categorical problem, etc.
 
 

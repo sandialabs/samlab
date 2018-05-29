@@ -79,8 +79,19 @@ def create(database, fs, attributes=None, content=None, tags=None):
     return database.observations.insert_one(document).inserted_id
 
 
-def create_many(database, fs, attributes=None, content=None, tags=None):
-    """Add a multiple observations to the :ref:`database <database>`.
+def create_many(database, fs):
+    """Return a context object that can add multiple observations to the :ref:`database <database>`.
+
+    Examples
+    --------
+
+    >>> with samlab.observation.create_many(database, fs) as observations:
+        observations.create(...)
+        observations.create(...)
+        .
+        .
+        .
+        observations.create(...)
 
     Parameters
     ----------
