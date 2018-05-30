@@ -167,12 +167,11 @@ def generic_path(path, content_type):
     assert(isinstance(path, six.string_types))
     assert(os.path.exists(path))
 
-    with open(path, "rb") as stream:
-        return {
-            "data": stream.read(),
-            "content-type": content_type,
-            "filename": path,
-        }
+    return {
+        "data": open(path, "rb"),
+        "content-type": content_type,
+        "filename": path,
+    }
 
 
 def stl_mesh(path):
