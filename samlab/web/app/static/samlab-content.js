@@ -22,6 +22,7 @@ define([
         "image/jpeg": "samlab-image-widget",
         "image/png": "samlab-image-widget",
         "text/plain": "samlab-text-widget",
+        "video/quicktime": "samlab-video-widget",
     };
 
     module.show = function(otype, oid, role, content_type)
