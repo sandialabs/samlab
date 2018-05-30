@@ -78,16 +78,16 @@ def get_otype_content_roles(otype):
 @require_auth
 def get_otype_oid_content_role_data(otype, oid, role):
     require_permissions(["read"])
-    owner = bson.objectid.ObjectId(oid)
-    owner = database[otype].find_one({"_id": owner})
+    oid = bson.objectid.ObjectId(oid)
+    obj = database[otype].find_one({"_id": oid})
 
-    if role not in owner["content"]:
+    if role not in obj["content"]:
         flask.abort(404)
 
-    content = fs.get(owner["content"][role]["data"])
+    content = obj["content"][role]
 
-    response = flask.make_response(content.read())
-    response.headers["content-type"] = content.content_type
+    response = flask.make_response(fs.get(content["data"]).read())
+    response.headers["content-type"] = content["content-type"]
     response.cache_control.max_age = "300"
     response.cache_control.public = True
     return response
