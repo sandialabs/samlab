@@ -94,6 +94,10 @@ js_source_path = "../samlab/web/app/static"
 #js_source_path = "."
 jsdoc_config_path = "conf.json"
 
+
+nbsphinx_prompt_width = 0
+
+
 # Complain about all cross reference targets that can't be found.
 nitpicky = True
 
