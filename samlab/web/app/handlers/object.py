@@ -5,6 +5,7 @@
 import io
 import logging
 import pprint
+import re
 
 import arrow
 import bson
@@ -85,9 +86,32 @@ def get_otype_oid_content_role_data(otype, oid, role):
         flask.abort(404)
 
     content = obj["content"][role]
+    content_type = content["content-type"]
+    data = fs.get(content["data"])
+    headers = {
+        "content-type": content_type,
+    }
 
-    response = flask.make_response(fs.get(content["data"]).read())
-    response.headers["content-type"] = content["content-type"]
+    begin = 0
+    end = data.length
+    status_code = 200
+
+    if flask.request.headers.has_key("range"):
+        status_code = 206
+        headers["accept-ranges"] = "bytes"
+
+        ranges = re.findall(r"\d+", flask.request.headers["range"])
+        begin = int(ranges[0])
+        if len(ranges) > 1:
+            end = int(ranges[1]) + 1
+        headers["content-range"] = "bytes %s-%s/%s" % (begin, end - 1, data.length)
+
+    headers["content-length"] = str(end - begin)
+
+    data.seek(begin)
+    body = data.read(end - begin)
+
+    response = flask.make_response((body, status_code, headers))
     response.cache_control.max_age = "300"
     response.cache_control.public = True
     return response

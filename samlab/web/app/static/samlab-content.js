@@ -22,6 +22,7 @@ define([
         "image/jpeg": "samlab-image-widget",
         "image/png": "samlab-image-widget",
         "text/plain": "samlab-text-widget",
+        "video/mp4": "samlab-video-widget",
         "video/quicktime": "samlab-video-widget",
     };
 
