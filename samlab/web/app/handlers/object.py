@@ -45,8 +45,8 @@ def get_otype_attributes_keys(otype):
     require_permissions(["read"])
 
     keys = set()
-    for owner in database[otype].find(projection={"attributes":True, "_id": False}):
-        keys.update(owner["attributes"].keys())
+    for obj in database[otype].find(projection={"attributes":True, "_id": False}):
+        keys.update(obj["attributes"].keys())
 
     return flask.jsonify(keys=sorted(keys))
 
@@ -55,10 +55,10 @@ def get_otype_attributes_keys(otype):
 @require_auth
 def get_otype_oid_attributes_pre(otype, oid):
     require_permissions(["read"])
-    owner = bson.objectid.ObjectId(oid)
-    owner = database[otype].find_one({"_id": owner})
+    oid = bson.objectid.ObjectId(oid)
+    obj = database[otype].find_one({"_id": oid})
 
-    response = flask.make_response(pprint.pformat(owner["attributes"]))
+    response = flask.make_response(pprint.pformat(obj["attributes"]))
     response.headers["content-type"] = "text/plain"
     return response
 
@@ -122,16 +122,16 @@ def get_otype_oid_content_role_data(otype, oid, role):
 def get_otype_oid_content_role_array_image(otype, oid, role):
     require_permissions(["read"])
 
-    owner = bson.objectid.ObjectId(oid)
-    owner = database[otype].find_one({"_id": owner})
+    oid = bson.objectid.ObjectId(oid)
+    obj = database[otype].find_one({"_id": oid})
 
-    if not role in owner["content"]:
+    if not role in obj["content"]:
         flask.abort(404)
 
-    if owner["content"][role]["content-type"] != "application/x-numpy-array":
+    if obj["content"][role]["content-type"] != "application/x-numpy-array":
         flask.abort(400)
 
-    data = samlab.deserialize.array(fs, owner["content"][role])
+    data = samlab.deserialize.array(fs, obj["content"][role])
 
     cmap_factory = flask.request.args.get("cmap-factory", "linear")
     if cmap_factory == "brewer":
@@ -167,16 +167,16 @@ def get_otype_oid_content_role_array_image(otype, oid, role):
 def get_otype_oid_content_role_array_metadata(otype, oid, role):
     require_permissions(["read"])
 
-    owner = bson.objectid.ObjectId(oid)
-    owner = database[otype].find_one({"_id": owner})
+    oid = bson.objectid.ObjectId(oid)
+    obj = database[otype].find_one({"_id": oid})
 
-    if not role in owner["content"]:
+    if not role in obj["content"]:
         flask.abort(404)
 
-    if owner["content"][role]["content-type"] != "application/x-numpy-array":
+    if obj["content"][role]["content-type"] != "application/x-numpy-array":
         flask.abort(400)
 
-    array = samlab.deserialize.array(fs, owner["content"][role])
+    array = samlab.deserialize.array(fs, obj["content"][role])
 
     metadata = {
         "dtype": array.dtype.name,
@@ -195,16 +195,16 @@ def get_otype_oid_content_role_array_metadata(otype, oid, role):
 def get_otype_oid_content_role_image_metadata(otype, oid, role):
     require_permissions(["read"])
 
-    owner = bson.objectid.ObjectId(oid)
-    owner = database[otype].find_one({"_id": owner})
+    oid = bson.objectid.ObjectId(oid)
+    obj = database[otype].find_one({"_id": oid})
 
-    if not role in owner["content"]:
+    if not role in obj["content"]:
         flask.abort(404)
 
-    if owner["content"][role]["content-type"] not in ["image/jpeg", "image/png"]:
+    if obj["content"][role]["content-type"] not in ["image/jpeg", "image/png"]:
         flask.abort(400)
 
-    image = samlab.deserialize.image(fs, owner["content"][role])
+    image = samlab.deserialize.image(fs, obj["content"][role])
 
     return flask.jsonify(metadata={"size": image.size})
 
@@ -215,8 +215,8 @@ def get_otype_tags(otype):
     require_permissions(["read"])
 
     tags = set()
-    for owner in database[otype].find(projection={"tags":True, "_id": False}):
-        tags.update(owner["tags"])
+    for obj in database[otype].find(projection={"tags":True, "_id": False}):
+        tags.update(obj["tags"])
 
     return flask.jsonify(tags=sorted(tags))
 
@@ -225,14 +225,14 @@ def get_otype_tags(otype):
 @require_auth
 def put_otype_oid_attributes(otype, oid):
     require_permissions(["write"])
-    owner = bson.objectid.ObjectId(oid)
-    owner = database[otype].find_one({"_id": owner})
+    oid = bson.objectid.ObjectId(oid)
+    obj = database[otype].find_one({"_id": oid})
 
-    attributes = owner["attributes"]
+    attributes = obj["attributes"]
     attributes.update(flask.request.json)
 
     database[otype].update_one(
-        {"_id": owner["_id"]},
+        {"_id": oid},
         {"$set": {"attributes": attributes, "modified-by": flask.request.authorization.username, "modified": arrow.utcnow().datetime}}
         )
 
@@ -245,14 +245,14 @@ def put_otype_oid_attributes(otype, oid):
 @require_auth
 def put_otype_oid_tags(otype, oid):
     require_permissions(["write"])
-    owner = bson.objectid.ObjectId(oid)
-    owner = database[otype].find_one({"_id": owner})
+    oid = bson.objectid.ObjectId(oid)
+    obj = database[otype].find_one({"_id": oid})
 
     add = flask.request.json["add"]
     remove = flask.request.json["remove"]
     toggle = flask.request.json["toggle"]
 
-    tags = set(owner["tags"])
+    tags = set(obj["tags"])
     for tag in add:
         tags.add(tag)
     for tag in remove:
@@ -265,7 +265,7 @@ def put_otype_oid_tags(otype, oid):
     tags = list(tags)
 
     database[otype].update_one(
-        {"_id": owner["_id"]},
+        {"_id": oid},
         {"$set": {"tags": tags, "modified-by": flask.request.authorization.username, "modified": arrow.utcnow().datetime}}
         )
 
