@@ -22,8 +22,6 @@ define([
                     oid: params.oid,
                 });
 
-                console.log(params);
-
                 component.content = params.content;
 
                 component.show_content = function(item)
