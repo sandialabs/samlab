@@ -59,7 +59,7 @@ def cluster_content(params):
     database_uri = application.config["database-uri"]
     database_name = application.config["database-name"]
     otype = params["otype"]
-    content = params["content"]
+    key = params["key"]
     preprocessor = params["preprocessor"]
     algorithm = params["algorithm"]
 
@@ -69,12 +69,19 @@ def cluster_content(params):
     def implementation(*args, **kwargs):
         task = generic_queue.cluster_content(*args, **kwargs)
         while True:
-            result = task()
+            try:
+                result = task()
+            except Exception as e:
+                log.debug("%s %s %s", e, e.args, e.metadata)
+                result = { "exception": str(eval(e.metadata["error"])) }
+
             if result is not None:
+                result["otype"] = kwargs["otype"]
+                result["key"] = kwargs["key"]
                 socketio.emit("cluster-content", result, room=sid)
                 return
             socketio.sleep(1.0)
-    socketio.start_background_task(implementation, database_uri, database_name, otype, content, preprocessor, algorithm)
+    socketio.start_background_task(implementation, database_uri=database_uri, database_name=database_name, otype=otype, key=key, preprocessor=preprocessor, algorithm=algorithm)
 
 
 @socketio.on("disconnect")

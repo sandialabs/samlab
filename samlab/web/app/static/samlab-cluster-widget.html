@@ -28,8 +28,9 @@
                 <dd class="col-md-9"><samlab-combo-control params="current: sort, items: sort_items"></samlab-combo-control></dd>
             </dl>
             <div class="ml-2 text-primary" data-bind="if: loading()">Computing clusters &hellip;</div>
+            <div class="ml-2 text-danger" data-bind="if: exception()"><b>Clustering failed:</b> <span data-bind="text: exception"></span></div>
         </form>
-        <table class="table" data-bind="if: !loading()">
+        <table class="table" data-bind="if: !loading() && !exception()">
             <tr>
                 <th>Cluster</th>
                 <th data-bind="text: object_label"></th>

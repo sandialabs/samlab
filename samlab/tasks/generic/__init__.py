@@ -39,16 +39,19 @@ def get_database(uri, name):
 
 class Queue(object):
     def __init__(self):
-        def cluster_content_impl(database_uri, database_name, otype, content, preprocessor, algorithm):
+        def cluster_content_impl(database_uri, database_name, otype, key, preprocessor, algorithm):
             database, fs = get_database(database_uri, database_name)
             oids = []
             features = []
-            for o in database[otype].find({"content.%s" % content : {"$exists": True}}):
+            for o in database[otype].find({"content.%s" % key : {"$exists": True}}):
                 oids.append(o["_id"])
-                features.append(o["content"][content])
+                features.append(o["content"][key])
 
-            features = [samlab.deserialize.array(fs, f) for f in features]
-            features = numpy.array(features)
+            features = [numpy.ravel(samlab.deserialize.array(fs, f)) for f in features]
+            try:
+                features = numpy.row_stack(features)
+            except:
+                raise ValueError("'%s' isn't usable as feature vectors, because the number of elements in each vector don't match." % key)
 
             assert(features.ndim == 2)
 
@@ -70,11 +73,7 @@ class Queue(object):
 
             clusters = [{"oid": oid, "label": label, "distance": distance} for oid, label, distance in zip(oids, labels, distances)]
 
-            return {
-                "clusters": clusters,
-                "content": content,
-                "otype": otype,
-            }
+            return { "clusters": clusters }
 
 
         def export_observations_impl(database_uri, database_name, search):

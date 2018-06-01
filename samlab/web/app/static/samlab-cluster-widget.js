@@ -3,14 +3,17 @@
 // Government retains certain rights in this software.
 
 define([
+    "debug",
     "knockout",
     "knockout.mapping",
     "samlab-dashboard",
     "samlab-object",
     "samlab-server",
     "samlab-socket",
-    ], function(ko, mapping, dashboard, object, server, socket)
+    ], function(debug, ko, mapping, dashboard, object, server, socket)
 {
+    var log = debug("samlab-cluster-widget");
+
     var component_name = "samlab-cluster-widget";
     ko.components.register(component_name,
     {
@@ -20,6 +23,7 @@ define([
             {
                 var component = mapping.fromJS({
                     clusters: [],
+                    exception: null,
                     key: null,
                     keys: [],
                     loading: false,
@@ -62,8 +66,8 @@ define([
                 {
                     var otype = component.otype();
 
-                    var content = component.key();
-                    if(content == null)
+                    var key = component.key();
+                    if(key == null)
                         return;
 
                     var preprocessor = {
@@ -79,13 +83,18 @@ define([
                             },
                         };
 
-                    component.loading(true);
-                    socket.emit("cluster-content", {
+                    var request = {
                         algorithm: algorithm,
-                        content: content,
+                        key: key,
                         otype: otype,
                         preprocessor: preprocessor,
-                        });
+                        };
+
+                    log("cluster-content request", request);
+
+                    component.loading(true);
+                    component.exception(null);
+                    socket.emit("cluster-content", request);
                 });
 
                 component.sort_results = ko.computed(function()
@@ -118,19 +127,27 @@ define([
 
                 component.select_object = function(data)
                 {
-                    console.log("select_object", arguments);
                     if(component.otype() == "observations")
                     {
                         dashboard.add_widget("samlab-observation-widget", {"id": data.oid()});
                     }
                 }
 
-                component.cluster_content = function(result)
+                component.cluster_content = function(response)
                 {
-                    if(result.otype == component.otype() && result.content == component.key())
+                    log("cluster-content response", response);
+
+                    if(response.otype == component.otype() && response.key == component.key())
                     {
                         component.loading(false);
-                        mapping.fromJS({clusters: result.clusters}, component);
+                        if(response.exception)
+                        {
+                            component.exception(response.exception);
+                        }
+                        else
+                        {
+                            mapping.fromJS({clusters: response.clusters}, component);
+                        }
                     }
                 }
 
