@@ -51,7 +51,7 @@ class Queue(object):
             try:
                 features = numpy.row_stack(features)
             except:
-                raise ValueError("'%s' isn't usable as feature vectors, because the number of elements in each vector don't match." % key)
+                raise ValueError("'%s' isn't usable for feature vectors - the vector lengths aren't consistent." % key)
 
             assert(features.ndim == 2)
 
