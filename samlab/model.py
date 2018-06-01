@@ -60,7 +60,7 @@ def create(database, fs, trial, name, attributes=None, content=None, tags=None):
     if content is None:
         content = {}
     assert(isinstance(content, dict))
-    content = {role: {"data": fs.put(spec["data"]), "content-type": spec["content-type"], "filename": spec.get("filename", None)} for role, spec in content.items()}
+    content = {key: {"data": fs.put(value["data"]), "content-type": value["content-type"], "filename": value.get("filename", None)} for key, value in content.items()}
 
     if tags is None:
         tags = []
@@ -108,14 +108,14 @@ def delete(database, fs, mid):
     database.models.delete_many({"_id": mid})
 
 
-def set_content(database, model, role, new_content):
+def set_content(database, model, key, content):
     """Deprecated, use :func:`samlab.object.set_content` instead."""
     samlab.deprecated("samlab.model.set_content() is deprecated, use samlab.object.set_content() instead.")
 
     fs = gridfs.GridFS(database)
 
     import samlab.object
-    samlab.object.set_content(database, fs, model["_id"], role, new_content)
+    samlab.object.set_content(database, fs, model["_id"], key, content)
 
 
 def fine_tune_vgg16(parameters, training_data, validation_data, test_data, training_count, validation_count, test_count):

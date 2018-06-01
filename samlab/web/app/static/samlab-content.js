@@ -26,20 +26,20 @@ define([
         "video/quicktime": "samlab-video-widget",
     };
 
-    module.show = function(otype, oid, role, content_type)
+    module.show = function(otype, oid, key, content_type)
     {
         otype = ko.unwrap(otype);
         oid = ko.unwrap(oid);
-        role = ko.unwrap(role);
+        key = ko.unwrap(key);
         content_type = ko.unwrap(content_type);
 
-        log("show", otype, oid, role, content_type);
+        log("show", otype, oid, key, content_type);
 
         type_subtype = content_type.split(";")[0];
 
         if(type_subtype == "application/x-samlab-widget")
         {
-            server.get_json("/" + otype + "/" + oid + "/content/" + role + "/data",
+            server.get_json("/" + otype + "/" + oid + "/content/" + key + "/data",
             {
                 success: function(widget)
                 {
@@ -49,11 +49,11 @@ define([
         }
         else
         {
-            var widget = "samlab-generic-role-widget";
+            var widget = "samlab-generic-content-widget";
             if(type_subtype in content_widget_map)
                 widget = content_widget_map[type_subtype];
 
-            dashboard.add_widget(widget, {otype: otype, oid: oid, role: role, "content-type": content_type});
+            dashboard.add_widget(widget, {otype: otype, oid: oid, key: key, "content-type": content_type});
         }
     }
 

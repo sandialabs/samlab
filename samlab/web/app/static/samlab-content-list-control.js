@@ -26,12 +26,12 @@ define([
 
                 component.show_content = function(item)
                 {
-                    content.show(component.otype, component.oid, item.role, item["content-type"]);
+                    content.show(component.otype, component.oid, item.key, item["content-type"]);
                 }
 
                 component.download_content = function(item)
                 {
-                    window.open("/" + component.otype() + "/" + component.oid() + "/content/" + item.role() + "/data", "_blank");
+                    window.open("/" + component.otype() + "/" + component.oid() + "/content/" + item.key() + "/data", "_blank");
                 }
 
                 component.delete_content = function(item)
@@ -44,10 +44,10 @@ define([
                         {
                             if(button.label == "Delete")
                             {
-                                object.delete_content(component.otype, component.oid, item.role);
+                                object.delete_content(component.otype, component.oid, item.key);
                             }
                         },
-                        message: "This will delete <b>" + item.role() + "</b>, and close any related dashboard widgets.",
+                        message: "This will delete <b>" + item.key() + "</b>, and close any related dashboard widgets.",
                         title: "Delete Content?",
                     });
                 }

@@ -22,7 +22,7 @@ define([
                     label: object.label(widget.params.otype, {singular: true, capitalize: true}) + " Content",
                     oid: widget.params.oid,
                     otype: widget.params.otype,
-                    role: widget.params.role,
+                    key: widget.params.key,
                     text: "",
                 });
 
@@ -33,7 +33,7 @@ define([
                     auto_delete_subscription.dispose();
                 }
 
-                server.load_text("/" + component.otype() + "/" + component.oid() + "/content/" + component.role() + "/data", function(text)
+                server.load_text("/" + component.otype() + "/" + component.oid() + "/content/" + component.key() + "/data", function(text)
                 {
                     component.text(text);
                 });

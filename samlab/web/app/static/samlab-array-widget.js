@@ -23,7 +23,7 @@ define([
                     label: object.label(widget.params.otype, {singular: true, capitalize: true}) + " Content",
                     oid: widget.params.oid,
                     otype: widget.params.otype,
-                    role: widget.params.role,
+                    key: widget.params.key,
                 });
 
                 var auto_delete_subscription = dashboard.auto_delete(widget, widget.params.otype, widget.params.oid);
@@ -60,10 +60,10 @@ define([
 
                 component.view_as_image = function()
                 {
-                    dashboard.add_widget("samlab-array-image-widget", {otype: component.otype, oid: component.oid, role: component.role, "content-type": component.content_type});
+                    dashboard.add_widget("samlab-array-image-widget", {otype: component.otype, oid: component.oid, key: component.key, "content-type": component.content_type});
                 }
 
-                server.load_json(component, "/" + component.otype() + "/" + component.oid() + "/content/" + component.role() + "/array/metadata");
+                server.load_json(component, "/" + component.otype() + "/" + component.oid() + "/content/" + component.key() + "/array/metadata");
 
                 return component;
             }

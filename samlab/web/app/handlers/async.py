@@ -145,29 +145,29 @@ def keras_model_layer_filter_gradient_ascent(params):
     database_name = application.config["database-name"]
     otype = params["otype"]
     oid = params["oid"]
-    role = params["role"]
+    key = params["key"]
     layer = params["layer"]
     filter = params["filter"]
 
-    key = (otype, oid, role, layer, filter)
-    if key in keras_model_layer_filter_gradient_ascent.cache:
-        image = keras_model_layer_filter_gradient_ascent.cache[key]
+    cache_key = (otype, oid, key, layer, filter)
+    if cache_key in keras_model_layer_filter_gradient_ascent.cache:
+        image = keras_model_layer_filter_gradient_ascent.cache[cache_key]
         image = toyplot.bitmap.to_png_data_uri(image)
-        socketio.emit("keras-model-layer-filter-gradient-ascent", {"otype": otype, "oid": oid, "role": role, "layer": layer, "filter": filter, "image": image}, room=sid)
+        socketio.emit("keras-model-layer-filter-gradient-ascent", {"otype": otype, "oid": oid, "key": key, "layer": layer, "filter": filter, "image": image}, room=sid)
         return
 
-    def implementation(otype, oid, role, layer, filter):
-        task = gpu_queue.get_model_layer_filter_gradient_ascent(database_uri, database_name, otype, oid, role, layer, filter)
+    def implementation(otype, oid, key, layer, filter):
+        task = gpu_queue.get_model_layer_filter_gradient_ascent(database_uri, database_name, otype, oid, key, layer, filter)
         while True:
             result = task()
             if result is not None:
-                keras_model_layer_filter_gradient_ascent.cache[key] = result
-                image = keras_model_layer_filter_gradient_ascent.cache[key]
+                keras_model_layer_filter_gradient_ascent.cache[cache_key] = result
+                image = keras_model_layer_filter_gradient_ascent.cache[cache_key]
                 image = toyplot.bitmap.to_png_data_uri(image)
-                socketio.emit("keras-model-layer-filter-gradient-ascent", {"otype": otype, "oid": oid, "role": role, "layer": layer, "filter": filter, "image": image}, room=sid)
+                socketio.emit("keras-model-layer-filter-gradient-ascent", {"otype": otype, "oid": oid, "key": key, "layer": layer, "filter": filter, "image": image}, room=sid)
                 return
             socketio.sleep(0.5)
-    socketio.start_background_task(implementation, otype, oid, role, layer, filter)
+    socketio.start_background_task(implementation, otype, oid, key, layer, filter)
 keras_model_layer_filter_gradient_ascent.cache = {}
 
 
@@ -182,23 +182,23 @@ def keras_model_summary(params):
     database_name = application.config["database-name"]
     otype = params["otype"]
     oid = params["oid"]
-    role = params["role"]
+    key = params["key"]
 
-    key = (otype, oid, role)
-    if key in keras_model_summary.cache:
-        socketio.emit("keras-model-summary", {"otype": otype, "oid": oid, "role": role, "summary": keras_model_summary.cache[key]}, room=sid)
+    cache_key = (otype, oid, key)
+    if cache_key in keras_model_summary.cache:
+        socketio.emit("keras-model-summary", {"otype": otype, "oid": oid, "key": key, "summary": keras_model_summary.cache[cache_key]}, room=sid)
         return
 
-    def implementation(otype, oid, role):
-        task = gpu_queue.get_model_summary(database_uri, database_name, otype, oid, role)
+    def implementation(otype, oid, key):
+        task = gpu_queue.get_model_summary(database_uri, database_name, otype, oid, key)
         while True:
             result = task()
             if result is not None:
-                keras_model_summary.cache[key] = result
-                socketio.emit("keras-model-summary", {"otype": otype, "oid": oid, "role": role, "summary": keras_model_summary.cache[key]}, room=sid)
+                keras_model_summary.cache[cache_key] = result
+                socketio.emit("keras-model-summary", {"otype": otype, "oid": oid, "key": key, "summary": keras_model_summary.cache[cache_key]}, room=sid)
                 return
             socketio.sleep(0.5)
-    socketio.start_background_task(implementation, otype, oid, role)
+    socketio.start_background_task(implementation, otype, oid, key)
 keras_model_summary.cache = {}
 
 

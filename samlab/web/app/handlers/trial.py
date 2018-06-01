@@ -70,7 +70,7 @@ def get_delete_trials_trial(trial):
         trial["attributes-pre"] = pprint.pformat(trial["attributes"], depth=1)
 
         if "content" in trial:
-            trial["content"] = [{"role": role, "content-type": spec["content-type"], "filename": spec.get("filename", None)} for role, spec in sorted(trial["content"].items())]
+            trial["content"] = [{"key": key, "content-type": value["content-type"], "filename": value.get("filename", None)} for key, value in sorted(trial["content"].items())]
         else:
             trial["content"] = []
 

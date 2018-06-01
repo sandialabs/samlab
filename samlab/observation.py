@@ -59,7 +59,7 @@ def create(database, fs, attributes=None, content=None, tags=None):
     if content is None:
         content = {}
     assert(isinstance(content, dict))
-    content = {role: {"data": fs.put(spec["data"]), "content-type": spec["content-type"], "filename": spec.get("filename", None)} for role, spec in content.items()}
+    content = {key: {"data": fs.put(value["data"]), "content-type": value["content-type"], "filename": value.get("filename", None)} for key, value in content.items()}
 
     if tags is None:
         tags = []
@@ -148,7 +148,7 @@ def create_many(database, fs):
             if content is None:
                 content = {}
             assert(isinstance(content, dict))
-            content = {role: {"data": self._fs.put(spec["data"]), "content-type": spec["content-type"], "filename": spec.get("filename", None)} for role, spec in content.items()}
+            content = {key: {"data": self._fs.put(value["data"]), "content-type": value["content-type"], "filename": value.get("filename", None)} for key, value in content.items()}
 
             if tags is None:
                 tags = []
@@ -248,9 +248,9 @@ def update(database, updater, filter=None, sort=None):
             if modified["attributes"] != original["attributes"]:
                 change["$set"]["attributes"] = modified["attributes"]
             if modified["content"] != original["content"]:
-                for role, spec in modified["content"].items():
-                    if not isinstance(spec["data"], bson.objectid.ObjectId):
-                        spec["data"] = fs.put(spec["data"])
+                for key, value in modified["content"].items():
+                    if not isinstance(value["data"], bson.objectid.ObjectId):
+                        value["data"] = fs.put(value["data"])
                 change["$set"]["content"] = modified["content"]
             if modified["tags"] != original["tags"]:
                 change["$set"]["tags"] = modified["tags"]
@@ -316,7 +316,7 @@ def set_tag(database, tag, state, filter=None, sort=None):
         log.info("Set tag %s on %s of %s observations." % (tag, len(add_tags), cursor.count()))
 
 
-def resize_images(database, size, new_role, old_role="original", filter=None, overwrite=False):
+def resize_images(database, size, target_key, source_key="original", filter=None, overwrite=False):
     """Add resized images to existing observations
 
     Use this function to resize / resample images when the originals aren't the
@@ -327,16 +327,16 @@ def resize_images(database, size, new_role, old_role="original", filter=None, ov
     database: database object returned by :func:`samlab.database.connect`, required.
     size: tuple, required
         (width, height) tuple containing the desired image size.
-    new_role: str, required
-        Name of the role that will store the resized images.
-    old_role: str, optional
-        Name of the role that contains the existing images to be resized.
+    target_key: str, required
+        Name of the key that will store the resized images.
+    source_key: str, optional
+        Name of the key that contains the existing images to be resized.
     """
     assert(isinstance(database, pymongo.database.Database))
     assert(isinstance(size, tuple))
     assert(len(size) == 2)
-    assert(isinstance(new_role, six.string_types))
-    assert(isinstance(old_role, six.string_types))
+    assert(isinstance(target_key, six.string_types))
+    assert(isinstance(source_key, six.string_types))
 
     import PIL.Image
 
@@ -354,17 +354,17 @@ def resize_images(database, size, new_role, old_role="original", filter=None, ov
     for observation in cursor:
         content = dict(observation["content"]) # Force a deep-copy
 
-        if new_role in content and not overwrite:
+        if target_key in content and not overwrite:
             continue
 
         try:
-            image = samlab.deserialize.image(fs, content[old_role])
+            image = samlab.deserialize.image(fs, content[source_key])
         except Exception as e:
-            log.error("Couldn't load observation %s image %s: %s", observation["_id"], content[old_role], e)
+            log.error("Couldn't load observation %s image %s: %s", observation["_id"], content[source_key], e)
             continue
         image = image.resize(size, resample=PIL.Image.BICUBIC)
-        content[new_role] = samlab.serialize.image(image)
-        content[new_role]["data"] = fs.put(content[new_role]["data"])
+        content[target_key] = samlab.serialize.image(image)
+        content[target_key]["data"] = fs.put(content[target_key]["data"])
 
         requests.append(pymongo.UpdateOne({"_id": observation["_id"]}, {"$set": {"content": content}}))
 

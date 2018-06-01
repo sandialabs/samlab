@@ -23,7 +23,7 @@ define([
                     metadata: {size: []},
                     oid: widget.params.oid,
                     otype: widget.params.otype,
-                    role: widget.params.role,
+                    key: widget.params.key,
                 });
 
                 var auto_delete_subscription = dashboard.auto_delete(widget, widget.params.otype, widget.params.oid);
@@ -35,7 +35,7 @@ define([
 
                 component.uri = ko.pureComputed(function()
                 {
-                    return "/" + component.otype() + "/" + component.oid() + "/content/" + component.role() + "/data";
+                    return "/" + component.otype() + "/" + component.oid() + "/content/" + component.key() + "/data";
                 });
 
                 component.metadata.size_formatted = ko.pureComputed(function()
@@ -43,7 +43,7 @@ define([
                     return component.metadata.size().join(" \u00d7 ");
                 });
 
-                server.load_json(component, "/" + component.otype() + "/" + component.oid() + "/content/" + component.role() + "/image/metadata");
+                server.load_json(component, "/" + component.otype() + "/" + component.oid() + "/content/" + component.key() + "/image/metadata");
 
                 return component;
             }

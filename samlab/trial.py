@@ -54,7 +54,7 @@ def create(database, fs, name, attributes=None, content=None, tags=None):
     if content is None:
         content = {}
     assert(isinstance(content, dict))
-    content = {role: {"data": fs.put(spec["data"]), "content-type": spec["content-type"], "filename": spec.get("filename", None)} for role, spec in content.items()}
+    content = {key: {"data": fs.put(value["data"]), "content-type": value["content-type"], "filename": value.get("filename", None)} for key, value in content.items()}
 
     if tags is None:
         tags = []

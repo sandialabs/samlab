@@ -1,5 +1,5 @@
-<div class="modal fade" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="true">
-    <div class="modal-dialog" role="document">
+<div class="modal fade" tabindex="-1" data-backdrop="static" data-keyboard="true">
+    <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" data-bind="text: title"></h5>
@@ -7,7 +7,7 @@
             <div class="modal-body">
                 <p data-bind="html: message"></p>
                 <input type="text" class="form-control" data-bind="visible: input, value:value, attr: {placeholder: placeholder}">
-                <div class="alert alert-danger" role="alert" data-bind="visible: alert, text: alert" ></div>
+                <div class="alert alert-danger" data-bind="visible: alert, text: alert" ></div>
             </div>
             <div class="modal-footer" data-bind="foreach: buttons">
                 <button type="button" class="btn" data-bind="css: class_name, click: $parent.close">

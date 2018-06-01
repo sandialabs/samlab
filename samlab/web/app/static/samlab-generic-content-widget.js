@@ -9,7 +9,7 @@ define([
     "samlab-object",
     ], function(ko, mapping, dashboard, object)
 {
-    var component_name = "samlab-generic-role-widget";
+    var component_name = "samlab-generic-content-widget";
     ko.components.register(component_name,
     {
         viewModel:
@@ -21,7 +21,7 @@ define([
                     label: object.label(widget.params.otype, {singular: true, capitalize: true}) + " Content",
                     oid: widget.params.oid,
                     otype: widget.params.otype,
-                    role: widget.params.role,
+                    key: widget.params.key,
                 });
 
                 var auto_delete_subscription = dashboard.auto_delete(widget, widget.params.otype, widget.params.oid);

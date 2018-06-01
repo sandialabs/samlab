@@ -63,7 +63,7 @@ def get_delete_observations_observation(observation):
         if "modified" in observation:
             observation["modified"] = arrow.get(observation["modified"]).isoformat()
 
-        observation["content"] = [{"role": role, "content-type": spec["content-type"], "filename": spec.get("filename", None)} for role, spec in observation["content"].items()]
+        observation["content"] = [{"key": key, "content-type": value["content-type"], "filename": value.get("filename", None)} for key, value in observation["content"].items()]
 
         observation["tags"] = sorted(observation.get("tags", []))
 

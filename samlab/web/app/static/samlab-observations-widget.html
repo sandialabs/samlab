@@ -79,10 +79,10 @@
             <div class="row mt-2">
                 <div class="col-md-12">
                     <figure class="figure">
-                        <img class="figure-img img-fluid rounded"  data-bind="attr: { src: '/observations/' + $parent.observation.id() + '/content/' + $data.role() + '/data' }"></img>
+                        <img class="figure-img img-fluid rounded"  data-bind="attr: { src: '/observations/' + $parent.observation.id() + '/content/' + $data.key() + '/data' }"></img>
                         <figcaption class="figure-caption">
                             <a href="#" data-bind="click: $parent.show_content">
-                                <strong class="mr-2" data-bind="text: role"></strong>
+                                <strong class="mr-2" data-bind="text: key"></strong>
                                 <span class="mr-2" data-bind="text: $data['content-type']"></span>
                                 <span class="mr-2" data-bind="text: filename"></span>
                             </a>

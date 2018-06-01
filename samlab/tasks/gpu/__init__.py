@@ -35,29 +35,29 @@ def get_database(uri, name):
 
 
 @functools.lru_cache(maxsize=1)
-def get_model(database_uri, database_name, otype, oid, role):
+def get_model(database_uri, database_name, otype, oid, key):
     database, fs = get_database(database_uri, database_name)
     owner = database[otype].find_one({"_id": bson.objectid.ObjectId(oid)})
 
     assert(owner)
-    assert(role in owner["content"])
-    assert(owner["content"][role]["content-type"] == "application/x-keras-model")
+    assert(key in owner["content"])
+    assert(owner["content"][key]["content-type"] == "application/x-keras-model")
 
-    model = samlab.deserialize.keras_model(fs, owner["content"][role])
+    model = samlab.deserialize.keras_model(fs, owner["content"][key])
     return model
 
 
 class Queue(object):
     def __init__(self, name):
-        def get_model_summary_impl(database_uri, database_name, otype, oid, role):
-            model = get_model(database_uri, database_name, otype, oid, role)
+        def get_model_summary_impl(database_uri, database_name, otype, oid, key):
+            model = get_model(database_uri, database_name, otype, oid, key)
             summary = {
                 "layers": [{"name": layer.name, "class_name": layer.__class__.__name__, "output_shape": layer.output_shape, "count_params": layer.count_params(), "config": layer.get_config()} for layer in model.layers],
                 }
             return summary
 
-        def get_model_layer_filter_gradient_ascent_impl(database_uri, database_name, otype, oid, role, layer, filter):
-            model = get_model(database_uri, database_name, otype, oid, role)
+        def get_model_layer_filter_gradient_ascent_impl(database_uri, database_name, otype, oid, key, layer, filter):
+            model = get_model(database_uri, database_name, otype, oid, key)
             layer = model.get_layer(name=layer)
             image, losses = samlab.plot.gradient_ascent(model.input, layer, filter, 224, 224)
             return image
@@ -77,7 +77,7 @@ class Queue(object):
 
             else:
                 batch_size = model["attributes"]["parameters"]["batch-size"]
-                image_role = model["attributes"]["parameters"]["image-role"]
+                image_key = model["attributes"]["parameters"]["image-key"]
 
                 keras_model = samlab.deserialize.keras_model(fs, model["content"]["model"])
 
@@ -90,7 +90,7 @@ class Queue(object):
                 indices = numpy.arange(len(observations))
 
                 data = samlab.observation.stream(observations, inputs, outputs, weights, indices)
-                data = samlab.image.load(data, database, role=image_role)
+                data = samlab.image.load(data, database, key=image_key)
                 data = samlab.image.to_array(data)
                 data = samlab.observation.batch(data, batch_size=batch_size, total_size=len(observations))
 

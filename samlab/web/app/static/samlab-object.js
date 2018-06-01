@@ -64,15 +64,15 @@ define([
         return result;
     }
 
-    module.delete_content = function(otype, oid, role)
+    module.delete_content = function(otype, oid, key)
     {
         var otype = ko.unwrap(otype);
         var oid = ko.unwrap(oid);
-        var role = ko.unwrap(role);
+        var key = ko.unwrap(key);
 
-        log("delete content", otype, oid, role);
+        log("delete content", otype, oid, key);
 
-        server.delete("/" + otype + "/" + oid + "/content/" + role, "DELETE");
+        server.delete("/" + otype + "/" + oid + "/content/" + key, "DELETE");
     }
 
     return module;

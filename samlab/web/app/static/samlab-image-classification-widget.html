@@ -11,7 +11,7 @@
             </div>
         </div>
         <div data-bind="if: error()">
-            <p class="text-danger">There was an error evaluating the model.  Perhaps this model doesn't contain all the required roles?</p>
+            <p class="text-danger">There was an error evaluating the model.  Perhaps this model doesn't contain all the required keys?</p>
         </div>
         <form class="form-inline" data-bind="if: !loading() && !error()">
             <label class="mr-2">Show:</label>
@@ -32,7 +32,7 @@
 
 <script type="text/html" id="image-cell">
     <div class="datagrid-cell image-classification-image-cell" data-bind="click: $parent.show_observation, style: {top: top + 'px', height: height + 'px', left: left + 'px', width: width + 'px'}">
-        <img data-bind="attr: {src: '/observations/' + observation + '/content/' + image_role + '/data'}, style: {height: (height - 4) + 'px'}"></img>
+        <img data-bind="attr: {src: '/observations/' + observation + '/content/' + image_key + '/data'}, style: {height: (height - 4) + 'px'}"></img>
     </div>
 </script>
 

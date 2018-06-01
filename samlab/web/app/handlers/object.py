@@ -27,13 +27,13 @@ from samlab.web.app import application, socketio, require_auth, require_permissi
 from samlab.web.app.database import database, fs
 
 
-@application.route("/<allow(observations,models):otype>/<oid>/content/<role>", methods=["DELETE"])
+@application.route("/<allow(observations,models):otype>/<oid>/content/<key>", methods=["DELETE"])
 @require_auth
-def delete_otype_oid_content_role(otype, oid, role):
+def delete_otype_oid_content_key(otype, oid, key):
     require_permissions(["delete"])
     oid = bson.objectid.ObjectId(oid)
     try:
-        samlab.object.delete_content(database, fs, otype, oid, role)
+        samlab.object.delete_content(database, fs, otype, oid, key)
     except KeyError:
         flask.abort(404)
     return flask.jsonify()
@@ -63,29 +63,29 @@ def get_otype_oid_attributes_pre(otype, oid):
     return response
 
 
-@application.route("/<allow(observations,trials,models):otype>/content/roles")
+@application.route("/<allow(observations,trials,models):otype>/content/keys")
 @require_auth
-def get_otype_content_roles(otype):
+def get_otype_content_keys(otype):
     require_permissions(["read"])
 
-    roles = set()
+    keys = set()
     for o in database[otype].find(projection={"content": True, "_id": False}):
-        roles.update(o["content"].keys())
+        keys.update(o["content"].keys())
 
-    return flask.jsonify(roles=sorted(roles))
+    return flask.jsonify(keys=sorted(keys))
 
 
-@application.route("/<allow(observations,trials,models):otype>/<oid>/content/<role>/data")
+@application.route("/<allow(observations,trials,models):otype>/<oid>/content/<key>/data")
 @require_auth
-def get_otype_oid_content_role_data(otype, oid, role):
+def get_otype_oid_content_key_data(otype, oid, key):
     require_permissions(["read"])
     oid = bson.objectid.ObjectId(oid)
     obj = database[otype].find_one({"_id": oid})
 
-    if role not in obj["content"]:
+    if key not in obj["content"]:
         flask.abort(404)
 
-    content = obj["content"][role]
+    content = obj["content"][key]
     content_type = content["content-type"]
     data = fs.get(content["data"])
     headers = {
@@ -117,21 +117,21 @@ def get_otype_oid_content_role_data(otype, oid, role):
     return response
 
 
-@application.route("/<allow(observations,trials,models):otype>/<oid>/content/<role>/array/image")
+@application.route("/<allow(observations,trials,models):otype>/<oid>/content/<key>/array/image")
 @require_auth
-def get_otype_oid_content_role_array_image(otype, oid, role):
+def get_otype_oid_content_key_array_image(otype, oid, key):
     require_permissions(["read"])
 
     oid = bson.objectid.ObjectId(oid)
     obj = database[otype].find_one({"_id": oid})
 
-    if not role in obj["content"]:
+    if not key in obj["content"]:
         flask.abort(404)
 
-    if obj["content"][role]["content-type"] != "application/x-numpy-array":
+    if obj["content"][key]["content-type"] != "application/x-numpy-array":
         flask.abort(400)
 
-    data = samlab.deserialize.array(fs, obj["content"][role])
+    data = samlab.deserialize.array(fs, obj["content"][key])
 
     cmap_factory = flask.request.args.get("cmap-factory", "linear")
     if cmap_factory == "brewer":
@@ -162,21 +162,21 @@ def get_otype_oid_content_role_array_image(otype, oid, role):
     return response
 
 
-@application.route("/<allow(observations,trials,models):otype>/<oid>/content/<role>/array/metadata")
+@application.route("/<allow(observations,trials,models):otype>/<oid>/content/<key>/array/metadata")
 @require_auth
-def get_otype_oid_content_role_array_metadata(otype, oid, role):
+def get_otype_oid_content_key_array_metadata(otype, oid, key):
     require_permissions(["read"])
 
     oid = bson.objectid.ObjectId(oid)
     obj = database[otype].find_one({"_id": oid})
 
-    if not role in obj["content"]:
+    if not key in obj["content"]:
         flask.abort(404)
 
-    if obj["content"][role]["content-type"] != "application/x-numpy-array":
+    if obj["content"][key]["content-type"] != "application/x-numpy-array":
         flask.abort(400)
 
-    array = samlab.deserialize.array(fs, obj["content"][role])
+    array = samlab.deserialize.array(fs, obj["content"][key])
 
     metadata = {
         "dtype": array.dtype.name,
@@ -190,21 +190,21 @@ def get_otype_oid_content_role_array_metadata(otype, oid, role):
     return flask.jsonify(metadata=metadata)
 
 
-@application.route("/<allow(observations,trials,models):otype>/<oid>/content/<role>/image/metadata")
+@application.route("/<allow(observations,trials,models):otype>/<oid>/content/<key>/image/metadata")
 @require_auth
-def get_otype_oid_content_role_image_metadata(otype, oid, role):
+def get_otype_oid_content_key_image_metadata(otype, oid, key):
     require_permissions(["read"])
 
     oid = bson.objectid.ObjectId(oid)
     obj = database[otype].find_one({"_id": oid})
 
-    if not role in obj["content"]:
+    if not key in obj["content"]:
         flask.abort(404)
 
-    if obj["content"][role]["content-type"] not in ["image/jpeg", "image/png"]:
+    if obj["content"][key]["content-type"] not in ["image/jpeg", "image/png"]:
         flask.abort(400)
 
-    image = samlab.deserialize.image(fs, obj["content"][role])
+    image = samlab.deserialize.image(fs, obj["content"][key])
 
     return flask.jsonify(metadata={"size": image.size})
 

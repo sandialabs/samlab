@@ -144,7 +144,7 @@ def constant(observation, input, output, weight, repeat=1):
         yield observation, input, output, weight
 
 
-def image_load(generator, database, role="original"):
+def image_load(generator, database, key="original"):
     """Load images from observations in :ref:`streaming-data`.
 
     Parameters
@@ -152,9 +152,9 @@ def image_load(generator, database, role="original"):
     generator: generator expression, required
         Generator expression that produces (observation, input, output, weight) tuples.
     database: database object returned by :func:`samlab.database.connect`, required
-    role: str, optional
+    key: str, optional
         Observation content to be loaded.  Typically this will be "original"
-        to load the original image, or some other role to load images that have
+        to load the original image, or some other key to load images that have
         been resized to a common size for fixed-length inputs.
 
     Yields
@@ -170,8 +170,7 @@ def image_load(generator, database, role="original"):
     for observation, input, output, weight in generator:
         id = observation["_id"]
         if id not in cache:
-            #cache[id] = PIL.Image.open(fs.get(observation["content"][role]["data"]))
-            cache[id] = samlab.deserialize.image(fs, observation["content"][role])
+            cache[id] = samlab.deserialize.image(fs, observation["content"][key])
         yield observation, cache[id], output, weight
 
 

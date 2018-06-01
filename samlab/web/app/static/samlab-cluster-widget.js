@@ -20,17 +20,17 @@ define([
             {
                 var component = mapping.fromJS({
                     clusters: [],
-                    role: null,
-                    roles: [],
+                    key: null,
+                    keys: [],
                     loading: false,
                     object_label: object.label(widget.params.otype, {singular: true, capitalize: true}),
                     otype: widget.params.otype,
                     title: "Cluster " + object.label(widget.params.otype, {singular: false, capitalize: true}),
                 });
 
-                component.role_items = component.roles.map(function(role)
+                component.key_items = component.keys.map(function(key)
                 {
-                    return {key: role, label: role};
+                    return {key: key, label: key};
                 });
 
                 component.preprocessor = widget.params.preprocessor;
@@ -62,7 +62,7 @@ define([
                 {
                     var otype = component.otype();
 
-                    var content = component.role();
+                    var content = component.key();
                     if(content == null)
                         return;
 
@@ -127,7 +127,7 @@ define([
 
                 component.cluster_content = function(result)
                 {
-                    if(result.otype == component.otype() && result.content == component.role())
+                    if(result.otype == component.otype() && result.content == component.key())
                     {
                         component.loading(false);
                         mapping.fromJS({clusters: result.clusters}, component);
@@ -140,10 +140,10 @@ define([
                 }
                 socket.on("cluster-content", component.cluster_content);
 
-                server.load_json(component, "/" + component.otype() + "/content/roles", "GET", { success: function()
+                server.load_json(component, "/" + component.otype() + "/content/keys", "GET", { success: function()
                 {
-                    if(component.roles().length)
-                        component.role(component.roles()[0]);
+                    if(component.keys().length)
+                        component.key(component.keys()[0]);
                 }});
 
                 return component;

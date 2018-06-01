@@ -26,7 +26,7 @@ define([
                     content_type: widget.params["content-type"],
                     oid: widget.params.oid,
                     otype: widget.params.otype,
-                    role: widget.params.role,
+                    key: widget.params.key,
                     label: object.label(widget.params.otype, {singular: true, capitalize: true}) + " Content",
                 });
 
@@ -67,7 +67,7 @@ define([
                 if(component.content_type() == "application/x-wavefront-obj")
                 {
                     var loader = new THREE.OBJLoader();
-                    loader.load("/" + component.otype() + "/" + component.oid() + "/content/" + component.role() + "/data", function(object)
+                    loader.load("/" + component.otype() + "/" + component.oid() + "/content/" + component.key() + "/data", function(object)
                     {
                         var size = new THREE.Box3();
                         size.setFromObject(object); // Axis aligned bounding box
@@ -82,7 +82,7 @@ define([
                 else if(component.content_type() == "model/stl")
                 {
                     var loader = new THREE.STLLoader();
-                    loader.load("/" + component.otype() + "/" + component.oid() + "/content/" + component.role() + "/data", function(geometry)
+                    loader.load("/" + component.otype() + "/" + component.oid() + "/content/" + component.key() + "/data", function(geometry)
                     {
                         geometry.computeBoundingBox();
                         var center = geometry.boundingBox.getCenter();

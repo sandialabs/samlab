@@ -28,10 +28,10 @@ log = logging.getLogger(__name__)
 logging.getLogger("PIL.PngImagePlugin").setLevel(logging.INFO)
 
 
-def load(generator, database, role="original"):
+def load(generator, database, key="original"):
     """Deprecated, use :func:`samlab.stream.image_load` instead."""
     samlab.deprecated("samlab.image.load() is deprecated, use samlab.stream.image_load() instead.")
-    return samlab.stream.image_load(generator, database, role)
+    return samlab.stream.image_load(generator, database, key)
 
 
 def to_array(generator, rescale=1.0 / 255.0):

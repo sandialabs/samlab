@@ -110,7 +110,7 @@ define([
                     var image = component.filtered_images()[row];
 
                     var cell = {
-                        image_role: "224x224",
+                        image_key: "224x224",
                         observation: image.observation(),
                         output: image.output(),
                         prediction: image.prediction(),
@@ -146,7 +146,7 @@ define([
 
                 socket.on("keras-model-evaluate-images", keras_model_evaluate_images_ready);
 
-                socket.emit("keras-model-evaluate-images", {mid: component.model_id(), role: "model"});
+                socket.emit("keras-model-evaluate-images", {mid: component.model_id(), key: "model"});
 
                 return component;
             },

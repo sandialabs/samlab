@@ -66,7 +66,7 @@ define([
                             {
                                 filter.visible(true);
                                 filter.loading(true);
-                                socket.emit("keras-model-layer-filter-gradient-ascent", {otype: "models", oid: component.model.id(), role: "model", layer: layer.name(), filter: filter.index})
+                                socket.emit("keras-model-layer-filter-gradient-ascent", {otype: "models", oid: component.model.id(), key: "model", layer: layer.name(), filter: filter.index})
                                 return;
                             }
                         }
@@ -85,7 +85,7 @@ define([
 
                 function keras_model_summary_ready(message)
                 {
-                    if(message.otype == "models" && message.oid == component.model.id() && message.role == "model")
+                    if(message.otype == "models" && message.oid == component.model.id() && message.key == "model")
                     {
                         mapping.fromJS({summary: message.summary}, component);
                     }
@@ -93,7 +93,7 @@ define([
 
                 function keras_model_layer_filter_gradient_ascent_ready(message)
                 {
-                    if(message.otype == "models" && message.oid == component.model.id() && message.role == "model")
+                    if(message.otype == "models" && message.oid == component.model.id() && message.key == "model")
                     {
                         for(let layer of component.layers())
                         {
@@ -120,7 +120,7 @@ define([
                 socket.on("keras-model-summary", keras_model_summary_ready);
                 socket.on("keras-model-layer-filter-gradient-ascent", keras_model_layer_filter_gradient_ascent_ready);
 
-                socket.emit("keras-model-summary", {otype: "models", oid: component.model.id(), role: "model"});
+                socket.emit("keras-model-summary", {otype: "models", oid: component.model.id(), key: "model"});
 
                 return component;
             },

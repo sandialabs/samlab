@@ -41,7 +41,7 @@ def get_delete_models_model(mid):
 
         model["attributes-pre"] = pprint.pformat(model["attributes"], depth=1)
 
-        model["content"] = [{"role": role, "content-type": spec["content-type"], "filename": spec.get("filename", None)} for role, spec in sorted(model["content"].items())]
+        model["content"] = [{"key": key, "content-type": value["content-type"], "filename": value.get("filename", None)} for key, value in sorted(model["content"].items())]
 
         log.debug("model: %s", model)
 

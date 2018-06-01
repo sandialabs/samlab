@@ -20,6 +20,7 @@ import sklearn.preprocessing
 
 import samlab.deserialize
 import samlab.mime
+import samlab.object
 import samlab.observation
 
 
@@ -78,9 +79,12 @@ class Queue(object):
 
         def export_observations_impl(database_uri, database_name, search):
             database, fs = get_database(database_uri, database_name)
-            observations = samlab.observation.search(database, search)
+            if search:
+                observations = samlab.observation.expand(database, samlab.object.search(database, "observations", search))
+            else:
+                observations = list(database.observations.find({}))
 
-            roles = numpy.unique([role for observation in observations for role in observation["content"].keys() if observation["content"][role]["content-type"] in ["image/jpeg", "image/png"]])
+            keys = numpy.unique([key for observation in observations for key in observation["content"].keys() if observation["content"][key]["content-type"] in ["image/jpeg", "image/png"]])
 
             directory = tempfile.mkdtemp()
             log.info("Exporting observations to %s", directory)
@@ -90,15 +94,15 @@ class Queue(object):
 
                 manifest = io.StringIO()
                 manifest.write("_id")
-                for role in roles:
-                    manifest.write(",%s" % role)
+                for key in keys:
+                    manifest.write(",%s" % key)
                 manifest.write("\n")
                 for observation in observations:
                     manifest.write("%s" % observation["_id"])
-                    for role in roles:
-                        if role in observation["content"]:
-                            rname = "%s-%s%s" % (observation["_id"], role, samlab.mime.lookup_extension(observation["content"][role]["content-type"]))
-                            content = fs.get(observation["content"][role]["data"])
+                    for key in keys:
+                        if key in observation["content"]:
+                            rname = "%s-%s%s" % (observation["_id"], key, samlab.mime.lookup_extension(observation["content"][key]["content-type"]))
+                            content = fs.get(observation["content"][key]["data"])
                             zfile.writestr(rname, content.read())
                             manifest.write(",%s" % rname)
                         else:

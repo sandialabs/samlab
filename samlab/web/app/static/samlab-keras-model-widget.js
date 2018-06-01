@@ -23,7 +23,7 @@ define([
                     label: object.label(widget.params.otype, {singular: true, capitalize: true}) + " Content",
                     oid: widget.params.oid,
                     otype: widget.params.otype,
-                    role: widget.params.role,
+                    key: widget.params.key,
                     summary: { layers: [] },
                 });
 
@@ -42,14 +42,14 @@ define([
 
                 component.keras_model_summary_ready = function(summary)
                 {
-                    if(summary.otype == component.otype() && summary.oid == component.oid() && summary.role == component.role())
+                    if(summary.otype == component.otype() && summary.oid == component.oid() && summary.key == component.key())
                     {
                         mapping.fromJS({summary: summary.summary}, component);
                     }
                 }
 
                 socket.on("keras-model-summary", component.keras_model_summary_ready);
-                socket.emit("keras-model-summary", {otype: component.otype(), oid: component.oid(), role: component.role()});
+                socket.emit("keras-model-summary", {otype: component.otype(), oid: component.oid(), key: component.key()});
 
                 return component;
             }

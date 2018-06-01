@@ -23,7 +23,7 @@ define([
                     metadata: {dtype: null, shape: [], size: null, min: null, mean: null, max: null, sum: null},
                     oid: widget.params.oid,
                     otype: widget.params.otype,
-                    role: widget.params.role,
+                    key: widget.params.key,
                 });
 
                 var auto_delete_subscription = dashboard.auto_delete(widget, widget.params.otype, widget.params.oid);
@@ -134,10 +134,10 @@ define([
 
                 component.uri = ko.pureComputed(function()
                 {
-                    return "/" + component.otype() + "/" + component.oid() + "/content/" + component.role() + "/array/image?cmap-factory=" + component.colormap.factory() + "&cmap-name=" + component.colormap.name();
+                    return "/" + component.otype() + "/" + component.oid() + "/content/" + component.key() + "/array/image?cmap-factory=" + component.colormap.factory() + "&cmap-name=" + component.colormap.name();
                 });
 
-                server.load_json(component, "/" + component.otype() + "/" + component.oid() + "/content/" + component.role() + "/array/metadata");
+                server.load_json(component, "/" + component.otype() + "/" + component.oid() + "/content/" + component.key() + "/array/metadata");
 
                 return component;
             }

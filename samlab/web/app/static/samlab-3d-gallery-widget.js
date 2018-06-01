@@ -72,7 +72,7 @@ define([
                     if(content["content-type"] == "model/stl")
                     {
                         var loader = new THREE.STLLoader();
-                        loader.load("/" + content.otype + "/" + content.oid + "/content/" + content.role + "/data", function(geometry)
+                        loader.load("/" + content.otype + "/" + content.oid + "/content/" + content.key + "/data", function(geometry)
                         {
                             geometry.computeBoundingBox();
                             var center = geometry.boundingBox.getCenter();
