@@ -35,7 +35,6 @@ def get_post_layouts():
 
         layout = database.layouts.find_one({"lid": lid})
         if layout is None:
-            database.layouts.create_index("lid")
             database.layouts.insert_one({"lid": lid, "content": content})
 
         return flask.jsonify(lid=str(lid))

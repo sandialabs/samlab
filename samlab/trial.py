@@ -71,8 +71,6 @@ def create(database, fs, name, attributes=None, content=None, tags=None):
         "tags": tags,
     }
 
-    database.trials.create_index("tags")
-    database.trials.create_index([("$**", pymongo.TEXT)])
     return database.trials.insert_one(document).inserted_id
 
 

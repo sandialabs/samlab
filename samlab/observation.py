@@ -74,8 +74,6 @@ def create(database, fs, attributes=None, content=None, tags=None):
         "tags": tags,
     }
 
-    database.observations.create_index("tags")
-    database.observations.create_index([("$**", pymongo.TEXT)])
     return database.observations.insert_one(document).inserted_id
 
 
@@ -100,9 +98,6 @@ def create_many(database, fs):
     """
     assert(isinstance(database, pymongo.database.Database))
     assert(isinstance(fs, gridfs.GridFS))
-
-    database.observations.create_index("tags")
-    database.observations.create_index([("$**", pymongo.TEXT)])
 
     class Implementation(object):
         def __init__(self, database, fs):

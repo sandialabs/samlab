@@ -170,10 +170,24 @@ def connect(name, uri="mongodb://localhost:27017", replica_set="samlab"):
     fs = gridfs.GridFS(database)
 
     # Force the database into existence, so we can follow change streams.
-    try:
-        database.create_collection("temp")
-    except pymongo.errors.CollectionInvalid:
-        pass
+    with contextlib.suppress(pymongo.errors.CollectionInvalid):
+        database.create_collection("layouts")
+    with contextlib.suppress(pymongo.errors.CollectionInvalid):
+        database.create_collection("models")
+    with contextlib.suppress(pymongo.errors.CollectionInvalid):
+        database.create_collection("observations")
+    with contextlib.suppress(pymongo.errors.CollectionInvalid):
+        database.create_collection("trials")
+
+    # Create database indexes
+    database.layouts.create_index("lid")
+    database.models.create_index([("$**", pymongo.TEXT)])
+    database.models.create_index("tags")
+    database.observations.create_index([("$**", pymongo.TEXT)])
+    database.observations.create_index("tags")
+    database.trials.create_index([("$**", pymongo.TEXT)])
+    database.trials.create_index("tags")
+
 
     return database, fs
 
