@@ -82,7 +82,6 @@ define([
                         label: "Parents",
                         children:
                         [
-                            { label: "Database", icon: "fa-database", widget: "samlab-database-widget", params: {}},
                             { label: "Trial", icon: "fa-address-card", widget: "samlab-trial-widget", params: {id: component.model.trial}},
                         ],
                     },

@@ -9,7 +9,6 @@ define([
     "samlab-attribute-manager",
     "samlab-content",
     "samlab-dashboard",
-    "samlab-database",
     "samlab-dialog",
     "samlab-notify",
     "samlab-object",
@@ -19,7 +18,7 @@ define([
     "samlab-socket",
     "samlab-tag-manager",
     "samlab-content-list-control",
-    ], function(ko, mapping, lodash, attribute_manager, content, dashboard, database, dialog, notify, object, observation, permissions, server, socket, tag_manager)
+    ], function(ko, mapping, lodash, attribute_manager, content, dashboard, dialog, notify, object, observation, permissions, server, socket, tag_manager)
 {
     var component_name = "samlab-observations-widget";
     ko.components.register(component_name,
@@ -30,7 +29,6 @@ define([
             {
                 var component = mapping.fromJS(
                 {
-                    database: database,
                     search_error: false,
                     loading: false,
                     observations: [],

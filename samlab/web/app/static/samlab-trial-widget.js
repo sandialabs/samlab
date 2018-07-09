@@ -73,13 +73,6 @@ define([
                             return { label: model.name, icon: "fa-paper-plane", widget: "samlab-model-widget", params: {id: model.id}};
                         }),
                     },
-                    {
-                        label: "Parents",
-                        children:
-                        [
-                            { label: "Database", icon: "fa-wrench", widget: "samlab-database-widget", params: {}},
-                        ],
-                    },
                 ];
 
                 component.activate_item = function(item)
