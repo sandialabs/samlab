@@ -12,6 +12,8 @@ import gridfs
 import pymongo
 
 import samlab.observation
+import samlab.serialize
+import samlab.trial
 
 log = logging.getLogger(__name__)
 
@@ -27,17 +29,33 @@ def create(database, fs):
     assert(isinstance(database, pymongo.database.Database))
     assert(isinstance(fs, gridfs.GridFS))
 
+    # Load the iris dataset using scikit-learn.
     import sklearn.datasets
-
     data = sklearn.datasets.load_iris()
     X = data["data"]
-    feature_labels = data["feature_names"]
     Y = data["target"]
+    feature_labels = data["feature_names"]
     class_labels = data["target_names"]
 
+    # Create a database record for each observation.  Writing the features as
+    # both contents and attributes is redundant, we do it here just to
+    # demonstrate flexibility.
     for x, y in zip(X, Y):
-        features = {key: value for key, value in zip(feature_labels, x)}
+        attributes = dict(zip(feature_labels, x))
+        content = {
+            "features": samlab.serialize.array(x),
+            "label": samlab.serialize.array(y),
+        }
         tags = ["label:%s" % class_labels[y]]
-        samlab.observation.create(database, fs, attributes=features, tags=tags)
+        samlab.observation.create(database, fs, attributes=attributes, content=content, tags=tags)
 
 
+    # Create a trial object that will contain a description of the data.
+    content = {
+        "description": samlab.serialize.string(data["DESCR"]),
+    }
+    tags = ["label:overview"]
+    samlab.trial.create(database, fs, name="Iris dataset overview", content=content)
+
+    # Even though we already have the full dataset in memory, pretend that we
+    # don't and load it from the database.
