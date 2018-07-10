@@ -8,7 +8,7 @@ define([
     "samlab-dashboard",
     "samlab-object",
     "samlab-server",
-    ], function(ko, mapping, object, server)
+    ], function(ko, mapping, dashboard, object, server)
 {
     var component_name = "samlab-text-widget";
     ko.components.register(component_name,
