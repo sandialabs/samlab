@@ -12,3 +12,6 @@ Feature: Observations
         And each document tags field will equal ["a", "b"]
         And each content field will contain an "array" role with content-type "application/x-numpy-array"
         And each content field will contain a "string" role with content-type "text/plain; charset=utf-8"
+
+    Scenario Outline: Ingest an observation
+        Given a database named test
