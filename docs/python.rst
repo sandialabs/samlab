@@ -19,6 +19,8 @@ visualizations.
     python/samlab.rst
     python/samlab.database.rst
     python/samlab.deserialize.rst
+    python/samlab.example.rst
+    python/samlab.example.iris.rst
     python/samlab.favorite.rst
     python/samlab.hyperopt.rst
     python/samlab.image.rst
