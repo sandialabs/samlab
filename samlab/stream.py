@@ -15,7 +15,6 @@ import gridfs
 import numpy
 import pymongo
 import PIL.Image
-import scipy.stats
 
 import samlab.deserialize
 

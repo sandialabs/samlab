@@ -33,7 +33,6 @@ visualizations.
     python/samlab.search.rst
     python/samlab.serialize.rst
     python/samlab.static.rst
-    python/samlab.stats.rst
     python/samlab.stream.rst
     python/samlab.tasks.rst
     python/samlab.tasks.generic.rst
