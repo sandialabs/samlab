@@ -9,7 +9,9 @@ import re
 
 import arrow
 import bson
+import cachetools.func
 import flask
+import pymongo
 import toyplot.bitmap
 import toyplot.color
 import toyplot.html
@@ -207,6 +209,60 @@ def get_otype_oid_content_key_image_metadata(otype, oid, key):
     image = samlab.deserialize.image(fs, obj["content"][key])
 
     return flask.jsonify(metadata={"size": image.size})
+
+
+@cachetools.func.ttl_cache()
+def get_oids(otype, search, sort, direction):
+    if search:
+        objects = samlab.object.load(database, otype, samlab.object.search(database, otype, search))
+        if sort == "_id":
+            objects = sorted(objects, key=lambda o: o["_id"])
+        elif sort == "created":
+            objects = sorted(objects, key=lambda o: o.get("created", ""))
+        elif sort == "modified":
+            objects = sorted(objects, key=lambda o: o.get("modified", ""))
+        elif sort == "modified-by":
+            objects = sorted(objects, key=lambda o: o.get("modified-by", ""))
+        elif sort == "tags":
+            objects = sorted(objects, key=lambda o: o.get("tags", []))
+        return [obj["_id"] for obj in objects]
+
+    # No search, so we can do everything with the database server
+    sort = [(sort, pymongo.DESCENDING if direction == "descending" else pymongo.ASCENDING)]
+    cursor = database[otype].find(sort=sort, projection={"_id": True})
+    return [obj["_id"] for obj in cursor]
+
+
+@application.route("/<allow(observations,trials,models):otype>/index/<oindex>")
+@require_auth
+def get_otype_index_oindex(otype, oindex):
+    require_permissions(["read"])
+
+    try:
+        oindex = int(oindex)
+    except:
+        flask.abort(400, "Index must be an integer: %s" % oindex)
+    if oindex < 0:
+        flask.abort(400, "Index must be a non-negative integer: %s" % oindex)
+
+    search = flask.request.args.get("search", "")
+
+    sort = flask.request.args.get("sort", "tags")
+    if sort not in ["id", "created", "modified", "modified-by", "tags"]:
+        flask.abort(400, "Unknown sort type: %s" % sort)
+    if sort == "id":
+        sort = "_id"
+
+    direction = flask.request.args.get("direction", "ascending")
+    if direction not in ["ascending", "descending"]:
+        flask.abort(400, "Unknown sort direction: %s" % direction)
+
+    oids = get_oids(otype, search, sort, direction)
+    if oindex >= len(oids):
+        flask.abort(400, "Index out of range: %s" % oindex)
+
+    return flask.jsonify(otype=otype, count=len(oids), oindex=oindex, oid=oids[oindex])
+
 
 
 @application.route("/<allow(observations,trials,models):otype>/tags")

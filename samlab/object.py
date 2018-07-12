@@ -97,7 +97,7 @@ class _IdSearchVisitor(object):
 
     def visit_term(self, term):
         result = set([o["_id"] for o in self._collection.find(filter={"$text": {"$search": '"' + term + '"'}}, projection={"_id": True})])
-        result |= set([o["_id"] for o in self._collection.find(filter={"content." + term: {"$exists": True}})])
+        result |= set([o["_id"] for o in self._collection.find(filter={"content." + term: {"$exists": True}}, projection={"_id": True})])
         try:
             tid = bson.objectid.ObjectId(term)
             result |= set([o["_id"] for o in self._collection.find(filter={"_id": tid}, projection={"_id": True})])
