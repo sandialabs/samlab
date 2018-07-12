@@ -12,7 +12,7 @@ import toyplot.color
 import toyplot.html
 
 import samlab.deserialize
-
+import samlab.web.app.handlers.common
 
 # Setup logging.
 log = logging.getLogger(__name__)
@@ -26,30 +26,15 @@ from samlab.web.app.database import database, fs
 
 @application.route("/models/<exclude(tags):mid>", methods=["GET", "DELETE"])
 @require_auth
-def get_delete_models_model(mid):
-    mid = bson.objectid.ObjectId(mid)
+def get_delete_models_model(oid):
+    oid = bson.objectid.ObjectId(oid)
 
     if flask.request.method == "GET":
-        require_permissions(["read"])
-        model = database.models.find_one({"_id": mid})
-
-        if "created" in model:
-            model["created"] = arrow.get(model["created"]).isoformat()
-        if "modified" in model:
-            model["modified"] = arrow.get(model["modified"]).isoformat()
-        model["name"] = model.get("name", mid)
-
-        model["attributes-pre"] = pprint.pformat(model["attributes"], depth=1)
-
-        model["content"] = [{"key": key, "content-type": value["content-type"], "filename": value.get("filename", None)} for key, value in sorted(model["content"].items())]
-
-        log.debug("model: %s", model)
-
-        return flask.jsonify(model=model)
+        return samlab.web.app.handlers.common.get_otype_oid("models", oid)
 
     elif flask.request.method == "DELETE":
         require_permissions(["delete"])
-        samlab.model.delete(database, fs, mid)
+        samlab.model.delete(database, fs, oid)
         return flask.jsonify()
 
 

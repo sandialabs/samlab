@@ -10,6 +10,7 @@ import bson
 import flask
 import pymongo
 
+import samlab.web.app.handlers.common
 import samlab.trial
 
 # Setup logging.
@@ -50,36 +51,16 @@ def get_trials():
     return flask.jsonify(trials=trials)
 
 
-@application.route("/trials/<exclude(tags):trial>", methods=["GET", "DELETE"])
+@application.route("/trials/<exclude(tags):oid>", methods=["GET", "DELETE"])
 @require_auth
-def get_delete_trials_trial(trial):
+def get_delete_trials_trial(oid):
+    oid = bson.objectid.ObjectId(oid)
+
     if flask.request.method == "GET":
-        require_permissions(["read"])
-        trial = bson.objectid.ObjectId(trial)
-        trial = database.trials.find_one({"_id": trial})
-
-        if trial is None:
-            flask.abort(404)
-
-        if "created" in trial:
-            trial["created"] = arrow.get(trial["created"]).isoformat()
-        if "modified" in trial:
-            trial["modified"] = arrow.get(trial["modified"]).isoformat()
-        trial["name"] = trial.get("name", trial["_id"])
-
-        trial["attributes-pre"] = pprint.pformat(trial["attributes"], depth=1)
-
-        if "content" in trial:
-            trial["content"] = [{"key": key, "content-type": value["content-type"], "filename": value.get("filename", None)} for key, value in sorted(trial["content"].items())]
-        else:
-            trial["content"] = []
-
-        return flask.jsonify(trial=trial)
-
+        return samlab.web.app.handlers.common.get_otype_oid("trials", oid)
     elif flask.request.method == "DELETE":
         require_permissions(["delete"])
-        trial = bson.objectid.ObjectId(trial)
-        samlab.trial.delete(database, fs, trial)
+        samlab.trial.delete(database, fs, oid)
         return flask.jsonify()
 
 

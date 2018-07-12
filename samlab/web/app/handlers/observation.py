@@ -10,6 +10,7 @@ import flask
 
 import samlab.object
 import samlab.observation
+import samlab.web.app.handlers.common
 
 
 # Setup logging.
@@ -50,28 +51,15 @@ def get_observations():
     return flask.jsonify(observations=ids)
 
 
-@application.route("/observations/<exclude(tags):observation>", methods=["GET", "DELETE"])
+@application.route("/observations/<exclude(tags):oid>", methods=["GET", "DELETE"])
 @require_auth
-def get_delete_observations_observation(observation):
+def get_delete_observations_observation(oid):
+    oid = bson.objectid.ObjectId(oid)
     if flask.request.method == "GET":
-        require_permissions(["read"])
-        observation = bson.objectid.ObjectId(observation)
-        observation = database.observations.find_one({"_id": observation})
-
-        if "created" in observation:
-            observation["created"] = arrow.get(observation["created"]).isoformat()
-        if "modified" in observation:
-            observation["modified"] = arrow.get(observation["modified"]).isoformat()
-
-        observation["content"] = [{"key": key, "content-type": value["content-type"], "filename": value.get("filename", None)} for key, value in observation["content"].items()]
-
-        observation["tags"] = sorted(observation.get("tags", []))
-
-        return flask.jsonify(observation=observation)
+        return samlab.web.app.handlers.common.get_otype_oid("observations", oid)
     elif flask.request.method == "DELETE":
         require_permissions(["delete"])
-        observation = bson.objectid.ObjectId(observation)
-        samlab.observation.delete(database, fs, observation)
+        samlab.observation.delete(database, fs, oid)
         return flask.jsonify()
 
 
