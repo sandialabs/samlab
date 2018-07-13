@@ -213,7 +213,7 @@ define([
 
                 component.adjust_index = function()
                 {
-                    log("adjust_index");
+                    log("adjust_index", component.observation.id());
 
                     if(component.count() < 1)
                     {

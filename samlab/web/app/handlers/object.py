@@ -212,7 +212,7 @@ def get_otype_oid_content_key_image_metadata(otype, oid, key):
 
 
 @cachetools.func.ttl_cache()
-def get_oids(session, otype, search):
+def get_objects(session, otype, search):
     if search:
         objects = samlab.object.load(database, otype, samlab.object.search(database, otype, search))
     else:
@@ -221,10 +221,10 @@ def get_oids(session, otype, search):
 
 
 @cachetools.func.ttl_cache()
-def get_sorted_oids(session, otype, search, sort, direction):
-    objects = get_oids(session, otype, search)
+def get_sorted_objects(session, otype, search, sort, direction):
+    objects = get_objects(session, otype, search)
     if sort == "_id":
-        pass # Objects returned from get_oids() are already sorted by id
+        pass # Objects returned from get_objects() are already sorted by id
     elif sort == "created":
         objects = sorted(objects, key=lambda o: o.get("created", ""))
     elif sort == "modified":
@@ -233,7 +233,7 @@ def get_sorted_oids(session, otype, search, sort, direction):
         objects = sorted(objects, key=lambda o: o.get("modified-by", ""))
     elif sort == "tags":
         objects = sorted(objects, key=lambda o: o.get("tags", []))
-    return [obj["_id"] for obj in objects]
+    return objects
 
 
 @application.route("/<allow(observations,trials,models):otype>/count")
@@ -255,10 +255,9 @@ def get_otype_count(otype):
     if direction not in ["ascending", "descending"]:
         flask.abort(400, "Unknown sort direction: %s" % direction)
 
-    oids = get_oids(session, otype, search)
+    objects = get_objects(session, otype, search)
 
-    return flask.jsonify(session=session, otype=otype, search=search, count=len(oids))
-
+    return flask.jsonify(session=session, otype=otype, search=search, count=len(objects))
 
 
 @application.route("/<allow(observations,trials,models):otype>/index/<oindex>")
@@ -287,12 +286,42 @@ def get_otype_index_oindex(otype, oindex):
     if direction not in ["ascending", "descending"]:
         flask.abort(400, "Unknown sort direction: %s" % direction)
 
-    oids = get_sorted_oids(session, otype, search, sort, direction)
-    if oindex >= len(oids):
+    objects = get_sorted_objects(session, otype, search, sort, direction)
+    if oindex >= len(objects):
         flask.abort(400, "Index out of range: %s" % oindex)
 
-    return flask.jsonify(session=session, otype=otype, search=search, sort=sort, direction=direction, oindex=oindex, oid=oids[oindex])
+    oid = objects[oindex]["_id"]
 
+    return flask.jsonify(session=session, otype=otype, search=search, sort=sort, direction=direction, oindex=oindex, oid=oid)
+
+
+@application.route("/<allow(observations,trials,models):otype>/id/<oid>")
+@require_auth
+def get_otype_id_oid(otype, oid):
+    require_permissions(["read"])
+
+    session = flask.request.args.get("session", "")
+    if not session:
+        flask.abort(400, "Missing session ID.")
+
+    search = flask.request.args.get("search", "")
+
+    sort = flask.request.args.get("sort", "_id")
+    if sort not in ["_id", "created", "modified", "modified-by", "tags"]:
+        flask.abort(400, "Unknown sort type: %s" % sort)
+
+    direction = flask.request.args.get("direction", "ascending")
+    if direction not in ["ascending", "descending"]:
+        flask.abort(400, "Unknown sort direction: %s" % direction)
+
+    objects = get_sorted_objects(session, otype, search, sort, direction)
+    oindex = None
+    for index, obj in enumerate(objects):
+        if obj["_id"] == oid:
+            oindex = index
+            break
+
+    return flask.jsonify(session=session, otype=otype, search=search, sort=sort, direction=direction, oid=oid, oindex=oindex)
 
 
 @application.route("/<allow(observations,trials,models):otype>/tags")
