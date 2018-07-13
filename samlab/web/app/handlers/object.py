@@ -212,7 +212,7 @@ def get_otype_oid_content_key_image_metadata(otype, oid, key):
 
 
 @cachetools.func.ttl_cache()
-def get_oids(otype, search, sort, direction):
+def get_oids(session, otype, search, sort, direction):
     if search:
         objects = samlab.object.load(database, otype, samlab.object.search(database, otype, search))
         if sort == "_id":
@@ -245,23 +245,25 @@ def get_otype_index_oindex(otype, oindex):
     if oindex < 0:
         flask.abort(400, "Index must be a non-negative integer: %s" % oindex)
 
+    session = flask.request.args.get("session", "")
+    if not session:
+        flask.abort(400, "Missing session ID.")
+
     search = flask.request.args.get("search", "")
 
     sort = flask.request.args.get("sort", "tags")
-    if sort not in ["id", "created", "modified", "modified-by", "tags"]:
+    if sort not in ["_id", "created", "modified", "modified-by", "tags"]:
         flask.abort(400, "Unknown sort type: %s" % sort)
-    if sort == "id":
-        sort = "_id"
 
     direction = flask.request.args.get("direction", "ascending")
     if direction not in ["ascending", "descending"]:
         flask.abort(400, "Unknown sort direction: %s" % direction)
 
-    oids = get_oids(otype, search, sort, direction)
+    oids = get_oids(session, otype, search, sort, direction)
     if oindex >= len(oids):
         flask.abort(400, "Index out of range: %s" % oindex)
 
-    return flask.jsonify(otype=otype, count=len(oids), oindex=oindex, oid=oids[oindex])
+    return flask.jsonify(session=session, otype=otype, search=search, sort=sort, direction=direction, count=len(oids), oindex=oindex, oid=oids[oindex])
 
 
 

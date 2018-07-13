@@ -26,7 +26,6 @@ def get_otype_oid(otype, oid):
 
     require_permissions(["read"])
 
-    oid = bson.objectid.ObjectId(oid)
     obj = database[otype].find_one({"_id": oid})
     if obj is None:
         flask.abort(404)
