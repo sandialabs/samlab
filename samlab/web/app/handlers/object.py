@@ -212,25 +212,53 @@ def get_otype_oid_content_key_image_metadata(otype, oid, key):
 
 
 @cachetools.func.ttl_cache()
-def get_oids(session, otype, search, sort, direction):
+def get_oids(session, otype, search):
     if search:
         objects = samlab.object.load(database, otype, samlab.object.search(database, otype, search))
-        if sort == "_id":
-            objects = sorted(objects, key=lambda o: o["_id"])
-        elif sort == "created":
-            objects = sorted(objects, key=lambda o: o.get("created", ""))
-        elif sort == "modified":
-            objects = sorted(objects, key=lambda o: o.get("modified", ""))
-        elif sort == "modified-by":
-            objects = sorted(objects, key=lambda o: o.get("modified-by", ""))
-        elif sort == "tags":
-            objects = sorted(objects, key=lambda o: o.get("tags", []))
-        return [obj["_id"] for obj in objects]
+    else:
+        objects = list(database[otype].find())
+    return objects
 
-    # No search, so we can do everything with the database server
-    sort = [(sort, pymongo.DESCENDING if direction == "descending" else pymongo.ASCENDING)]
-    cursor = database[otype].find(sort=sort, projection={"_id": True})
-    return [obj["_id"] for obj in cursor]
+
+@cachetools.func.ttl_cache()
+def get_sorted_oids(session, otype, search, sort, direction):
+    objects = get_oids(session, otype, search)
+    if sort == "_id":
+        pass # Objects returned from get_oids() are already sorted by id
+    elif sort == "created":
+        objects = sorted(objects, key=lambda o: o.get("created", ""))
+    elif sort == "modified":
+        objects = sorted(objects, key=lambda o: o.get("modified", ""))
+    elif sort == "modified-by":
+        objects = sorted(objects, key=lambda o: o.get("modified-by", ""))
+    elif sort == "tags":
+        objects = sorted(objects, key=lambda o: o.get("tags", []))
+    return [obj["_id"] for obj in objects]
+
+
+@application.route("/<allow(observations,trials,models):otype>/count")
+@require_auth
+def get_otype_count(otype):
+    require_permissions(["read"])
+
+    session = flask.request.args.get("session", "")
+    if not session:
+        flask.abort(400, "Missing session ID.")
+
+    search = flask.request.args.get("search", "")
+
+    sort = flask.request.args.get("sort", "_id")
+    if sort not in ["_id", "created", "modified", "modified-by", "tags"]:
+        flask.abort(400, "Unknown sort type: %s" % sort)
+
+    direction = flask.request.args.get("direction", "ascending")
+    if direction not in ["ascending", "descending"]:
+        flask.abort(400, "Unknown sort direction: %s" % direction)
+
+    oids = get_oids(session, otype, search)
+
+    return flask.jsonify(session=session, otype=otype, search=search, count=len(oids))
+
 
 
 @application.route("/<allow(observations,trials,models):otype>/index/<oindex>")
@@ -251,7 +279,7 @@ def get_otype_index_oindex(otype, oindex):
 
     search = flask.request.args.get("search", "")
 
-    sort = flask.request.args.get("sort", "tags")
+    sort = flask.request.args.get("sort", "_id")
     if sort not in ["_id", "created", "modified", "modified-by", "tags"]:
         flask.abort(400, "Unknown sort type: %s" % sort)
 
@@ -259,11 +287,11 @@ def get_otype_index_oindex(otype, oindex):
     if direction not in ["ascending", "descending"]:
         flask.abort(400, "Unknown sort direction: %s" % direction)
 
-    oids = get_oids(session, otype, search, sort, direction)
+    oids = get_sorted_oids(session, otype, search, sort, direction)
     if oindex >= len(oids):
         flask.abort(400, "Index out of range: %s" % oindex)
 
-    return flask.jsonify(session=session, otype=otype, search=search, sort=sort, direction=direction, count=len(oids), oindex=oindex, oid=oids[oindex])
+    return flask.jsonify(session=session, otype=otype, search=search, sort=sort, direction=direction, oindex=oindex, oid=oids[oindex])
 
 
 

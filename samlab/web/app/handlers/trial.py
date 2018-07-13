@@ -51,7 +51,7 @@ def get_trials():
     return flask.jsonify(trials=trials)
 
 
-@application.route("/trials/<exclude(tags):oid>", methods=["GET", "DELETE"])
+@application.route("/trials/<exclude(count,tags):oid>", methods=["GET", "DELETE"])
 @require_auth
 def get_delete_trials_trial(oid):
     oid = bson.objectid.ObjectId(oid)

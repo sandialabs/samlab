@@ -51,7 +51,7 @@ def get_observations():
     return flask.jsonify(observations=ids)
 
 
-@application.route("/observations/<exclude(tags):oid>", methods=["GET", "DELETE"])
+@application.route("/observations/<exclude(count,tags):oid>", methods=["GET", "DELETE"])
 @require_auth
 def get_delete_observations_observation(oid):
     oid = bson.objectid.ObjectId(oid)

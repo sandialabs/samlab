@@ -3,9 +3,11 @@
 // Government retains certain rights in this software.
 
 define([
+    "debug",
     "knockout",
     "knockout.mapping",
     "lodash",
+    "URI",
     "samlab-attribute-manager",
     "samlab-content",
     "samlab-dashboard",
@@ -17,9 +19,12 @@ define([
     "samlab-server",
     "samlab-socket",
     "samlab-tag-manager",
+    "samlab-uuidv4",
     "samlab-content-list-control",
-    ], function(ko, mapping, lodash, attribute_manager, content, dashboard, dialog, notify, object, observation, permissions, server, socket, tag_manager)
+    ], function(debug, ko, mapping, lodash, URI, attribute_manager, content, dashboard, dialog, notify, object, observation, permissions, server, socket, tag_manager, uuidv4)
 {
+    var log = debug("samlab-observations-widget");
+
     var component_name = "samlab-observations-widget";
     ko.components.register(component_name,
     {
@@ -27,11 +32,14 @@ define([
         {
             createViewModel: function(widget, component_info)
             {
+                //////////////////////////////////////////////////////
+                // Data model
+
                 var component = mapping.fromJS(
                 {
-                    search_error: false,
+                    count: 0,
+                    index: 0,
                     loading: false,
-                    observations: [],
                     observation:
                     {
                         "attributes-pre": null,
@@ -42,57 +50,47 @@ define([
                         tags: [],
                     },
                     permissions: permissions,
-                    sort_keys: ["id", "modified", "modified-by", "original-filename", "tags"],
+                    search_error: false,
+                    session: uuidv4(),
                 });
-
-                component.search = widget.params.search;
-                component.search.extend({rateLimit: {timeout: 500, method: "notifyWhenChangesStop"}});
-
-                var sort_labels =
-                {
-                    "id": "ID",
-                    "modified": "Modified",
-                    "modified-by": "Modified by",
-                    "original-filename": "Original filename",
-                    "tags": "Tags",
-                };
-                component.sort = widget.params.sort;
-                component.sort_label = ko.pureComputed(function()
-                {
-                    return sort_labels[component.sort()];
-                });
-                component.sort_options = component.sort_keys.map(function(key)
-                {
-                    return {key: key, label: sort_labels[key]};
-                });
-                component.set_sort = function(option)
-                {
-                    component.sort(option.key);
-                }
 
                 component.observation.id = widget.params.id;
 
-                component.view_observation = function()
-                {
-                    dashboard.add_widget("samlab-observation-widget", {id: component.observation.id()});
-                }
+                ////////////////////////////////////////////////////////
+                // Search / sort controls
 
-                component.manage_attributes = function()
+                component.search = widget.params.search;
+                component.search.extend({rateLimit: {timeout: 500, method: "notifyWhenChangesStop"}});
+                component.search.subscribe(function()
                 {
-                    dashboard.add_widget("samlab-attribute-manager-widget");
-                }
+                    component.load_count();
+                });
 
-                component.manage_tags = function()
+                component.position = ko.pureComputed(function()
                 {
-                    dashboard.add_widget("samlab-tag-manager-widget");
-                }
+                    if(component.count() < 1)
+                        return null;
 
-                component.export_observations = function()
+                    return (component.index() + 1) + " of " + component.count();
+                });
+
+                component.sort = widget.params.sort;
+                component.sort_items =
+                [
+                    {key: "_id", label: "ID"},
+                    {key: "created", label: "Created"},
+                    {key: "modified", label: "Modified"},
+                    {key: "modified-by", label: "Modified by"},
+                    {key: "tags", label: "Tags"},
+                ];
+                component.sort.subscribe(function()
                 {
-                    socket.emit("export-observations", {search: component.search()});
-                    notify.local({icon: "fa fa-download", message: "Exporting observations.", type: "success"});
-                }
+                    component.adjust_index();
+                });
 
+                /////////////////////////////////////////////////////////////////
+                // Operations menu
+/*
                 component.delete_observation = function()
                 {
                     dialog.dialog(
@@ -108,97 +106,187 @@ define([
                         title: "Delete Observation?",
                     });
                 };
+*/
+
+                component.export_observations = function()
+                {
+                    socket.emit("export-observations", {search: component.search()});
+                    notify.local({icon: "fa fa-download", message: "Exporting observations.", type: "success"});
+                }
 
                 component.help = function()
                 {
                     dashboard.add_widget("samlab-markup-viewer-widget", {uri: "samlab-observations-widget-help.html"});
                 }
 
+                component.manage_attributes = function()
+                {
+                    dashboard.add_widget("samlab-attribute-manager-widget");
+                }
+
+                component.manage_tags = function()
+                {
+                    dashboard.add_widget("samlab-tag-manager-widget");
+                }
+
+                component.view_observation = function()
+                {
+                    dashboard.add_widget("samlab-observation-widget", {id: component.observation.id()});
+                }
+
+                /////////////////////////////////////////////////////////////////
+                // Navigation controls
+
                 component.first_observation = function()
                 {
-                    var observations = component.observations();
-                    if(observations.length < 1)
+                    if(component.count() < 1)
                         return;
-                    component.observation.id(observations[0]);
+                    component.index(0);
+                    component.lookup_id();
                 };
 
                 component.last_observation = function()
                 {
-                    var observations = component.observations();
-                    if(observations.length < 1)
+                    if(component.count() < 1)
                         return;
-                    component.observation.id(observations[observations.length-1]);
+
+                    component.index(component.count() - 1);
+                    component.lookup_id();
                 }
-
-                component.random_observation = function()
-                {
-                    var observations = component.observations();
-                    if(observations.length < 1)
-                        return;
-
-                    component.observation.id(observations[lodash.random(0, observations.length-1)]);
-                };
 
                 component.next_observation = function()
                 {
-                    var id = component.observation.id();
-                    if(id == null)
+                    if(component.count() < 1)
                         return;
 
-                    var observations = component.observations();
-                    var index = observations.indexOf(component.observation.id());
-                    component.observation.id(observations[(index + 1) % observations.length]);
+                    component.index((component.index() + 1) % component.count());
+                    component.lookup_id();
                 };
 
                 component.previous_observation = function()
                 {
-                    var id = component.observation.id();
-                    if(id == null)
+                    if(component.count() < 1)
                         return;
 
-
-                    var observations = component.observations();
-                    var index = observations.indexOf(component.observation.id());
-                    component.observation.id(observations[(index + observations.length - 1) % observations.length]);
+                    component.index((component.index() + component.count() - 1) % component.count());
+                    component.lookup_id();
                 }
 
-                component.position = ko.pureComputed(function()
+                component.random_observation = function()
                 {
-                    var index = component.observations.indexOf(component.observation.id());
-                    if(index < 0)
-                        return null;
+                    if(component.count() < 1)
+                        return;
 
-                    return (index + 1) + " of " + component.observations().length;
-                });
+                    component.index(lodash.random(0, component.count()-1));
+                    component.lookup_id();
+                };
 
-                component.load_observation = ko.computed(function()
+                ///////////////////////////////////////////////////////////////////////////////
+                // Server communication
+
+                component.load_count = function()
                 {
-                    //var observations = component.observations();
-                    var id = component.observation.id();
-                    //console.log("load_observation", id);
-
-                    if(id != null)
+                    log("load_count");
+                    component.loading(true);
+                    var session = component.session();
+                    var search = component.search();
+                    var uri = URI("/observations/count").setQuery({session: session, search: search})
+                    server.get_json(uri,
                     {
-                        server.load_json(component, "/observations/" + id);
-                        server.load_text("/observations/" + component.observation.id() + "/attributes/pre", function(data)
+                        success: function(data)
                         {
-                            component.observation["attributes-pre"](data);
-                        });
+                            component.count(data.count);
+                            component.search_error(false);
+                            component.adjust_index();
+                        },
+                        error: function()
+                        {
+                            component.search_error(true);
+                            component.loading(false);
+                        },
+                        finished: function()
+                        {
+                            component.loading(false);
+                        },
+                    });
+                };
+
+                component.adjust_index = function()
+                {
+                    log("adjust_index");
+
+                    if(component.count() < 1)
+                    {
+                        component.index(0);
                     }
                     else
                     {
-                        //console.log("clear");
+                        if(component.index() >= component.count())
+                        {
+                            component.index(component.count()-1)
+                        }
+                    }
+
+                    component.lookup_id();
+                }
+
+                component.lookup_id = function()
+                {
+                    log("lookup_id");
+                    if(component.count() < 1)
+                    {
                         component.observation["attributes-pre"](null);
                         component.observation.content([]);
                         component.observation.created(null);
                         component.observation["modified-by"](null);
                         component.observation.modified(null);
                         component.observation.tags([]);
+                        return;
                     }
+
+                    component.loading(true);
+                    var session = component.session();
+                    var search = component.search();
+                    var sort = component.sort();
+                    var direction = "ascending";
+                    var index = component.index();
+
+                    var uri = URI("/observations/index/" + index).setQuery({session: session, search: search, sort: sort, direction: direction})
+                    server.get_json(uri,
+                    {
+                        success: function(data)
+                        {
+                            component.observation.id(data.oid);
+                            component.load_observation();
+                        },
+                        error: function()
+                        {
+                            component.loading(false);
+                        },
+                        finished: function()
+                        {
+                            component.loading(false);
+                        },
+                    });
+                };
+
+                component.load_observation = function()
+                {
+                    log("load_observation");
+
+                    var id = component.observation.id();
+                    server.load_json(component, "/observations/" + id);
+                    server.load_text("/observations/" + id + "/attributes/pre", function(data)
+                    {
+                        component.observation["attributes-pre"](data);
+                    });
 
                     attribute_manager.manage("observations", id);
                     tag_manager.manage("observations", id);
-                });
+                };
+
+                /////////////////////////////////////////////////////////////////////
+                // Display formatting
 
                 component.observation.created_formatted = ko.pureComputed(function()
                 {
@@ -215,42 +303,8 @@ define([
                     return content["content-type"]().split("/")[0] == "image";
                 });
 
-                component.load_observations = ko.computed(function()
-                {
-                    component.loading(true);
-                    server.load_json(component, "/observations?sort=" + component.sort() + "&search=" + component.search(), "GET",
-                    {
-                        success: function()
-                        {
-                            component.search_error(false);
-                        },
-                        error: function()
-                        {
-                            component.search_error(true);
-                        },
-                        finished: function()
-                        {
-                            component.loading(false);
-                        },
-                    });
-                });
-
-                component.observations.subscribe(function(observations)
-                {
-                    var id = component.observation.id();
-                    var index = observations.indexOf(id);
-                    if(index < 0)
-                    {
-                        if(observations.length)
-                        {
-                            component.observation.id(observations[0]);
-                        }
-                        else
-                        {
-                            component.observation.id(null);
-                        }
-                    }
-                });
+                /////////////////////////////////////////////////////////////////////////
+                // External event handling
 
                 dashboard.active_widget.subscribe(function(active_widget)
                 {
@@ -258,6 +312,16 @@ define([
                         return;
                     attribute_manager.manage("observations", component.observation.id);
                     tag_manager.manage("observations", component.observation.id);
+                });
+
+                var observation_created_subscription = object.created.subscribe(function(object)
+                {
+                    if(object.otype == "observations")
+                    {
+/*
+                        component.load_count();
+*/
+                    }
                 });
 
                 var observation_changed_subscription = object.changed.subscribe(function(object)
@@ -276,12 +340,15 @@ define([
                 {
                     if(object.otype == "observations")
                     {
-                        component.observations.remove(object.oid);
+/*
+                        component.load_count();
+*/
                     }
                 });
 
                 component.dispose = function()
                 {
+                    observation_created_subscription.dispose();
                     observation_changed_subscription.dispose();
                     observation_deleted_subscription.dispose();
 
@@ -292,6 +359,9 @@ define([
                 dashboard.bind({widget: widget, keys: "left", callback: component.previous_observation});
                 dashboard.bind({widget: widget, keys: "right", callback: component.next_observation});
 
+                // Start running
+                component.load_count()
+
                 return component;
             }
         },
@@ -300,7 +370,7 @@ define([
 
     var module =
     {
-        widget: { width: 6, height: 12, params: {search: "", sort: "modified", id: null}},
+        widget: { width: 6, height: 12, params: {search: "", sort: "_id", id: null}},
     };
 
     return module
