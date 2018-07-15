@@ -50,6 +50,7 @@ define([
                         tags: [],
                     },
                     permissions: permissions,
+                    outdated: false,
                     search_error: false,
                     session: uuidv4(),
                 });
@@ -87,6 +88,19 @@ define([
                 {
                     component.adjust_index();
                 });
+
+                component.direction = widget.params.direction;
+                component.direction.subscribe(function()
+                {
+                    component.adjust_index();
+                });
+
+                component.reload = function()
+                {
+                    component.outdated(false);
+                    component.session(uuidv4());
+                    component.load_count();
+                }
 
                 /////////////////////////////////////////////////////////////////
                 // Operations menu
@@ -186,7 +200,6 @@ define([
 
                 component.load_count = function()
                 {
-                    log("load_count");
                     component.loading(true);
                     var session = component.session();
                     var search = component.search();
@@ -195,6 +208,7 @@ define([
                     {
                         success: function(data)
                         {
+                            log("load_count", data);
                             component.count(data.count);
                             component.search_error(false);
                             component.adjust_index();
@@ -204,27 +218,38 @@ define([
                             component.search_error(true);
                             component.loading(false);
                         },
-                        finished: function()
-                        {
-                            component.loading(false);
-                        },
                     });
                 };
 
                 component.adjust_index = function()
                 {
-                    log("adjust_index", component.observation.id());
-
+                    log("adjust_index", {id: component.observation.id(), index: component.index()});
                     if(component.count() < 1)
                     {
                         component.index(0);
                     }
                     else
                     {
-                        if(component.index() >= component.count())
+                        var session = component.session();
+                        var search = component.search();
+                        var sort = component.sort();
+                        var direction = component.direction();
+                        var id = component.observation.id();
+
+                        var uri = URI("/observations/id/" + id).setQuery({session: session, search: search, sort: sort, direction: direction})
+                        server.get_json(uri,
                         {
-                            component.index(component.count()-1)
-                        }
+                            success: function(data)
+                            {
+                                log("adjust_index", data);
+                                //component.observation.id(data.oid);
+                                //component.load_observation();
+                            },
+                            finished: function()
+                            {
+                                //component.loading(false);
+                            },
+                        });
                     }
 
                     component.lookup_id();
@@ -232,9 +257,10 @@ define([
 
                 component.lookup_id = function()
                 {
-                    log("lookup_id");
+                    component.loading(true);
                     if(component.count() < 1)
                     {
+                        component.loading(false);
                         component.observation["attributes-pre"](null);
                         component.observation.content([]);
                         component.observation.created(null);
@@ -244,11 +270,10 @@ define([
                         return;
                     }
 
-                    component.loading(true);
                     var session = component.session();
                     var search = component.search();
                     var sort = component.sort();
-                    var direction = "ascending";
+                    var direction = component.direction();
                     var index = component.index();
 
                     var uri = URI("/observations/index/" + index).setQuery({session: session, search: search, sort: sort, direction: direction})
@@ -256,12 +281,9 @@ define([
                     {
                         success: function(data)
                         {
+                            log("lookup_id", data);
                             component.observation.id(data.oid);
                             component.load_observation();
-                        },
-                        error: function()
-                        {
-                            component.loading(false);
                         },
                         finished: function()
                         {
@@ -318,21 +340,24 @@ define([
                 {
                     if(object.otype == "observations")
                     {
-/*
-                        component.load_count();
-*/
+                        component.outdated(true);
                     }
                 });
 
                 var observation_changed_subscription = object.changed.subscribe(function(object)
                 {
-                    if(object.otype == "observations" && object.oid == component.observation.id())
+                    if(object.otype == "observations")
                     {
-                        server.load_json(component, "/observations/" + component.observation.id());
-                        server.load_text("/observations/" + component.observation.id() + "/attributes/pre", function(data)
+                        component.outdated(true);
+
+                        if(object.oid == component.observation.id())
                         {
-                            component.observation["attributes-pre"](data);
-                        });
+                            server.load_json(component, "/observations/" + component.observation.id());
+                            server.load_text("/observations/" + component.observation.id() + "/attributes/pre", function(data)
+                            {
+                                component.observation["attributes-pre"](data);
+                            });
+                        }
                     }
                 });
 
@@ -340,9 +365,7 @@ define([
                 {
                     if(object.otype == "observations")
                     {
-/*
-                        component.load_count();
-*/
+                        component.outdated(true);
                     }
                 });
 
@@ -370,7 +393,7 @@ define([
 
     var module =
     {
-        widget: { width: 6, height: 12, params: {search: "", sort: "_id", id: null}},
+        widget: { width: 6, height: 12, params: {search: "", sort: "_id", direction: "ascending", id: null}},
     };
 
     return module
