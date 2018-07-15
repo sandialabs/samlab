@@ -16,8 +16,16 @@ def fail_all():
     return implementation
 
 
+def pass_empty():
+    def implementation(authorization):
+        return True
+    return implementation
+
+
 def pass_all():
     def implementation(authorization):
+        if not authorization:
+            return False
         return True
     return implementation
 
