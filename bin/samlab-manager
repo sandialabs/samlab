@@ -29,6 +29,7 @@ if arguments.config:
         module_fp.close()
     except Exception as e:
         log.error("Error loading configuration file %s: %s", arguments.config, e)
+        exit(1)
 
 defaults = {
     "certificate": getattr(config, "certificate", None),
