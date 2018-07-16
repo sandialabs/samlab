@@ -211,7 +211,7 @@ def get_otype_oid_content_key_image_metadata(otype, oid, key):
     return flask.jsonify(metadata={"size": image.size})
 
 
-@cachetools.func.ttl_cache()
+@cachetools.func.lru_cache()
 def get_objects(session, otype, search):
     if search:
         objects = samlab.object.load(database, otype, samlab.object.search(database, otype, search))
@@ -220,7 +220,7 @@ def get_objects(session, otype, search):
     return objects
 
 
-@cachetools.func.ttl_cache()
+@cachetools.func.lru_cache()
 def get_sorted_objects(session, otype, search, sort, direction):
     objects = get_objects(session, otype, search)
     if sort == "_id":
