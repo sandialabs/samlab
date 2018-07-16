@@ -8,7 +8,8 @@ define([
     "knockout.mapping",
     "samlab-server",
     "samlab-socket",
-    ], function(debug, ko, mapping, server, socket)
+    "URI",
+    ], function(debug, ko, mapping, server, socket, URI)
 {
     var log = debug("samlab-object");
 
@@ -73,6 +74,64 @@ define([
         log("delete content", otype, oid, key);
 
         server.delete("/" + otype + "/" + oid + "/content/" + key, "DELETE");
+    }
+
+    module.get_count = function(otype, params)
+    {
+        var params = params || {};
+
+        var uri = URI("/" + otype + "/count").setQuery(
+        {
+            session: params.session || "",
+            search: params.search || "",
+        });
+
+        server.get_json(uri,
+        {
+            success: params.success,
+            error: params.error,
+            finished: params.finished,
+        });
+    }
+
+    module.lookup_index = function(otype, oid, params)
+    {
+        var params = params || {};
+
+        var uri = URI("/" + otype + "/id/" + oid).setQuery(
+        {
+            session: params.session || "",
+            search: params.search || "",
+            sort: params.sort || "",
+            direction: params.direction || "",
+        });
+
+        server.get_json(uri,
+        {
+            success: params.success,
+            error: params.error,
+            finished: params.finished,
+        });
+    }
+
+    module.lookup_id = function(otype, oindex, params)
+    {
+        var params = params || {};
+
+        var uri = URI("/" + otype + "/index/" + oindex).setQuery(
+        {
+            session: params.session || "",
+            search: params.search || "",
+            sort: params.sort || "",
+            direction: params.direction || "",
+        });
+
+        server.get_json(uri,
+        {
+            success: params.success,
+            error: params.error,
+            finished: params.finished,
+        });
     }
 
     return module;

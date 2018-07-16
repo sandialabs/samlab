@@ -206,11 +206,10 @@ define([
                 component.load_count = function()
                 {
                     component.loading(true);
-                    var session = component.session();
-                    var search = component.search();
-                    var uri = URI("/observations/count").setQuery({session: session, search: search})
-                    server.get_json(uri,
+                    object.get_count("observations",
                     {
+                        session: component.session(),
+                        search: component.search(),
                         success: function(data)
                         {
                             log("load_count", data);
@@ -235,15 +234,12 @@ define([
                     }
                     else
                     {
-                        var session = component.session();
-                        var search = component.search();
-                        var sort = component.sort();
-                        var direction = component.direction();
-                        var id = component.observation.id();
-
-                        var uri = URI("/observations/id/" + id).setQuery({session: session, search: search, sort: sort, direction: direction})
-                        server.get_json(uri,
+                        object.lookup_index("observations", component.observation.id(),
                         {
+                            session: component.session(),
+                            search: component.search(),
+                            sort: component.sort(),
+                            direction: component.direction(),
                             success: function(data)
                             {
                                 log("adjust_index", data);
@@ -275,15 +271,12 @@ define([
                         return;
                     }
 
-                    var session = component.session();
-                    var search = component.search();
-                    var sort = component.sort();
-                    var direction = component.direction();
-                    var index = component.index();
-
-                    var uri = URI("/observations/index/" + index).setQuery({session: session, search: search, sort: sort, direction: direction})
-                    server.get_json(uri,
+                    object.lookup_id("observations", component.index(),
                     {
+                        session: component.session(),
+                        search: component.search(),
+                        sort: component.sort(),
+                        direction: component.direction(),
                         success: function(data)
                         {
                             log("lookup_id", data);
@@ -357,11 +350,8 @@ define([
 
                         if(object.oid == component.observation.id())
                         {
-                            server.load_json(component, "/observations/" + component.observation.id());
-                            server.load_text("/observations/" + component.observation.id() + "/attributes/pre", function(data)
-                            {
-                                component.observation["attributes-pre"](data);
-                            });
+                            // Our observation has changed, so reload it.
+                            component.load_observation();
                         }
                     }
                 });
@@ -371,6 +361,11 @@ define([
                     if(object.otype == "observations")
                     {
                         component.outdated(true);
+
+                        if(object.oid == component.observation.id())
+                        {
+                            // Our observation was deleted.  TODO: Do something about it.
+                        }
                     }
                 });
 
