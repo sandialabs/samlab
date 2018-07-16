@@ -224,7 +224,7 @@ def get_objects(session, otype, search):
 def get_sorted_objects(session, otype, search, sort, direction):
     objects = get_objects(session, otype, search)
     if sort == "_id":
-        pass # Objects returned from get_objects() are already sorted by id
+        objects = sorted(objects, key=lambda o: o["_id"])
     elif sort == "created":
         objects = sorted(objects, key=lambda o: o.get("created", ""))
     elif sort == "modified":
@@ -233,6 +233,8 @@ def get_sorted_objects(session, otype, search, sort, direction):
         objects = sorted(objects, key=lambda o: o.get("modified-by", ""))
     elif sort == "tags":
         objects = sorted(objects, key=lambda o: o.get("tags", []))
+    if direction != "ascending":
+        objects = objects[::-1]
     return objects
 
 
@@ -246,14 +248,6 @@ def get_otype_count(otype):
         flask.abort(400, "Missing session ID.")
 
     search = flask.request.args.get("search", "")
-
-    sort = flask.request.args.get("sort", "_id")
-    if sort not in ["_id", "created", "modified", "modified-by", "tags"]:
-        flask.abort(400, "Unknown sort type: %s" % sort)
-
-    direction = flask.request.args.get("direction", "ascending")
-    if direction not in ["ascending", "descending"]:
-        flask.abort(400, "Unknown sort direction: %s" % direction)
 
     objects = get_objects(session, otype, search)
 

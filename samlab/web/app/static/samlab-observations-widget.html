@@ -10,6 +10,7 @@
             <span class="ml-2" data-bind="text: position, visible: !loading()"></span>
             <label class="ml-2">Sort By</label>
             <samlab-combo-control class="ml-2" params="current: sort, items: sort_items"></samlab-combo-control>
+            <samlab-combo-control class="ml-2" params="current: direction, items: direction_items"></samlab-combo-control>
             <button type="button" class="btn btn-sm ml-2" data-bind="click: reload, css: {'btn-secondary': !outdated(), 'btn-success': outdated}">Reload</button>
             <span class="fa fa-circle-o-notch fa-spin fa-fw ml-2" data-bind="visible: loading()"></span>
             <button type="button" class="btn btn-sm btn-secondary ml-auto" data-bind="click: first_observation"><span class="fa fa-fast-backward"></span>&nbsp;First</button>

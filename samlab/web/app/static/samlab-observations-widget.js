@@ -90,6 +90,11 @@ define([
                 });
 
                 component.direction = widget.params.direction;
+                component.direction_items =
+                [
+                    {key: "ascending", label: "Ascending"},
+                    {key: "descending", label: "Descending"},
+                ];
                 component.direction.subscribe(function()
                 {
                     component.adjust_index();
