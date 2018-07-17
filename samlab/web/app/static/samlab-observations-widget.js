@@ -37,9 +37,8 @@ define([
 
                 var component = mapping.fromJS(
                 {
-                    count: 0,
-                    index: 0,
-                    loading: false,
+                    count: null,
+                    oindex: null,
                     observation:
                     {
                         "attributes-pre": null,
@@ -51,8 +50,8 @@ define([
                     },
                     permissions: permissions,
                     outdated: false,
-                    search_error: false,
                     session: uuidv4(),
+                    state: "start",
                 });
 
                 component.observation.id = widget.params.id;
@@ -64,15 +63,15 @@ define([
                 component.search.extend({rateLimit: {timeout: 500, method: "notifyWhenChangesStop"}});
                 component.search.subscribe(function()
                 {
-                    component.old_load_count();
+                    component.start_search();
                 });
 
                 component.position = ko.pureComputed(function()
                 {
-                    if(component.count() < 1)
-                        return null;
+                    if(component.state() == "ready")
+                        return (component.oindex() + 1) + " of " + component.count();
 
-                    return (component.index() + 1) + " of " + component.count();
+                    return null;
                 });
 
                 component.sort = widget.params.sort;
@@ -86,7 +85,7 @@ define([
                 ];
                 component.sort.subscribe(function()
                 {
-                    component.old_adjust_index();
+                    component.start_sort();
                 });
 
                 component.direction = widget.params.direction;
@@ -97,14 +96,14 @@ define([
                 ];
                 component.direction.subscribe(function()
                 {
-                    component.old_adjust_index();
+                    component.start_sort();
                 });
 
                 component.reload = function()
                 {
                     component.outdated(false);
                     component.session(uuidv4());
-                    component.old_load_count();
+                    component.start_search();
                 }
 
                 /////////////////////////////////////////////////////////////////
@@ -158,120 +157,128 @@ define([
 
                 component.first_observation = function()
                 {
-                    if(component.count() < 1)
-                        return;
-                    component.index(0);
-                    component.old_lookup_id();
+                    component.set_index(0);
                 };
 
                 component.last_observation = function()
                 {
-                    if(component.count() < 1)
-                        return;
-
-                    component.index(component.count() - 1);
-                    component.old_lookup_id();
+                    component.set_index(component.count() - 1);
                 }
 
                 component.next_observation = function()
                 {
-                    if(component.count() < 1)
-                        return;
-
-                    component.index((component.index() + 1) % component.count());
-                    component.old_lookup_id();
+                    component.set_index((component.oindex() + 1) % component.count());
                 };
 
                 component.previous_observation = function()
                 {
-                    if(component.count() < 1)
-                        return;
-
-                    component.index((component.index() + component.count() - 1) % component.count());
-                    component.old_lookup_id();
+                    component.set_index((component.oindex() + component.count() - 1) % component.count());
                 }
 
                 component.random_observation = function()
                 {
-                    if(component.count() < 1)
-                        return;
-
-                    component.index(lodash.random(0, component.count()-1));
-                    component.old_lookup_id();
+                    component.set_index(lodash.random(0, component.count()-1));
                 };
 
                 ///////////////////////////////////////////////////////////////////////////////
-                // Server communication
+                // State machine
 
-                component.old_load_count = function()
+                component.start_search = function()
                 {
-                    component.loading(true);
+                    log("state: searching");
+                    component.state("searching");
                     object.lookup_count("observations",
                     {
                         session: component.session(),
                         search: component.search(),
                         success: function(data)
                         {
-                            log("old_load_count", data);
                             component.count(data.count);
-                            component.search_error(false);
-                            component.old_adjust_index();
+                            if(data.count)
+                            {
+                                var oid = component.observation.id();
+                                if(oid != null)
+                                {
+                                    object.lookup_index("observations", oid,
+                                    {
+                                        session: component.session(),
+                                        search: component.search(),
+                                        sort: component.sort(),
+                                        direction: component.direction(),
+                                        success: function(data)
+                                        {
+                                            if(data.oindex != null)
+                                            {
+                                                component.load(data.oindex, data.oid);
+                                            }
+                                            else
+                                            {
+                                                component.set_index(0);
+                                            }
+                                        },
+                                    });
+                                }
+                                else
+                                {
+                                    component.set_index(0);
+                                }
+                            }
+                            else
+                            {
+                                component.empty();
+                            }
                         },
                         error: function()
                         {
-                            component.search_error(true);
-                            component.loading(false);
-                        },
+                            component.search_error();
+                        }
                     });
-                };
-
-                component.old_adjust_index = function()
-                {
-                    log("old_adjust_index", {id: component.observation.id(), index: component.index()});
-                    if(component.count() < 1)
-                    {
-                        component.index(0);
-                    }
-                    else
-                    {
-                        object.lookup_index("observations", component.observation.id(),
-                        {
-                            session: component.session(),
-                            search: component.search(),
-                            sort: component.sort(),
-                            direction: component.direction(),
-                            success: function(data)
-                            {
-                                log("old_adjust_index", data);
-                                //component.observation.id(data.oid);
-                                //component.load_observation();
-                            },
-                            finished: function()
-                            {
-                                //component.loading(false);
-                            },
-                        });
-                    }
-
-                    component.old_lookup_id();
                 }
 
-                component.old_lookup_id = function()
+                component.search_error = function()
                 {
-                    component.loading(true);
-                    if(component.count() < 1)
-                    {
-                        component.loading(false);
-                        component.observation["attributes-pre"](null);
-                        component.observation.content([]);
-                        component.observation.created(null);
-                        component.observation["modified-by"](null);
-                        component.observation.modified(null);
-                        component.observation.tags([]);
-                        return;
-                    }
+                    log("state: search-error");
+                    component.state("search-error");
+                }
 
-                    object.lookup_id("observations", component.index(),
+                component.empty = function()
+                {
+                    log("state: empty");
+                    component.state("empty");
+                }
+
+                component.load = function(oindex, oid)
+                {
+                    log("state: loading", oindex, oid);
+                    component.state("loading");
+
+                    component.oindex(oindex);
+                    component.observation.id(oid);
+
+                    server.load_json(component, "/observations/" + oid);
+                    server.load_text("/observations/" + oid + "/attributes/pre", function(data)
+                    {
+                        component.observation["attributes-pre"](data);
+                    });
+
+                    attribute_manager.manage("observations", oid);
+                    tag_manager.manage("observations", oid);
+
+                    component.ready();
+                }
+
+                component.ready = function()
+                {
+                    log("state: ready");
+                    component.state("ready");
+                }
+
+                component.set_index = function(oindex)
+                {
+                    log("set_index:", oindex);
+
+                    // Lookup the id for this index, so we can load it.
+                    object.lookup_id("observations", oindex,
                     {
                         session: component.session(),
                         search: component.search(),
@@ -279,31 +286,28 @@ define([
                         direction: component.direction(),
                         success: function(data)
                         {
-                            log("old_lookup_id", data);
-                            component.observation.id(data.oid);
-                            component.load_observation();
-                        },
-                        finished: function()
-                        {
-                            component.loading(false);
+                            component.load(oindex, data.oid);
                         },
                     });
-                };
+                }
 
-                component.load_observation = function()
+                component.start_sort = function()
                 {
-                    log("load_observation");
+                    log("change_sort:", component.sort(), component.direction());
 
-                    var id = component.observation.id();
-                    server.load_json(component, "/observations/" + id);
-                    server.load_text("/observations/" + id + "/attributes/pre", function(data)
+                    // Lookup the index for this id, so we can update the UI.
+                    object.lookup_index("observations", component.observation.id(),
                     {
-                        component.observation["attributes-pre"](data);
+                        session: component.session(),
+                        search: component.search(),
+                        sort: component.sort(),
+                        direction: component.direction(),
+                        success: function(data)
+                        {
+                            component.load(data.oindex, data.oid);
+                        },
                     });
-
-                    attribute_manager.manage("observations", id);
-                    tag_manager.manage("observations", id);
-                };
+                }
 
                 /////////////////////////////////////////////////////////////////////
                 // Display formatting
@@ -348,11 +352,13 @@ define([
                     {
                         component.outdated(true);
 
+/*
                         if(object.oid == component.observation.id())
                         {
                             // Our observation has changed, so reload it.
                             component.load_observation();
                         }
+*/
                     }
                 });
 
@@ -383,7 +389,7 @@ define([
                 dashboard.bind({widget: widget, keys: "right", callback: component.next_observation});
 
                 // Start running
-                component.old_load_count()
+                component.start_search();
 
                 return component;
             }

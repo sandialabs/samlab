@@ -7,19 +7,19 @@
             <div class="input-group">
                 <input type="search" class="form-control form-control-sm" placeholder="Search" data-bind="textInput: search">
             </div>
-            <span class="ml-2" data-bind="text: position, visible: !loading()"></span>
-            <label class="ml-2">Sort By</label>
-            <samlab-combo-control class="ml-2" params="current: sort, items: sort_items"></samlab-combo-control>
-            <samlab-combo-control class="ml-2" params="current: direction, items: direction_items"></samlab-combo-control>
+            <label class="ml-2">Sort by</label>
+            <samlab-combo-control class="ml-2" params="current: sort, items: sort_items, disabled: state() != 'ready'"></samlab-combo-control>
+            <samlab-combo-control class="ml-2" params="current: direction, items: direction_items, disabled: state() != 'ready'"></samlab-combo-control>
             <button type="button" class="btn btn-sm ml-2" data-bind="click: reload, css: {'btn-secondary': !outdated(), 'btn-success': outdated}">Reload</button>
-            <span class="fa fa-circle-o-notch fa-spin fa-fw ml-2" data-bind="visible: loading()"></span>
-            <button type="button" class="btn btn-sm btn-secondary ml-auto" data-bind="click: first_observation"><span class="fa fa-fast-backward"></span>&nbsp;First</button>
-            <button type="button" class="btn btn-sm btn-secondary ml-2" data-bind="click: previous_observation"><span class="fa fa-step-backward"></span>&nbsp;Prev</button>
-            <button type="button" class="btn btn-sm btn-secondary ml-2" data-bind="click: random_observation"><span class="fa fa-random"></span>&nbsp;Random</button>
-            <button type="button" class="btn btn-sm btn-secondary ml-2" data-bind="click: next_observation">Next&nbsp;<span class="fa fa-step-forward"></span></button>
-            <button type="button" class="btn btn-sm btn-secondary ml-2" data-bind="click: last_observation">Last&nbsp;<span class="fa fa-fast-forward"></span></button>
+            <span class="ml-2" data-bind="text: position"></span>
+            <span class="fa fa-refresh fa-spin fa-fw ml-2" data-bind="visible: state() == 'searching' || state() == 'loading'"></span>
+            <button type="button" class="btn btn-sm btn-secondary ml-auto" data-bind="attr: {disabled: state() != 'ready'}, click: first_observation"><span class="fa fa-fast-backward"></span>&nbsp;First</button>
+            <button type="button" class="btn btn-sm btn-secondary ml-2" data-bind="attr: {disabled: state() != 'ready'}, click: previous_observation"><span class="fa fa-step-backward"></span>&nbsp;Prev</button>
+            <button type="button" class="btn btn-sm btn-secondary ml-2" data-bind="attr: {disabled: state() != 'ready'}, click: random_observation"><span class="fa fa-random"></span>&nbsp;Random</button>
+            <button type="button" class="btn btn-sm btn-secondary ml-2" data-bind="attr: {disabled: state() != 'ready'}, click: next_observation">Next&nbsp;<span class="fa fa-step-forward"></span></button>
+            <button type="button" class="btn btn-sm btn-secondary ml-2" data-bind="attr: {disabled: state() != 'ready'}, click: last_observation">Last&nbsp;<span class="fa fa-fast-forward"></span></button>
         </form>
-        <div class="mt-2" data-bind="if: search_error">
+        <div class="mt-2" data-bind="if: state() == 'search-error'">
             <p class="small text-danger">Invalid search.  Use quotation marks for multi-word matches, and <b>and</b> / <b>or</b> / <b>not</b> to combine search terms.</p>
         </div>
         <hr></hr>
