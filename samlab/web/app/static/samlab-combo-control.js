@@ -16,6 +16,7 @@ define([
             {
                 var component = mapping.fromJS({
                     current: params.current,
+                    disabled: params.disabled,
                     items: params.items,
                 });
 
