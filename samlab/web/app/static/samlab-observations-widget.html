@@ -11,7 +11,7 @@
             <samlab-combo-control class="ml-2" params="current: sort, items: sort_items, disabled: state() != 'ready'"></samlab-combo-control>
             <samlab-combo-control class="ml-2" params="current: direction, items: direction_items, disabled: state() != 'ready'"></samlab-combo-control>
             <button type="button" class="btn btn-sm ml-2" data-bind="click: reload, css: {'btn-secondary': !outdated(), 'btn-success': outdated}">Reload</button>
-            <span class="ml-2" data-bind="text: position"></span>
+            <span class="ml-2 text-monospace" data-bind="text: position"></span>
             <span class="fa fa-refresh fa-spin fa-fw ml-2" data-bind="visible: state() == 'searching' || state() == 'loading'"></span>
             <button type="button" class="btn btn-sm btn-secondary ml-auto" data-bind="attr: {disabled: state() != 'ready'}, click: first_observation"><span class="fa fa-fast-backward"></span>&nbsp;First</button>
             <button type="button" class="btn btn-sm btn-secondary ml-2" data-bind="attr: {disabled: state() != 'ready'}, click: previous_observation"><span class="fa fa-step-backward"></span>&nbsp;Prev</button>
