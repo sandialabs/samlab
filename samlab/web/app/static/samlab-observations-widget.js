@@ -38,6 +38,7 @@ define([
                 var component = mapping.fromJS(
                 {
                     count: null,
+                    deleted: false,
                     oindex: null,
                     observation:
                     {
@@ -108,7 +109,7 @@ define([
 
                 /////////////////////////////////////////////////////////////////
                 // Operations menu
-/*
+
                 component.delete_observation = function()
                 {
                     dialog.dialog(
@@ -124,7 +125,6 @@ define([
                         title: "Delete Observation?",
                     });
                 };
-*/
 
                 component.export_observations = function()
                 {
@@ -245,6 +245,14 @@ define([
                 {
                     log("state: empty");
                     component.state("empty");
+
+                    component.observation.id(null);
+                    component.observation["attributes-pre"](null);
+                    component.observation.content([]);
+                    component.observation.created(null);
+                    component.observation["modified-by"](null);
+                    component.observation.modified(null);
+                    component.observation.tags([]);
                 }
 
                 component.load = function(oindex, oid)
@@ -255,7 +263,17 @@ define([
                     component.oindex(oindex);
                     component.observation.id(oid);
 
-                    server.load_json(component, "/observations/" + oid);
+                    server.load_json(component, "/observations/" + oid, "GET",
+                    {
+                        success: function()
+                        {
+                            component.deleted(false);
+                        },
+                        error: function()
+                        {
+                            component.deleted(true);
+                        }
+                    })
                     server.load_text("/observations/" + oid + "/attributes/pre", function(data)
                     {
                         component.observation["attributes-pre"](data);
@@ -368,7 +386,10 @@ define([
 
                         if(object.oid == component.observation.id())
                         {
-                            // Our observation was deleted.  TODO: Do something about it.
+                            log("current observation deleted");
+                            component.observation.id(null);
+                            component.session(uuidv4());
+                            component.start_search();
                         }
                     }
                 });
