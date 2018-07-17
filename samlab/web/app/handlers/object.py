@@ -309,6 +309,7 @@ def get_otype_id_oid(otype, oid):
         flask.abort(400, "Unknown sort direction: %s" % direction)
 
     objects = get_sorted_objects(session, otype, search, sort, direction)
+    oid = bson.objectid.ObjectId(oid)
     oindex = None
     for index, obj in enumerate(objects):
         if obj["_id"] == oid:
