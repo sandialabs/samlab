@@ -60,6 +60,9 @@ def get_otype_oid_attributes_pre(otype, oid):
     oid = bson.objectid.ObjectId(oid)
     obj = database[otype].find_one({"_id": oid})
 
+    if obj is None:
+        flask.abort(404)
+
     response = flask.make_response(pprint.pformat(obj["attributes"]))
     response.headers["content-type"] = "text/plain"
     return response
