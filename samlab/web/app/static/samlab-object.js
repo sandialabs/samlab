@@ -76,7 +76,7 @@ define([
         server.delete("/" + otype + "/" + oid + "/content/" + key, "DELETE");
     }
 
-    module.get_count = function(otype, params)
+    module.lookup_count = function(otype, params)
     {
         var params = params || {};
 

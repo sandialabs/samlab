@@ -64,7 +64,7 @@ define([
                 component.search.extend({rateLimit: {timeout: 500, method: "notifyWhenChangesStop"}});
                 component.search.subscribe(function()
                 {
-                    component.load_count();
+                    component.old_load_count();
                 });
 
                 component.position = ko.pureComputed(function()
@@ -86,7 +86,7 @@ define([
                 ];
                 component.sort.subscribe(function()
                 {
-                    component.adjust_index();
+                    component.old_adjust_index();
                 });
 
                 component.direction = widget.params.direction;
@@ -97,14 +97,14 @@ define([
                 ];
                 component.direction.subscribe(function()
                 {
-                    component.adjust_index();
+                    component.old_adjust_index();
                 });
 
                 component.reload = function()
                 {
                     component.outdated(false);
                     component.session(uuidv4());
-                    component.load_count();
+                    component.old_load_count();
                 }
 
                 /////////////////////////////////////////////////////////////////
@@ -161,7 +161,7 @@ define([
                     if(component.count() < 1)
                         return;
                     component.index(0);
-                    component.lookup_id();
+                    component.old_lookup_id();
                 };
 
                 component.last_observation = function()
@@ -170,7 +170,7 @@ define([
                         return;
 
                     component.index(component.count() - 1);
-                    component.lookup_id();
+                    component.old_lookup_id();
                 }
 
                 component.next_observation = function()
@@ -179,7 +179,7 @@ define([
                         return;
 
                     component.index((component.index() + 1) % component.count());
-                    component.lookup_id();
+                    component.old_lookup_id();
                 };
 
                 component.previous_observation = function()
@@ -188,7 +188,7 @@ define([
                         return;
 
                     component.index((component.index() + component.count() - 1) % component.count());
-                    component.lookup_id();
+                    component.old_lookup_id();
                 }
 
                 component.random_observation = function()
@@ -197,25 +197,25 @@ define([
                         return;
 
                     component.index(lodash.random(0, component.count()-1));
-                    component.lookup_id();
+                    component.old_lookup_id();
                 };
 
                 ///////////////////////////////////////////////////////////////////////////////
                 // Server communication
 
-                component.load_count = function()
+                component.old_load_count = function()
                 {
                     component.loading(true);
-                    object.get_count("observations",
+                    object.lookup_count("observations",
                     {
                         session: component.session(),
                         search: component.search(),
                         success: function(data)
                         {
-                            log("load_count", data);
+                            log("old_load_count", data);
                             component.count(data.count);
                             component.search_error(false);
-                            component.adjust_index();
+                            component.old_adjust_index();
                         },
                         error: function()
                         {
@@ -225,9 +225,9 @@ define([
                     });
                 };
 
-                component.adjust_index = function()
+                component.old_adjust_index = function()
                 {
-                    log("adjust_index", {id: component.observation.id(), index: component.index()});
+                    log("old_adjust_index", {id: component.observation.id(), index: component.index()});
                     if(component.count() < 1)
                     {
                         component.index(0);
@@ -242,7 +242,7 @@ define([
                             direction: component.direction(),
                             success: function(data)
                             {
-                                log("adjust_index", data);
+                                log("old_adjust_index", data);
                                 //component.observation.id(data.oid);
                                 //component.load_observation();
                             },
@@ -253,10 +253,10 @@ define([
                         });
                     }
 
-                    component.lookup_id();
+                    component.old_lookup_id();
                 }
 
-                component.lookup_id = function()
+                component.old_lookup_id = function()
                 {
                     component.loading(true);
                     if(component.count() < 1)
@@ -279,7 +279,7 @@ define([
                         direction: component.direction(),
                         success: function(data)
                         {
-                            log("lookup_id", data);
+                            log("old_lookup_id", data);
                             component.observation.id(data.oid);
                             component.load_observation();
                         },
@@ -383,7 +383,7 @@ define([
                 dashboard.bind({widget: widget, keys: "right", callback: component.next_observation});
 
                 // Start running
-                component.load_count()
+                component.old_load_count()
 
                 return component;
             }
