@@ -352,13 +352,11 @@ define([
                     {
                         component.outdated(true);
 
-/*
                         if(object.oid == component.observation.id())
                         {
                             // Our observation has changed, so reload it.
-                            component.load_observation();
+                            component.load(component.oindex(), component.observation.id());
                         }
-*/
                     }
                 });
 
