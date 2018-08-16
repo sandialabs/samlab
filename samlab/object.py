@@ -96,8 +96,13 @@ class _IdSearchVisitor(object):
         self._stack.append(result)
 
     def visit_term(self, term):
+        # Match documents that contain the search term in text (field values).
         result = set([o["_id"] for o in self._collection.find(filter={"$text": {"$search": '"' + term + '"'}}, projection={"_id": True})])
+        # Match documents with content that matches the search term.
         result |= set([o["_id"] for o in self._collection.find(filter={"content." + term: {"$exists": True}}, projection={"_id": True})])
+        # Match documents with attribute fields that match the search term.
+        result |= set([o["_id"] for o in self._collection.find(filter={"attributes." + term: {"$exists": True}}, projection={"_id": True})])
+        # Match documents whose ID matches the search term.
         try:
             tid = bson.objectid.ObjectId(term)
             result |= set([o["_id"] for o in self._collection.find(filter={"_id": tid}, projection={"_id": True})])
