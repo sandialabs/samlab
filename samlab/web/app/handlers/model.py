@@ -24,7 +24,7 @@ from samlab.web.app import application, socketio, require_auth, require_permissi
 from samlab.web.app.database import database, fs
 
 
-@application.route("/models/<exclude(count,tags):mid>", methods=["GET", "DELETE"])
+@application.route("/models/<exclude(count,tags):oid>", methods=["GET", "DELETE"])
 @require_auth
 def get_delete_models_model(oid):
     oid = bson.objectid.ObjectId(oid)
