@@ -310,7 +310,7 @@ def image_transform(generator, transforms, resample=PIL.Image.BICUBIC):
 #        yield image, label
 
 
-def random_array_window(generator, shape, count=1, inputs=True, outputs=False):
+def random_array_window(generator, shape, count=1, inputs=True, outputs=False, return_windows=False):
     """Extract subsets of images from :ref:`streaming-data` using a random window.
 
     Parameters
@@ -347,7 +347,8 @@ def random_array_window(generator, shape, count=1, inputs=True, outputs=False):
             winput = input[iy: iy+height, ix: ix+width] if inputs else input
             woutput = output[iy: iy+height, ix: ix+width] if outputs else output
 
-            yield observation, winput, woutput, weight
-
-
+            if return_windows:
+                yield observation, winput, woutput, weight, (iy, iy+height, ix, ix+width)
+            else:
+                yield observation, winput, woutput, weight
 
