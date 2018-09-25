@@ -40,6 +40,28 @@ def array(fs, content):
     return numpy.load(fs.get(content["data"]))
 
 
+def arrays(fs, content):
+    """Deserialize a collection of Numpy arrays stored in the database.
+
+    Parameters
+    ----------
+    fs: :class:`gridfs.GridFS` instance, required
+
+    content: dict, required
+        Content object stored as part of an :ref:`observation <observations>` or :ref:`model <models>`.
+
+    Returns
+    -------
+    array: :class:`numpy.NpzFile`
+    """
+    assert(isinstance(fs, gridfs.GridFS))
+    assert(isinstance(content, dict))
+    assert("content-type" in content)
+    assert(content["content-type"] == "application/x-numpy-arrays")
+
+    return numpy.load(fs.get(content["data"]))
+
+
 def image(fs, content):
     """Deserializes an image stored in the database.
 

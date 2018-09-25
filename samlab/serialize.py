@@ -42,6 +42,22 @@ def array(value):
     }
 
 
+def arrays(*args, **kwargs):
+    """Serialize multiple numpy arrays for storage in the database.
+
+    Returns
+    -------
+    content: dict
+        Serialized in-memory representation of the arrays that can be used with :func:`samlab.observation.create`, :func:`samlab.observation.create_many`, :func:`samlab.trial.create`, and :func:`samlab.model.create`.
+    """
+    stream = io.BytesIO()
+    numpy.savez(stream, *args, **kwargs)
+    return {
+        "data": stream.getvalue(),
+        "content-type": "application/x-numpy-arrays",
+    }
+
+
 def attributes(value):
     """Copy an arbitrary data structure with modifications so it can be stored in the database.
 
