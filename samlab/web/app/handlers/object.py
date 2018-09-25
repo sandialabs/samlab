@@ -203,8 +203,6 @@ def get_otype_oid_content_key_arrays_metadata(otype, oid, key):
     oid = bson.objectid.ObjectId(oid)
     obj = database[otype].find_one({"_id": oid})
 
-    log.debug(obj["content"])
-
     if not key in obj["content"]:
         flask.abort(404)
 
@@ -219,6 +217,26 @@ def get_otype_oid_content_key_arrays_metadata(otype, oid, key):
             "size": array.size,
             } for key, array in arrays.items()]
         return flask.jsonify(metadata=metadata)
+
+
+@application.route("/<allow(observations,trials,models):otype>/<oid>/content/<key>/arrays/<array>/data")
+@require_auth
+def get_otype_oid_content_key_arrays_array_data(otype, oid, key, array):
+    require_permissions(["read"])
+
+    oid = bson.objectid.ObjectId(oid)
+    obj = database[otype].find_one({"_id": oid})
+
+    if not key in obj["content"]:
+        flask.abort(404)
+
+    if obj["content"][key]["content-type"] != "application/x-numpy-arrays":
+        flask.abort(400)
+
+    with samlab.deserialize.arrays(fs, obj["content"][key]) as arrays:
+        if array not in arrays:
+            flask.abort(404)
+        return flask.jsonify(data = arrays[array].tolist())
 
 
 @application.route("/<allow(observations,trials,models):otype>/<oid>/content/<key>/image/metadata")
@@ -411,5 +429,4 @@ def put_otype_oid_tags(otype, oid):
     socketio.emit("tags-changed", otype) # TODO: Handle this in samlab.web.app.watch_database
 
     return flask.jsonify()
-
 
