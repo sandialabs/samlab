@@ -206,7 +206,7 @@ def ingest(generator, database):
             observations.create(attributes=attributes, content=content, tags=tags)
 
 
-def update(database, updater, filter=None, sort=None):
+def update(database, fs, updater, filter=None, sort=None):
     """Make changes to observations stored in the database.
 
     Parameters
@@ -216,7 +216,7 @@ def update(database, updater, filter=None, sort=None):
     sort: sort specification compatible with :meth:`pymongo.collection.Collection.find`, optional.
     """
     assert(isinstance(database, pymongo.database.Database))
-    fs = gridfs.GridFS(database)
+    assert(isinstance(fs, gridfs.GridFS))
 
     if filter is None:
         filter = {}
