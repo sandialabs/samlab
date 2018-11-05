@@ -67,7 +67,7 @@ from samlab.web.app import application, socketio
 application.config["acl"] = config.acl if hasattr(config, "acl") else samlab.web.app.acl.permit_all()
 application.config["authenticate"] = config.authentication if hasattr(config, "authentication") else samlab.web.app.auth.none()
 application.config["certificate"] = arguments.certificate
-application.config["check-credentials"] = config.credential_check if hasattr(config, "credential_check") else samlab.web.app.credentials.pass_all()
+application.config["check-credentials"] = config.credential_check if hasattr(config, "credential_check") else samlab.web.app.credentials.pass_empty()
 application.config["database-name"] = arguments.database_name
 application.config["database-uri"] = arguments.database_uri
 application.config["database-replica-set"] = arguments.database_replica_set
