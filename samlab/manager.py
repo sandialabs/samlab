@@ -46,10 +46,12 @@ class Server(object):
 
     Parameters
     ----------
-    database: string, required
+    database_name: string, required
         Name of a MongoDB database.  The database will be created automatically if it doesn't exist.
-    uri: string, required
+    database_uri: string, required
         URI of a running MongoDB server.
+    database_replica_set: string, required
+        Name of an existing server replica set.
     host: string, optional
         Host interface for binding.  Defaults to localhost to prevent outside connections.
     port: int, optional
@@ -57,7 +59,7 @@ class Server(object):
     quiet: bool, optional
         if `True` (the default), suppresses output from the samlab manager process.
     """
-    def __init__(self, database, uri, host=None, port=None, quiet=True):
+    def __init__(self, database_name, database_uri, database_replica_set, host=None, port=None, quiet=True):
         # Choose an interface for binding.
         if host is None:
             host = "127.0.0.1"
@@ -93,17 +95,18 @@ class Server(object):
         self._gpu_task_queue = subprocess.Popen(command, env=env, stdout=output, stderr=output)
 
         # Start the server
-        command = ["samlab-manager", "--database", database, "--database-uri", uri, "--host", host, "--port", str(port)]
+        command = ["samlab-manager", "--database-name", database_name, "--database-uri", database_uri, "--database-replica-set", database_replica_set, "--host", host, "--port", str(port)]
         log.info("Starting Samlab manager: %s", " ".join(command))
         self._server = subprocess.Popen(command, stdout=output, stderr=output)
 
-        self._database = database
-        self._uri = uri
+        self._database_name = database_name
+        self._database_uri = database_uri
+        self._database_replica_set = database_replica_set
         self._host = host
         self._port = port
 
     def __repr__(self):
-        return "samlab.manager.Server(database=%r, uri=%r, host=%r, port=%r)" % (self._database, self._uri, self._host, self._port)
+        return "samlab.manager.Server(database_name=%r, database_uri=%r, database_replica_set=%r, host=%r, port=%r)" % (self._database_name, self._database_uri, self._database_replica_set, self._host, self._port)
 
     def __enter__(self):
         return self

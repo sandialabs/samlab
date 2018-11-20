@@ -125,6 +125,10 @@ class Server(object):
         """
         return "mongodb://%s:%s" % (self._host, self._port)
 
+    @property
+    def replica_set(self):
+        return "samlab"
+
     def stop(self):
         """Stop the running mongod instance.
 
