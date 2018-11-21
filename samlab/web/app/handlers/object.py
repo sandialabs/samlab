@@ -138,20 +138,17 @@ def get_otype_oid_content_key_array_image(otype, oid, key):
 
     data = samlab.deserialize.array(fs, obj["content"][key])
 
-    cmap_factory = flask.request.args.get("cmap-factory", "linear")
+    cmap_factory, cmap_name = flask.request.args.get("colormap", "linear/Blackbody").split("/")
+
     if cmap_factory == "brewer":
         cmap_factory = toyplot.color.brewer
-        cmap_name = "BlueRed"
     elif cmap_factory == "linear":
         cmap_factory = toyplot.color.linear
-        cmap_name = "Blackbody"
     elif cmap_factory == "diverging":
         cmap_factory = toyplot.color.diverging
-        cmap_name = "BlueRed"
     else:
         flask.abort(400)
 
-    cmap_name = flask.request.args.get("cmap-name", cmap_name)
     try:
         colormap = cmap_factory.map(cmap_name)
     except:
@@ -185,6 +182,7 @@ def get_otype_oid_content_key_array_metadata(otype, oid, key):
 
     metadata = {
         "dtype": array.dtype.name,
+        "ndim": array.ndim,
         "shape": array.shape,
         "size": array.size,
         "min": array.min() if array.size else None,

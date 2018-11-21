@@ -29,10 +29,23 @@
             <dd class="col-sm-9" data-bind="text:metadata.sum_formatted"></dd>
             <!-- /ko -->
         </dl>
+
+        <!-- ko if: metadata.ndim() == 2 -->
+        <dl class="row">
+            <dt class="col-sm-3">image size</dt>
+            <dd class="col-sm-9" data-bind="text:metadata.image_size_formatted"></dd>
+
+            <dt class="col-sm-3">colormap</dt>
+            <dd class="col-sm-9"><samlab-combo-control params="current: colormap, items: colormaps"></samlab-combo-control>
+        </dl>
+
         <div class="row">
             <div class="col-md-12">
-                <a href="#" data-bind="click: view_as_image">View as image</a>
+                <figure class="figure">
+                    <img class="figure-img img-fluid rounded" data-bind="attr: {src: image_uri}"></img>
+                </figure>
             </div>
         </div>
+        <!-- /ko -->
     </div>
 </div>
