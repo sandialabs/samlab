@@ -1,6 +1,12 @@
 <div class="dropdown">
     <button type="button" class="btn btn-sm btn-outline-secondary dropdown-toggle" data-toggle="dropdown" data-boundary="window" data-bind="attr: {disabled: disabled}, text: current_label"></button>
     <div class="dropdown-menu" data-bind="foreach: items">
-        <a class="dropdown-item" data-bind="click: $component.set_item, text: label"></a>
+        <!-- ko if: "heading" in $data -->
+        <h6 class="dropdown-header" data-bind="text: heading"></h6>
+        <!-- /ko -->
+
+        <!-- ko if: "key" in $data -->
+        <small><a class="dropdown-item" data-bind="click: $component.set_item, text: label"></a></small>
+        <!-- /ko -->
     </div>
 </div>

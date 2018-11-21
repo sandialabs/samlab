@@ -3,10 +3,13 @@
 // Government retains certain rights in this software.
 
 define([
+    "debug",
     "knockout",
     "knockout.mapping",
-    ], function(ko, mapping)
+    ], function(debug, ko, mapping)
 {
+    var log = debug("samlab-combo-control");
+
     var component_name = "samlab-combo-control";
     ko.components.register(component_name,
     {
@@ -22,11 +25,16 @@ define([
 
                 component.current_label = ko.pureComputed(function()
                 {
+                    log("current", component.current());
+
                     for(let item of component.items())
                     {
-                        if(item.key() == component.current())
+                        if("key" in item)
                         {
-                            return item.label();
+                            if(item.key() == component.current())
+                            {
+                                return item.label();
+                            }
                         }
                     }
                 });
