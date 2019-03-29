@@ -10,7 +10,6 @@ __version__ = "0.1.0"
 
 import logging
 
-import tensorflow.contrib.keras as keras
 import gridfs
 import numpy
 import pymongo
@@ -207,6 +206,7 @@ def image_to_array(generator, rescale=1.0 / 255.0):
     datum: tuple
         Yields (observation, input, output, weight) tuples with `input` replaced by an instance of :class:`numpy.ndarray` with shape (height, width, 3).
     """
+    import tensorflow.contrib.keras as keras
     for observation, image, output, weight in generator:
         image = keras.preprocessing.image.img_to_array(image) * rescale
         if image.shape[2] == 1:

@@ -10,7 +10,6 @@ __version__ = "0.1.0"
 
 import logging
 
-import tensorflow.contrib.keras as keras
 import gridfs
 import numpy
 import pymongo
