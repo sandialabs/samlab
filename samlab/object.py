@@ -62,6 +62,20 @@ def delete_content(database, fs, otype, oid, key):
     database[otype].update_one({"_id": oid}, {"$set": {"content": content}})
 
 
+def set_attributes(database, fs, otype, oid, attributes):
+    assert(isinstance(database, pymongo.database.Database))
+    assert(isinstance(fs, gridfs.GridFS))
+    assert(otype in ["observations", "trials", "models"])
+    assert(isinstance(oid, bson.objectid.ObjectId))
+    assert(isinstance(attributes, dict))
+
+    obj = database[otype].find_one({"_id": oid})
+    if obj is None:
+        raise KeyError()
+
+    database[otype].update_one({"_id": oid}, {"$set": {"attributes": attributes}})
+
+
 def update_attributes(database, fs, otype, oid, new_attributes):
     assert(isinstance(database, pymongo.database.Database))
     assert(isinstance(fs, gridfs.GridFS))
