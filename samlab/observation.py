@@ -20,6 +20,7 @@ import six
 
 import samlab
 import samlab.deserialize
+import samlab.object
 import samlab.serialize
 
 log = logging.getLogger(__name__)
@@ -185,21 +186,6 @@ def delete(database, fs, oid):
     database.observations.delete_many({"_id": oid})
 
 
-def ingest(generator, database):
-    """Deprecated, use :func:`samlab.observation.create_many` instead."""
-    samlab.deprecated("samlab.observation.ingest() is deprecated, use samlab.observation.create_many() instead.")
-
-    assert(isinstance(database, pymongo.database.Database))
-    fs = gridfs.GridFS(database)
-
-    with create_many(database, fs) as observations:
-        for observation in generator:
-            attributes = observation.get("attributes", None)
-            content = observation.get("content", None)
-            tags = observation.get("tags", None)
-            observations.create(attributes=attributes, content=content, tags=tags)
-
-
 def update(database, fs, updater, filter=None, sort=None):
     """Make changes to observations stored in the database.
 
@@ -353,10 +339,5 @@ def resize_images(database, size, target_key, source_key="original", filter=None
 
     database.observations.bulk_write(requests)
     progress.finish()
-
-
-def expand(database, observations):
-    assert(isinstance(database, pymongo.database.Database))
-    return numpy.array([database.observations.find_one({"_id": bson.objectid.ObjectId(id)}) for id in observations])
 
 

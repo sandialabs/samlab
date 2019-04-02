@@ -4,7 +4,6 @@
 
 """Functionality for working with :ref:`favorites`."""
 
-import bson.objectid
 import pymongo
 import six
 

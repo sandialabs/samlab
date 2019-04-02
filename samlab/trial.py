@@ -10,7 +10,6 @@ import arrow
 import bson.objectid
 import gridfs
 import pymongo
-import numpy
 import six
 
 import samlab
@@ -108,12 +107,5 @@ def delete(database, fs, tid):
                 fs.delete(value["data"])
     # Delete the trial
     database.trials.delete_many({"_id": tid})
-
-
-def mean_loss(results):
-    """Deprecated, use :func:`samlab.train.mean_loss` instead."""
-    samlab.deprecated("samlab.trial.mean_loss() is deprecated, use :func:`samlab.train.mean_loss` instead.")
-    losses = [result["validation-losses"].min() for result in results if "validation-losses" in result and not numpy.any(numpy.isnan(result["validation-losses"]))]
-    return numpy.mean(losses) if len(losses) else None
 
 

@@ -20,6 +20,21 @@ import samlab.search
 log = logging.getLogger(__name__)
 
 
+def load(database, otype, filter=None, oids=None):
+    """Load database objects of the given type."""
+    assert(isinstance(database, pymongo.database.Database))
+    assert(otype in ["observations", "trials", "models"])
+
+    if filter is not None:
+        return list(database[otype].find(filter=filter))
+
+    if oids is not None:
+        assert(isinstance(oids, collections.abc.Collection))
+        return [database[otype].find_one({"_id": oid}) for oid in oids]
+
+    return list(database[otype].find())
+
+
 def set_content(database, fs, otype, oid, key, value):
     assert(isinstance(database, pymongo.database.Database))
     assert(isinstance(fs, gridfs.GridFS))
@@ -148,11 +163,3 @@ def search(database, otype, search):
 
     visitor = samlab.search.parser().parse(search).accept(_IdSearchVisitor(database[otype]))
     return visitor.ids
-
-
-def load(database, otype, oids):
-    assert(isinstance(database, pymongo.database.Database))
-    assert(otype in ["observations", "trials", "models"])
-    assert(isinstance(oids, collections.abc.Collection))
-
-    return [database[otype].find_one({"_id": oid}) for oid in oids]
