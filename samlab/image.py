@@ -10,52 +10,11 @@ __version__ = "0.1.0"
 
 import logging
 
-import tensorflow.contrib.keras as keras
-import gridfs
 import numpy
-import pymongo
-import PIL.Image
 import scipy.stats
-
-import samlab
-import samlab.deserialize
-import samlab.stream
 
 
 log = logging.getLogger(__name__)
-
-# Hide annoying log messages when loading PNG images using Pillow.
-logging.getLogger("PIL.PngImagePlugin").setLevel(logging.INFO)
-
-
-def load(generator, database, key="original"):
-    """Deprecated, use :func:`samlab.stream.image_load` instead."""
-    samlab.deprecated("samlab.image.load() is deprecated, use samlab.stream.image_load() instead.")
-    return samlab.stream.image_load(generator, database, key)
-
-
-def to_array(generator, rescale=1.0 / 255.0):
-    """Deprecated, use :func:`samlab.stream.image_to_array` instead."""
-    samlab.deprecated("samlab.image.to_array() is deprecated, use samlab.stream.image_to_array() instead.")
-    return samlab.stream.image_to_array(generator, rescale)
-
-
-def random_window(generator, shape, count=1, inputs=True, outputs=False):
-    """Deprecated, use :func:`samlab.stream.random_array_window` instead."""
-    samlab.deprecated("samlab.image.random_window() is deprecated, use samlab.stream.random_array_window() instead.")
-    return samlab.stream.random_array_window(generator, shape, count, inputs, outputs)
-
-
-def window(generator, shape, stride=None):
-    """Deprecated, use :func:`samlab.stream.array_window` instead."""
-    samlab.deprecated("samlab.image.window() is deprecated, use samlab.stream.array_window() instead.")
-    return samlab.stream.array_window(generator, shape, stride)
-
-
-def transform(generator, transforms, resample=PIL.Image.BICUBIC):
-    """Deprecated, use :func:`samlab.stream.image_transform` instead."""
-    samlab.deprecated("samlab.image.transform() is deprecated, use samlab.stream.image_transform() instead.")
-    return samlab.stream.image_transform(generator, transforms, resample)
 
 
 def density_map(size, points, covariance=None):

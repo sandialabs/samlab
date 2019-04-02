@@ -22,7 +22,6 @@ visualizations.
     python/samlab.example.rst
     python/samlab.example.iris.rst
     python/samlab.favorite.rst
-    python/samlab.hyperopt.rst
     python/samlab.image.rst
     python/samlab.manager.rst
     python/samlab.mime.rst
@@ -32,8 +31,6 @@ visualizations.
     python/samlab.plot.rst
     python/samlab.search.rst
     python/samlab.serialize.rst
-    python/samlab.static.rst
-    python/samlab.stream.rst
     python/samlab.tasks.rst
     python/samlab.tasks.generic.rst
     python/samlab.tasks.generic.run.rst

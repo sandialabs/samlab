@@ -21,7 +21,6 @@ import six
 import samlab
 import samlab.deserialize
 import samlab.serialize
-import samlab.static
 
 log = logging.getLogger(__name__)
 
@@ -104,16 +103,12 @@ def create_many(database, fs):
             self._database = database
             self._fs = fs
             self._created = arrow.utcnow().datetime
-            self._progress = samlab.Progress(
-                step_message="Ingested {count} observations in {elapsed:.1f}s ({rate:.2f} observations/s).",
-                log=log,
-                )
 
         def __enter__(self):
             return self
 
         def __exit__(self, exc_type, exc_val, exc_tb):
-            self._progress.finish()
+            pass
 
         def create(self, attributes=None, content=None, tags=None):
             """Add an observation to the :ref:`database <database>`.
@@ -159,7 +154,6 @@ def create_many(database, fs):
             }
 
             oid = self._database.observations.insert_one(document).inserted_id
-            self._progress.step()
             return oid
 
     return Implementation(database, fs)
@@ -223,11 +217,6 @@ def update(database, fs, updater, filter=None, sort=None):
 
     cursor = database.observations.find(filter=filter, sort=sort)
 
-    progress = samlab.Progress(
-        total=cursor.count(),
-        step_message="Updated {count} of {total} observations in {elapsed:.1f}s ({rate:.2f} observations/s).",
-        log=log,
-        )
     for original in cursor:
         modified = updater(copy.deepcopy(original))
 
@@ -256,9 +245,6 @@ def update(database, fs, updater, filter=None, sort=None):
             if change["$set"]:
                 database.observations.update_one({"_id": original["_id"]}, change)
                 #changes.append(pymongo.UpdateOne({"_id": original["_id"]}, change))
-
-        progress.step()
-    progress.finish()
 
 
 def set_tag(database, tag, state, filter=None, sort=None):
@@ -372,35 +358,5 @@ def resize_images(database, size, target_key, source_key="original", filter=None
 def expand(database, observations):
     assert(isinstance(database, pymongo.database.Database))
     return numpy.array([database.observations.find_one({"_id": bson.objectid.ObjectId(id)}) for id in observations])
-
-
-def load(database, filter=None):
-    """Deprecated, use :func:`samlab.static.load` instead."""
-    samlab.deprecated("samlab.observation.load() is deprecated, use samlab.static.load() instead.")
-    return samlab.static.load(database, filter)
-
-
-def map(observations, inputs, outputs, weights, mapper):
-    """Deprecated, use :func:`samlab.static.map` instead."""
-    samlab.deprecated("samlab.observation.map() is deprecated, use samlab.static.map() instead.")
-    return samlab.static.map(observations, inputs, outputs, weights, mapper)
-
-
-def log_outputs(observations, inputs, outputs, weights, names):
-    """Deprecated, use :func:`samlab.static.log_outputs` instead."""
-    samlab.deprecated("samlab.observation.log_outputs() is deprecated, use samlab.static.log_outputs() instead.")
-    return samlab.static.log_outputs(observations, inputs, outputs, weights, names)
-
-
-def stream(observations, inputs, outputs, weights, indices=None, repeat=True):
-    """Deprecated, use :func:`samlab.static.stream` instead."""
-    samlab.deprecated("samlab.observation.stream() is deprecated, use samlab.static.stream() instead.")
-    return samlab.static.stream(observations, inputs, outputs, weights, indices, repeat)
-
-
-def batch(generator, batch_size, total_size, include_observations=False):
-    """Deprecated, use :func:`samlab.stream.batch` instead."""
-    samlab.deprecated("samlab.observation.batch() is deprecated, use samlab.stream.batch() instead.")
-    return samlab.stream.batch(generator, batch_size, total_size, include_observations)
 
 
