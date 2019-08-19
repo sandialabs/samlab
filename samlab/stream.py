@@ -186,34 +186,6 @@ def image_load(generator, database, key="original"):
 #        yield image, label, weight
 
 
-def image_to_array(generator, rescale=1.0 / 255.0):
-    """Convert images to feature vectors in :ref:`streaming-data`.
-
-    Note
-    ----
-    Assumes that incoming data contains :class:`PIL.Image.Image` as the `input` for each datum.
-    Grayscale images are converted to RGB images with identical channels.
-
-    Parameters
-    ----------
-    generator: generator expression, required
-        Generator expression that produces (observation, input, output, weight) tuples.
-    rescale: float, optional
-        Scaling value applied to image pixel values.  The default scales pixel values from [0, 255] to [0, 1].
-
-    Yields
-    ------
-    datum: tuple
-        Yields (observation, input, output, weight) tuples with `input` replaced by an instance of :class:`numpy.ndarray` with shape (height, width, 3).
-    """
-    import tensorflow.contrib.keras as keras
-    for observation, image, output, weight in generator:
-        image = keras.preprocessing.image.img_to_array(image) * rescale
-        if image.shape[2] == 1:
-            image = numpy.tile(image, (1, 1, 3))
-        yield observation, image, output, weight
-
-
 def image_transform(generator, transforms, resample=PIL.Image.BICUBIC):
     """Apply affine transformations to images in :ref:`streaming-data`.
 

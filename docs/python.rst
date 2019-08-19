@@ -33,6 +33,8 @@ visualizations.
     python/samlab.tasks.rst
     python/samlab.tasks.generic.rst
     python/samlab.tasks.generic.run.rst
+    python/samlab.torch.rst
+    python/samlab.train.rst
     python/samlab.trial.rst
     python/samlab.web.rst
     python/samlab.web.app.rst

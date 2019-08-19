@@ -47,6 +47,7 @@ for module_name in [
         "hyperopt",
         "hyperopt.mongoexp",
         "numpy",
+        "numpy.core.multiarray",
         "numpy.linalg",
         "numpy.ma",
         "numpy.random",
@@ -58,9 +59,8 @@ for module_name in [
         "sklearn.metrics",
         "sklearn.model_selection",
         "sklearn.preprocessing",
-        "tensorflow",
-        "tensorflow.contrib",
-        "tensorflow.contrib.keras",
+        "torch",
+        "torch.cuda",
         ]:
     sys.modules[module_name] = module_proxy()
 
