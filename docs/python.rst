@@ -28,15 +28,11 @@ visualizations.
     python/samlab.model.rst
     python/samlab.object.rst
     python/samlab.observation.rst
-    python/samlab.plot.rst
     python/samlab.search.rst
     python/samlab.serialize.rst
     python/samlab.tasks.rst
     python/samlab.tasks.generic.rst
     python/samlab.tasks.generic.run.rst
-    python/samlab.tasks.gpu.rst
-    python/samlab.tasks.gpu.run.rst
-    python/samlab.train.rst
     python/samlab.trial.rst
     python/samlab.web.rst
     python/samlab.web.app.rst
