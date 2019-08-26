@@ -259,10 +259,9 @@ def get_otype_oid_content_key_image_metadata(otype, oid, key):
 @cachetools.func.lru_cache()
 def get_objects(session, otype, search):
     if search:
-        objects = samlab.object.load(database, otype, samlab.object.search(database, otype, search))
-    else:
-        objects = list(database[otype].find())
-    return objects
+        return samlab.object.load(database, otype, oids=samlab.object.search(database, otype, search))
+
+    return samlab.object.load(database, otype)
 
 
 @cachetools.func.lru_cache()

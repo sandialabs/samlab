@@ -18,6 +18,27 @@ import PIL.Image
 log = logging.getLogger(__name__)
 
 
+def any(fs, content):
+    """Deserialize any data stored in the database.
+
+    Parameters
+    ----------
+    fs: :class:`gridfs.GridFS` instance, required
+
+    content: dict, required
+        Content object stored as part of an :ref:`observation <observations>` or :ref:`model <models>`.
+
+    Returns
+    -------
+    array: :class:`numpy.ndarray`
+    """
+    assert(isinstance(fs, gridfs.GridFS))
+    assert(isinstance(content, dict))
+    assert("content-type" in content)
+
+    return content["content-type"], fs.get(content["data"])
+
+
 def array(fs, content):
     """Deserialize a Numpy array stored in the database.
 
