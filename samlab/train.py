@@ -40,15 +40,14 @@ class Stop(object):
         return self._triggered
 
 
-def k_fold(dataset, validation=0.2, n=5, k=2, count=None):
+def k_fold(dataset, n=5, k=2, validation=0.2, count=None):
     """Return sets of indices partitioning a dataset for K-fold cross validation."""
     assert(k > 1)
 
     results = []
     for iteration in range(n):
-        fold_size = int(numpy.ceil(len(dataset) / k))
         indices = numpy.random.choice(len(dataset), size=len(dataset), replace=False)
-        folds = indices.split(fold_size)
+        folds = numpy.array_split(indices, k)
 
         for index, test_indices in enumerate(folds):
             remaining = numpy.concatenate(folds[:index] + folds[index+1:])
