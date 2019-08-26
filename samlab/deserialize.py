@@ -105,33 +105,3 @@ def image(fs, content):
     return PIL.Image.open(fs.get(content["data"]))
 
 
-def keras_model(fs, content):
-    """Deserialize a Keras model stored in the database.
-
-    Parameters
-    ----------
-    fs: :class:`gridfs.GridFS` instance, required
-
-    content: dict, required
-        Content object stored as part of an :ref:`observation <observations>` or :ref:`model <models>`.
-
-    Returns
-    -------
-    model: `keras.engine.training.Model`
-    """
-    import tensorflow.contrib.keras as keras
-
-    assert(isinstance(fs, gridfs.GridFS))
-    assert(isinstance(content, dict))
-    assert("content-type" in content)
-    assert(content["content-type"] == "application/x-keras-model")
-
-    fd, model_path = tempfile.mkstemp(suffix=".hdf5")
-    os.close(fd)
-
-    with open(model_path, "wb") as stream:
-        stream.write(fs.get(content["data"]).read())
-
-    model = keras.models.load_model(model_path)
-    os.remove(model_path)
-    return model

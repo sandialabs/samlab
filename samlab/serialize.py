@@ -147,34 +147,6 @@ def json(document, content_type="application/json"):
     }
 
 
-def keras_model(model):
-    """Serialize a Keras model for storage in the database.
-
-    Keras models are normally saved to a filesystem in HDF5 format.  This
-    function takes the path to the model as input and reads it into memory,
-    ready for storage in the database.
-
-    Parameters
-    ----------
-    model: `keras.engine.training.Model` or str, required
-        Keras model, or the filesystem path of a saved Keras model to be serialized.
-
-    Returns
-    -------
-    content: dict
-        Serialized in-memory representation of the model that can be used with :func:`samlab.observation.create`, :func:`samlab.observation.create_many`, :func:`samlab.trial.create`, and :func:`samlab.model.create`.
-    """
-    if isinstance(model, six.string_types):
-        path = model
-        assert(os.path.exists(path))
-    else: # We assume that it's a Keras model here.
-        fd, path = tempfile.mkstemp(suffix=".hdf5")
-        os.close(fd)
-        model.save(path)
-
-    return generic_path(path, content_type="application/x-keras-model")
-
-
 def obj_mesh(path):
     return generic_path(path, content_type="application/x-wavefront-obj")
 
