@@ -45,6 +45,7 @@ setup(
             ],
         },
     scripts = [
+        "bin/samlab-gputop",
         "bin/samlab-manager",
         ],
     version=re.search(
