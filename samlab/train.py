@@ -2,7 +2,7 @@
 # (NTESS).  Under the terms of Contract DE-NA0003525 with NTESS, the U.S.
 # Government retains certain rights in this software.
 
-"""Utilities to simplify training models."""
+"""Utilities to simplify training artifacts."""
 
 import logging
 

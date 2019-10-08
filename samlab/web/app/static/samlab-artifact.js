@@ -14,7 +14,7 @@ define([
 
     module.delete = function(id)
     {
-        server.load_json(module, "/models/" + id, "DELETE");
+        server.load_json(module, "/artifacts/" + id, "DELETE");
     };
 
     return module;

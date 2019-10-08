@@ -15,7 +15,7 @@ def create(database, otype, oid, name):
     ----------
     database: database object returned by :func:`samlab.database.connect`, required
     otype: str, required
-        Object type.  One of "observations", "trials", "models", or "layouts".
+        Object type.  One of "observations", "experiments", "artifacts", or "layouts".
     oid: str, required.
         ID of the object to be favorited.
     name: str, required.
@@ -36,7 +36,7 @@ def delete(database, otype, oid):
     ----------
     database: database object returned by :func:`samlab.database.connect`, required
     otype: str, required
-        Object type.  One of "observations", "trials", "models", or "layouts".
+        Object type.  One of "observations", "experiments", "artifacts", or "layouts".
     oid: str, required.
         ID of the object to be un-favorited.
     """

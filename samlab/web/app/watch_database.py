@@ -30,8 +30,8 @@ def watch_objects(otype):
 
 
 threading.Thread(target=watch_objects, args=("observations",), daemon=True).start()
-threading.Thread(target=watch_objects, args=("trials",), daemon=True).start()
-threading.Thread(target=watch_objects, args=("models",), daemon=True).start()
+threading.Thread(target=watch_objects, args=("experiments",), daemon=True).start()
+threading.Thread(target=watch_objects, args=("artifacts",), daemon=True).start()
 threading.Thread(target=watch_objects, args=("deliveries",), daemon=True).start()
 threading.Thread(target=watch_objects, args=("favorites",), daemon=True).start()
 

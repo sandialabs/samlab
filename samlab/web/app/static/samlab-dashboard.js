@@ -52,9 +52,8 @@ define(
                 label: "Analysis",
                 children:
                 [
-                    { label: "Cluster Observations", icon: "fa-group", component: "samlab-cluster-widget", params: {otype: "observations"}},
                     { label: "Observations", icon: "fa-list", component: "samlab-observations-widget", params: {}},
-                    { label: "Trials", icon: "fa-address-card", component: "samlab-trials-widget"},
+                    { label: "Experiments", icon: "fa-address-card", component: "samlab-experiments-widget"},
                 ],
             },
             {
@@ -410,18 +409,18 @@ define(
 
         if(otype == "layouts")
             module.set_layout_id(oid);
-        else if(otype == "models")
-            module.add_widget("samlab-model-widget", {id: oid});
+        else if(otype == "artifacts")
+            module.add_widget("samlab-artifact-widget", {id: oid});
         else if(otype == "observations")
             module.add_widget("samlab-observation-widget", {id: oid});
-        else if(otype == "trials")
-            module.add_widget("samlab-trial-widget", {id: oid});
+        else if(otype == "experiments")
+            module.add_widget("samlab-experiment-widget", {id: oid});
     }
 
     /**
      * Automatically delete a widget if an object is deleted from the database.
      * @param {object} widget - The widget to be deleted.
-     * @param {string} otype - The type of object to monitor (`observations`, `trials`, `models`).
+     * @param {string} otype - The type of object to monitor (`observations`, `experiments`, `artifacts`).
      * @param {string} oid - ID of the object to monitor.
      */
     module.auto_delete = function(widget, otype, oid)

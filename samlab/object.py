@@ -2,7 +2,7 @@
 # (NTESS).  Under the terms of Contract DE-NA0003525 with NTESS, the U.S.
 # Government retains certain rights in this software.
 
-"""Functionality for working with generic objects (observations, trials, and models)."""
+"""Functionality for working with generic objects (observations, experiments, and artifacts)."""
 
 from __future__ import absolute_import, division, print_function, unicode_literals
 
@@ -23,7 +23,7 @@ log = logging.getLogger(__name__)
 def load(database, otype, filter=None, oids=None):
     """Load database objects of the given type."""
     assert(isinstance(database, pymongo.database.Database))
-    assert(otype in ["observations", "trials", "models"])
+    assert(otype in ["observations", "experiments", "artifacts"])
 
     if filter is not None:
         return list(database[otype].find(filter=filter))
@@ -38,7 +38,7 @@ def load(database, otype, filter=None, oids=None):
 def set_content(database, fs, otype, oid, key, value):
     assert(isinstance(database, pymongo.database.Database))
     assert(isinstance(fs, gridfs.GridFS))
-    assert(otype in ["observations", "trials", "models"])
+    assert(otype in ["observations", "experiments", "artifacts"])
     assert(isinstance(oid, bson.objectid.ObjectId))
     assert(isinstance(key, six.string_types))
     assert(isinstance(value, dict))
@@ -60,7 +60,7 @@ def set_content(database, fs, otype, oid, key, value):
 def delete_content(database, fs, otype, oid, key):
     assert(isinstance(database, pymongo.database.Database))
     assert(isinstance(fs, gridfs.GridFS))
-    assert(otype in ["observations", "trials", "models"])
+    assert(otype in ["observations", "experiments", "artifacts"])
     assert(isinstance(oid, bson.objectid.ObjectId))
     assert(isinstance(key, six.string_types))
 
@@ -80,7 +80,7 @@ def delete_content(database, fs, otype, oid, key):
 def set_attributes(database, fs, otype, oid, attributes):
     assert(isinstance(database, pymongo.database.Database))
     assert(isinstance(fs, gridfs.GridFS))
-    assert(otype in ["observations", "trials", "models"])
+    assert(otype in ["observations", "experiments", "artifacts"])
     assert(isinstance(oid, bson.objectid.ObjectId))
     assert(isinstance(attributes, dict))
 
@@ -94,7 +94,7 @@ def set_attributes(database, fs, otype, oid, attributes):
 def update_attributes(database, fs, otype, oid, new_attributes):
     assert(isinstance(database, pymongo.database.Database))
     assert(isinstance(fs, gridfs.GridFS))
-    assert(otype in ["observations", "trials", "models"])
+    assert(otype in ["observations", "experiments", "artifacts"])
     assert(isinstance(oid, bson.objectid.ObjectId))
     assert(isinstance(new_attributes, dict))
 
@@ -158,7 +158,7 @@ class _IdSearchVisitor(object):
 
 def search(database, otype, search):
     assert(isinstance(database, pymongo.database.Database))
-    assert(otype in ["observations", "trials", "models"])
+    assert(otype in ["observations", "experiments", "artifacts"])
     assert(isinstance(search, six.string_types))
 
     visitor = samlab.search.parser().parse(search).accept(_IdSearchVisitor(database[otype]))

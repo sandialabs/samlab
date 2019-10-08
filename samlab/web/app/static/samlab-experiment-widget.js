@@ -11,11 +11,11 @@ define([
     "samlab-object",
     "samlab-server",
     "samlab-tag-manager",
-    "samlab-trial",
+    "samlab-experiment",
     "samlab-content-list-control",
-    ], function(ko, mapping, attribute_manager, dashboard, dialog, object, server, tag_manager, trial)
+    ], function(ko, mapping, attribute_manager, dashboard, dialog, object, server, tag_manager, experiment)
 {
-    var component_name = "samlab-trial-widget";
+    var component_name = "samlab-experiment-widget";
     ko.components.register(component_name,
     {
         viewModel:
@@ -23,15 +23,15 @@ define([
             createViewModel: function(widget, component_info)
             {
                 var component = mapping.fromJS({
-                    models: [],
+                    artifacts: [],
                     selected_option: null,
-                    trial:
+                    experiment:
                     {
                         "attributes-pre": null,
                         content: [],
                         created: null,
                         id: widget.params.id,
-                        models: [],
+                        artifacts: [],
                         "modified-by": null,
                         modified: null,
                         name: null,
@@ -39,38 +39,38 @@ define([
                     },
                 });
 
-                var auto_delete_subscription = dashboard.auto_delete(widget, "trials", widget.params.id);
-                var trial_changed_subscription = object.notify_changed("trials", widget.params.id, function()
+                var auto_delete_subscription = dashboard.auto_delete(widget, "experiments", widget.params.id);
+                var experiment_changed_subscription = object.notify_changed("experiments", widget.params.id, function()
                 {
-                    server.load_json(component, "/trials/" + component.trial.id());
-                    server.load_json(component, "/trials/" + component.trial.id() + "/models");
+                    server.load_json(component, "/experiments/" + component.experiment.id());
+                    server.load_json(component, "/experiments/" + component.experiment.id() + "/artifacts");
                 });
 
                 component.dispose = function()
                 {
                     auto_delete_subscription.dispose();
-                    trial_changed_subscription.dispose();
-                    attribute_manager.release("trials", component.trial.id);
-                    tag_manager.release("trials", component.trial.id);
+                    experiment_changed_subscription.dispose();
+                    attribute_manager.release("experiments", component.experiment.id);
+                    tag_manager.release("experiments", component.experiment.id);
                 }
 
-                attribute_manager.manage("trials", component.trial.id);
-                tag_manager.manage("trials", component.trial.id);
+                attribute_manager.manage("experiments", component.experiment.id);
+                tag_manager.manage("experiments", component.experiment.id);
                 dashboard.active_widget.subscribe(function(active_widget)
                 {
                     if(active_widget != widget)
                         return;
-                    attribute_manager.manage("trials", component.trial.id);
-                    tag_manager.manage("trials", component.trial.id);
+                    attribute_manager.manage("experiments", component.experiment.id);
+                    tag_manager.manage("experiments", component.experiment.id);
                 });
 
                 component.groups =
                 [
                     {
-                        label: "Models",
-                        children: component.models.map(function(model)
+                        label: "Artifacts",
+                        children: component.artifacts.map(function(artifact)
                         {
-                            return { label: model.name, icon: "fa-paper-plane", widget: "samlab-model-widget", params: {id: model.id}};
+                            return { label: artifact.name, icon: "fa-paper-plane", widget: "samlab-artifact-widget", params: {id: artifact.id}};
                         }),
                     },
                 ];
@@ -90,7 +90,7 @@ define([
                     dashboard.add_widget("samlab-tag-manager-widget");
                 }
 
-                component.delete_trial = function()
+                component.delete_experiment = function()
                 {
                     dialog.dialog(
                     {
@@ -99,29 +99,29 @@ define([
                         callback: function(button)
                         {
                             if(button.label == "Delete")
-                                trial.delete(component.trial.id());
+                                experiment.delete(component.experiment.id());
                         },
-                        message: "This will delete the trial and its models, and close any related dashboard widgets.",
+                        message: "This will delete the experiment and its artifacts, and close any related dashboard widgets.",
                         title: "Delete Trial?",
                     });
                 };
 
-                component.trial.created_formatted = ko.pureComputed(function()
+                component.experiment.created_formatted = ko.pureComputed(function()
                 {
-                    if(component.trial.created())
-                        return new Date(component.trial.created()).toLocaleString();
+                    if(component.experiment.created())
+                        return new Date(component.experiment.created()).toLocaleString();
                     return null;
                 });
 
-                component.trial.modified_formatted = ko.pureComputed(function()
+                component.experiment.modified_formatted = ko.pureComputed(function()
                 {
-                    if(component.trial.modified())
-                        return new Date(component.trial.modified()).toLocaleString();
+                    if(component.experiment.modified())
+                        return new Date(component.experiment.modified()).toLocaleString();
                     return null;
                 });
 
-                server.load_json(component, "/trials/" + component.trial.id());
-                server.load_json(component, "/trials/" + component.trial.id() + "/models");
+                server.load_json(component, "/experiments/" + component.experiment.id());
+                server.load_json(component, "/experiments/" + component.experiment.id() + "/artifacts");
 
                 return component;
             }

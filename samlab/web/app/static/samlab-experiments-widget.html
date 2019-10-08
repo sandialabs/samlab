@@ -1,7 +1,7 @@
 <div class="widget-content">
     <div class="container-fluid">
         <div class="grid-stack-item-handle">
-            <h1 class="h2">Trials</h1>
+            <h1 class="h2">Experiments</h1>
         </div>
         <hr></hr>
         <table class="table table-borderless">
@@ -11,10 +11,10 @@
                     <th>Name</th>
                 </tr>
             </thead>
-            <tbody data-bind="foreach: trials">
+            <tbody data-bind="foreach: experiments">
                 <tr>
                     <td></td>
-                    <td><a href="#" data-bind="click: $component.open_trial"><span data-bind="text: label"></span></a></td>
+                    <td><a href="#" data-bind="click: $component.open_experiment"><span data-bind="text: label"></span></a></td>
                 </tr>
             </tbody>
         </table>

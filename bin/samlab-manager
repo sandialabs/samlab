@@ -45,10 +45,10 @@ defaults = {
     "session_timeout": getattr(config, "session_timeout", 15 * 60),
 }
 
-parser = argparse.ArgumentParser(description="Web interface for managing observations, trials, and models.", parents=[config_parser])
+parser = argparse.ArgumentParser(description="Web interface for managing observations, experiments, and artifacts.", parents=[config_parser])
 parser.set_defaults(**defaults)
 parser.add_argument("--certificate", help="TLS certificate.  Default: %(default)s")
-parser.add_argument("--database-name", help="Database containing trials to be analyzed. Default: %(default)s")
+parser.add_argument("--database-name", help="Database containing experiments to be analyzed. Default: %(default)s")
 parser.add_argument("--database-uri", help="Database connection string. Default: %(default)s")
 parser.add_argument("--database-replica-set", help="Database replica set name. Default: %(default)s")
 parser.add_argument("--debug", action="store_true", help="Enable server debugging.")
@@ -78,7 +78,7 @@ application.config["port"] = arguments.port
 application.config["server-name"] = arguments.server_name if arguments.server_name is not None else arguments.database_name
 application.config["server-description"] = arguments.server_description
 application.config["session-timeout"] = arguments.session_timeout
-application.config["layout"] = config.layout if hasattr(config, "layout") else [{"component":"samlab-trials-widget"}]
+application.config["layout"] = config.layout if hasattr(config, "layout") else [{"component":"samlab-experiments-widget"}]
 
 for key, value in sorted(application.config.items()):
     if key not in ["SECRET_KEY"]:
@@ -86,14 +86,14 @@ for key, value in sorted(application.config.items()):
 
 # Load request handlers (note: must happen *after* all configuration).
 import samlab.web.app.handlers
+import samlab.web.app.handlers.artifact
 import samlab.web.app.handlers.async
 import samlab.web.app.handlers.delivery
+import samlab.web.app.handlers.experiment
 import samlab.web.app.handlers.favorite
 import samlab.web.app.handlers.layout
-import samlab.web.app.handlers.model
 import samlab.web.app.handlers.object
 import samlab.web.app.handlers.observation
-import samlab.web.app.handlers.trial
 import samlab.web.app.watch_database
 
 # Start the server.

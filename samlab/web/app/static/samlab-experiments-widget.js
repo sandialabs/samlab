@@ -6,10 +6,10 @@ define([
     "knockout",
     "knockout.mapping",
     "samlab-dashboard",
-    "samlab-trial",
-    ], function(ko, mapping, dashboard, trial)
+    "samlab-experiment",
+    ], function(ko, mapping, dashboard, experiment)
 {
-    var component_name = "samlab-trials-widget";
+    var component_name = "samlab-experiments-widget";
     ko.components.register(component_name,
     {
         viewModel:
@@ -19,14 +19,14 @@ define([
                 var component = mapping.fromJS({
                 });
 
-                component.trials = trial.trials.map(function(trial)
+                component.experiments = experiment.experiments.map(function(experiment)
                 {
-                    return { label: trial.name, id: trial.id};
+                    return { label: experiment.name, id: experiment.id};
                 });
 
-                component.open_trial = function(item)
+                component.open_experiment = function(item)
                 {
-                    dashboard.add_widget("samlab-trial-widget", {id: item.id});
+                    dashboard.add_widget("samlab-experiment-widget", {id: item.id});
                 };
 
                 return component;

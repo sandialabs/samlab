@@ -2,7 +2,9 @@
 # (NTESS).  Under the terms of Contract DE-NA0003525 with NTESS, the U.S.
 # Government retains certain rights in this software.
 
-"""Functionality for working with :ref:`trials`."""
+"""Functionality for working with :ref:`artifacts`."""
+
+from __future__ import absolute_import, division, print_function, unicode_literals
 
 import logging
 
@@ -12,38 +14,35 @@ import gridfs
 import pymongo
 import six
 
-import samlab
 
 log = logging.getLogger(__name__)
 
 
-def create(database, fs, name, attributes=None, content=None, tags=None):
-    """Add a new trial to the :ref:`database <database>`.
+def create(database, fs, experiment, name, attributes=None, content=None, tags=None):
+    """Add a new artifact to the :ref:`database <database>`.
 
     Parameters
     ----------
     database: database object returned by :func:`samlab.database.connect`, required
     fs: :class:`gridfs.GridFS`, required
+    experiment: :class:`bson.objectid.ObjectId`, required
+        ID of the experiment that will own this artifact.
     name: string, required
-        Human-readable trial name.
+        Human-readable artifact name.
     attributes: dict, optional
-        Optional metadata to be stored with this trial.  Be sure to pass this
+        Optional metadata to be stored with this artifact.  Be sure to pass this
         data through :func:`samlab.serialize.attributes` to ensure that it only
         contains types that can be stored in the database.
     content: dict, optional
-        Dict containing content to be stored for this model.  The value for
+        Dict containing content to be stored for this artifact.  The value for
         each key-value pair in the content should be created using functions in
         :mod:`samlab.serialize`.
     tags: list of str, optional
-        Tags to be stored with this trial.
-
-    Returns
-    -------
-    id: :class:`bson.objectid.ObjectId`
-        Unique database identifier for the newly created trial.
+        Tags to be stored with this artifact.
     """
     assert(isinstance(database, pymongo.database.Database))
     assert(isinstance(fs, gridfs.GridFS))
+    assert(isinstance(experiment, bson.objectid.ObjectId))
     assert(isinstance(name, six.string_types))
 
     if attributes is None:
@@ -61,51 +60,41 @@ def create(database, fs, name, attributes=None, content=None, tags=None):
     for tag in tags:
         assert(isinstance(tag, six.string_types))
 
-
     document = {
         "attributes": attributes,
         "content": content,
         "created": arrow.utcnow().datetime,
         "name": name,
         "tags": tags,
+        "experiment": experiment,
     }
 
-    return database.trials.insert_one(document).inserted_id
+    return database.artifacts.insert_one(document).inserted_id
 
 
-def delete(database, fs, tid):
-    """Delete a trial from the :ref:`database <database>`.
+def delete(database, fs, mid):
+    """Delete a artifact from the :ref:`database <database>`.
 
-    Note that this implicitly deletes any models and data owned by the trial.
+    Note that this implicitly deletes any data owned by the artifact.
 
     Parameters
     ----------
     database: database object returned by :func:`samlab.database.connect`, required
     fs: :class:`gridfs.GridFS`, required
-    tid: :class:`bson.objectid.ObjectId`, required
-        Unique database identifier for the trial to be deleted.
+    mid: :class:`bson.objectid.ObjectId`, required
+        Unique database identifier for the artifact to be deleted.
     """
     assert(isinstance(database, pymongo.database.Database))
     assert(isinstance(fs, gridfs.GridFS))
-    assert(isinstance(tid, bson.objectid.ObjectId))
+    assert(isinstance(mid, bson.objectid.ObjectId))
 
-    # Delete favorites pointing to models owned by this trial
-    for model in database.models.find({"trial": tid}):
-        database.favorites.delete_many({"otype": "models", "oid": str(model["_id"])})
-    # Delete content owned by models owned by this trial
-    for model in database.models.find({"trial": tid}):
-        for key, value in model["content"].items():
+    # Delete favorites pointing to thisartifact 
+    database.favorites.delete_many({"otype": "artifacts", "oid": str(mid)})
+    # Delete content owned by thisartifact 
+    for artifact in database.artifacts.find({"_id": mid}):
+        for key, value in artifact["content"].items():
             fs.delete(value["data"])
-    # Delete models owned by this trial
-    database.models.delete_many({"trial": tid})
-    # Delete favorites pointing to this trial
-    database.favorites.delete_many({"otype": "trials", "oid": str(tid)})
-    # Delete content owned by this trial
-    for trial in database.trials.find({"_id": tid}):
-        if "content" in trial: # Early trials didn't have content
-            for key, value in trial["content"].items():
-                fs.delete(value["data"])
-    # Delete the trial
-    database.trials.delete_many({"_id": tid})
+    # Delete theartifact 
+    database.artifacts.delete_many({"_id": mid})
 
 

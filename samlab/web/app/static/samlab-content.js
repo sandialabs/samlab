@@ -15,11 +15,11 @@ define([
     var module = {};
 
     var content_widget_map = {
-        "application/x-keras-model": "samlab-keras-model-widget",
+        "application/x-keras-artifact": "samlab-keras-artifact-widget",
         "application/x-numpy-array": "samlab-array-widget",
         "application/x-numpy-arrays": "samlab-arrays-widget",
         "application/x-wavefront-obj": "samlab-3d-viewer-widget",
-        "model/stl": "samlab-3d-viewer-widget",
+        "artifact/stl": "samlab-3d-viewer-widget",
         "image/jpeg": "samlab-image-widget",
         "image/png": "samlab-image-widget",
         "text/plain": "samlab-text-widget",

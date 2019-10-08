@@ -24,23 +24,23 @@ from samlab.web.app import application, socketio, require_auth, require_permissi
 from samlab.web.app.database import database, fs
 
 
-@application.route("/models/<exclude(count,tags):oid>", methods=["GET", "DELETE"])
+@application.route("/artifacts/<exclude(count,tags):oid>", methods=["GET", "DELETE"])
 @require_auth
-def get_delete_models_model(oid):
+def get_delete_artifacts_artifact(oid):
     oid = bson.objectid.ObjectId(oid)
 
     if flask.request.method == "GET":
-        return samlab.web.app.handlers.common.get_otype_oid("models", oid)
+        return samlab.web.app.handlers.common.get_otype_oid("artifacts", oid)
 
     elif flask.request.method == "DELETE":
         require_permissions(["delete"])
-        samlab.model.delete(database, fs, oid)
+        samlab.artifact.delete(database, fs, oid)
         return flask.jsonify()
 
 
-@application.route("/models/<model>/plots/training-loss")
+@application.route("/artifacts/<artifact>/plots/training-loss")
 @require_auth
-def get_models_model_plots_training_loss(model):
+def get_artifacts_artifact_plots_training_loss(artifact):
     require_permissions(["read"])
 
     width = int(flask.request.args.get("width", 500))
@@ -50,8 +50,8 @@ def get_models_model_plots_training_loss(model):
     validation = True if flask.request.args.get("validation", "true") == "true" else False
     test = True if flask.request.args.get("test", "true") == "true" else False
 
-    model = bson.objectid.ObjectId(model)
-    model = database.models.find_one({"_id": model})
+    artifact = bson.objectid.ObjectId(artifact)
+    artifact = database.artifacts.find_one({"_id": artifact})
 
     result = {
         "minimum_training_loss": None,
@@ -64,22 +64,22 @@ def get_models_model_plots_training_loss(model):
 
     axes = canvas.cartesian(xlabel="Training Epoch", ylabel="Loss", yscale=scale)
     labels = []
-    if training and "training-losses" in model["content"]:
-        training_losses = samlab.deserialize.array(fs, model["content"]["training-losses"])
+    if training and "training-losses" in artifact["content"]:
+        training_losses = samlab.deserialize.array(fs, artifact["content"]["training-losses"])
         if training_losses.size:
             mark = axes.plot(training_losses, color=palette[0])
             labels.append(mark.markers[0] + " training")
             result["minimum_training_loss"] = training_losses.min()
 
-    if validation and "validation-losses" in model["content"]:
-        validation_losses = samlab.deserialize.array(fs, model["content"]["validation-losses"])
+    if validation and "validation-losses" in artifact["content"]:
+        validation_losses = samlab.deserialize.array(fs, artifact["content"]["validation-losses"])
         if validation_losses.size:
             mark = axes.plot(validation_losses, color=palette[1])
             labels.append(mark.markers[0] + " validation")
             result["minimum_validation_loss"] = validation_losses.min()
 
-    if test and "test-losses" in model["content"]:
-        test_losses = samlab.deserialize.array(fs, model["content"]["test-losses"])
+    if test and "test-losses" in artifact["content"]:
+        test_losses = samlab.deserialize.array(fs, artifact["content"]["test-losses"])
         if test_losses.size:
             mark = axes.plot(test_losses, color=palette[2])
             labels.append(mark.markers[0] + " test")
@@ -92,12 +92,12 @@ def get_models_model_plots_training_loss(model):
     return flask.jsonify(result)
 
 
-@application.route("/models/<model>/plots/training-accuracy")
+@application.route("/artifacts/<artifact>/plots/training-accuracy")
 @require_auth
-def get_models_model_plots_training_accuracy(model, width=500, height=500):
+def get_artifacts_artifact_plots_training_accuracy(artifact, width=500, height=500):
     require_permissions(["read"])
-    model = bson.objectid.ObjectId(model)
-    model = database.models.find_one({"_id": model})
+    artifact = bson.objectid.ObjectId(artifact)
+    artifact = database.artifacts.find_one({"_id": artifact})
 
     result = {}
 
@@ -106,24 +106,24 @@ def get_models_model_plots_training_accuracy(model, width=500, height=500):
 
     axes = canvas.cartesian(xlabel="Training Epoch", ylabel="Accuracy")
     labels = []
-    if "training-accuracies" in model["content"]:
-        training_accuracies = samlab.deserialize.array(fs, model["content"]["training-accuracies"])
+    if "training-accuracies" in artifact["content"]:
+        training_accuracies = samlab.deserialize.array(fs, artifact["content"]["training-accuracies"])
         mark = axes.plot(training_accuracies, color=palette[0])
         labels.append(mark.markers[0] + " training")
         result["maximum_training_accuracy"] = training_accuracies.max()
     else:
         result["maximum_training_accuracy"] = None
 
-    if "validation-accuracies" in model["content"]:
-        validation_accuracies = samlab.deserialize.array(fs, model["content"]["validation-accuracies"])
+    if "validation-accuracies" in artifact["content"]:
+        validation_accuracies = samlab.deserialize.array(fs, artifact["content"]["validation-accuracies"])
         mark = axes.plot(validation_accuracies, color=palette[1])
         labels.append(mark.markers[0] + " validation")
         result["maximum_validation_accuracy"] = validation_accuracies.max()
     else:
         result["maximum_validation_accuracy"] = None
 
-    if "test-accuracies" in model["content"]:
-        test_accuracies = samlab.deserialize.array(fs, model["content"]["test-accuracies"])
+    if "test-accuracies" in artifact["content"]:
+        test_accuracies = samlab.deserialize.array(fs, artifact["content"]["test-accuracies"])
         mark = axes.plot(test_accuracies, color=palette[2])
         labels.append(mark.markers[0] + " test")
         result["maximum_test_accuracy"] = test_accuracies.max()

@@ -28,7 +28,7 @@ def get_favorites():
     return flask.jsonify(favorites=favorites)
 
 
-@application.route("/favorites/<allow(observations,trials,models,layouts):otype>/<oid>", methods=["PUT", "DELETE"])
+@application.route("/favorites/<allow(observations,experiments,artifacts,layouts):otype>/<oid>", methods=["PUT", "DELETE"])
 @require_auth
 def put_delete_favorites_otype_oid(otype, oid):
     if flask.request.method == "PUT":

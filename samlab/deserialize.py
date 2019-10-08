@@ -26,7 +26,7 @@ def any(fs, content):
     fs: :class:`gridfs.GridFS` instance, required
 
     content: dict, required
-        Content object stored as part of an :ref:`observation <observations>` or :ref:`model <models>`.
+        Content object stored as part of an :ref:`observation <observations>` or :ref:`artifact <artifacts>`.
 
     Returns
     -------
@@ -47,7 +47,7 @@ def array(fs, content):
     fs: :class:`gridfs.GridFS` instance, required
 
     content: dict, required
-        Content object stored as part of an :ref:`observation <observations>` or :ref:`model <models>`.
+        Content object stored as part of an :ref:`observation <observations>` or :ref:`artifact <artifacts>`.
 
     Returns
     -------
@@ -69,7 +69,7 @@ def arrays(fs, content):
     fs: :class:`gridfs.GridFS` instance, required
 
     content: dict, required
-        Content object stored as part of an :ref:`observation <observations>` or :ref:`model <models>`.
+        Content object stored as part of an :ref:`observation <observations>` or :ref:`artifact <artifacts>`.
 
     Returns
     -------
@@ -91,7 +91,7 @@ def image(fs, content):
     fs: :class:`gridfs.GridFS` instance, required
 
     content: dict, required
-        Content object stored as part of an :ref:`observation <observations>` or :ref:`model <models>`.
+        Content object stored as part of an :ref:`observation <observations>` or :ref:`artifact <artifacts>`.
 
     Returns
     -------

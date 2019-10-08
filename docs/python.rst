@@ -24,17 +24,17 @@ visualizations.
     python/samlab.interactive.rst
     python/samlab.manager.rst
     python/samlab.mime.rst
-    python/samlab.model.rst
+    python/samlab.artifact.rst
+    python/samlab.experiment.rst
     python/samlab.object.rst
     python/samlab.observation.rst
     python/samlab.search.rst
     python/samlab.serialize.rst
-    python/samlab.tasks.rst
     python/samlab.tasks.generic.rst
     python/samlab.tasks.generic.run.rst
+    python/samlab.tasks.rst
     python/samlab.torch.rst
     python/samlab.train.rst
-    python/samlab.trial.rst
     python/samlab.web.rst
     python/samlab.web.app.rst
     python/samlab.web.app.acl.rst
@@ -42,14 +42,14 @@ visualizations.
     python/samlab.web.app.credentials.rst
     python/samlab.web.app.database.rst
     python/samlab.web.app.handlers.rst
+    python/samlab.web.app.handlers.artifact.rst
     python/samlab.web.app.handlers.async.rst
     python/samlab.web.app.handlers.common.rst
     python/samlab.web.app.handlers.delivery.rst
+    python/samlab.web.app.handlers.experiment.rst
     python/samlab.web.app.handlers.favorite.rst
     python/samlab.web.app.handlers.layout.rst
-    python/samlab.web.app.handlers.model.rst
     python/samlab.web.app.handlers.object.rst
     python/samlab.web.app.handlers.observation.rst
     python/samlab.web.app.handlers.rst
-    python/samlab.web.app.handlers.trial.rst
     python/samlab.web.app.watch_database.rst

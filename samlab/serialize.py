@@ -32,7 +32,7 @@ def array(value):
     Returns
     -------
     content: dict
-        Serialized in-memory representation of the array that can be used with :func:`samlab.observation.create`, :func:`samlab.observation.create_many`, :func:`samlab.trial.create`, and :func:`samlab.model.create`.
+        Serialized in-memory representation of the array that can be used with :func:`samlab.observation.create`, :func:`samlab.observation.create_many`, :func:`samlab.experiment.create`, and :func:`samlab.artifact.create`.
     """
     stream = io.BytesIO()
     numpy.save(stream, value)
@@ -48,7 +48,7 @@ def arrays(*args, **kwargs):
     Returns
     -------
     content: dict
-        Serialized in-memory representation of the arrays that can be used with :func:`samlab.observation.create`, :func:`samlab.observation.create_many`, :func:`samlab.trial.create`, and :func:`samlab.model.create`.
+        Serialized in-memory representation of the arrays that can be used with :func:`samlab.observation.create`, :func:`samlab.observation.create_many`, :func:`samlab.experiment.create`, and :func:`samlab.artifact.create`.
     """
     stream = io.BytesIO()
     numpy.savez(stream, *args, **kwargs)
@@ -61,7 +61,7 @@ def arrays(*args, **kwargs):
 def attributes(value):
     """Copy an arbitrary data structure with modifications so it can be stored in the database.
 
-    :ref:`observations`, :ref:`trials`, and :ref:`models` are all entities that
+    :ref:`observations`, :ref:`experiments`, and :ref:`artifacts` are all entities that
     can include "attributes" (arbitrary metadata).  Use this function to clean
     attribute contents before passing them to Samlab, to filter-out unserializable
     types such as functions.
@@ -73,7 +73,7 @@ def attributes(value):
 
     Returns
     -------
-    serializable: modified copy of `value` that can be used with :func:`samlab.observation.create`, :func:`samlab.observation.create_many`, :func:`samlab.trial.create`, and :func:`samlab.model.create`.
+    serializable: modified copy of `value` that can be used with :func:`samlab.observation.create`, :func:`samlab.observation.create_many`, :func:`samlab.experiment.create`, and :func:`samlab.artifact.create`.
     """
     def valid_key(key):
         if key.startswith("$"):
@@ -101,7 +101,7 @@ def image(img):
     Returns
     -------
     content: dict
-        Serialized in-memory representation of the image that can be used with :func:`samlab.observation.create`, :func:`samlab.observation.create_many`, :func:`samlab.trial.create`, and :func:`samlab.model.create`.
+        Serialized in-memory representation of the image that can be used with :func:`samlab.observation.create`, :func:`samlab.observation.create_many`, :func:`samlab.experiment.create`, and :func:`samlab.artifact.create`.
     """
     import PIL.Image
 
@@ -139,7 +139,7 @@ def json(document, content_type="application/json"):
     Returns
     -------
     content: dict
-        Serialized in-memory representation of the document that can be used with :func:`samlab.observation.create`, :func:`samlab.observation.create_many`, :func:`samlab.trial.create`, and :func:`samlab.model.create`.
+        Serialized in-memory representation of the document that can be used with :func:`samlab.observation.create`, :func:`samlab.observation.create_many`, :func:`samlab.experiment.create`, and :func:`samlab.artifact.create`.
     """
     return {
         "data": pyjson.dumps(document).encode("utf8"),
@@ -163,7 +163,7 @@ def generic_path(path, content_type):
 
 
 def stl_mesh(path):
-    return generic_path(path, content_type="model/stl")
+    return generic_path(path, content_type="artifact/stl")
 
 
 def string(value):
@@ -176,7 +176,7 @@ def string(value):
     Returns
     -------
     content: dict
-        Serialized version of the string that can be used with :func:`samlab.observation.create`, :func:`samlab.observation.create_many`, :func:`samlab.trial.create`, and :func:`samlab.model.create`.
+        Serialized version of the string that can be used with :func:`samlab.observation.create`, :func:`samlab.observation.create_many`, :func:`samlab.experiment.create`, and :func:`samlab.artifact.create`.
     """
     return {
         "data": value.encode("utf8"),

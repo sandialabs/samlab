@@ -1,11 +1,11 @@
 <div class="widget-content">
     <div class="container-fluid">
         <div class="grid-stack-item-handle">
-            <h1 class="h2">Trial</h1>
+            <h1 class="h2">Artifact</h1>
             <p class="lead">
-                <span data-bind="text: trial.name"></span>
-                <span class="small text-muted" data-bind="text: trial.id"></span>
-                <samlab-favorite-control params="otype: 'trials', oid: trial.id"></samlab-favorite-control>
+                <span data-bind="text: artifact.name"></span>
+                <span class="small text-muted" data-bind="text: artifact.id"></span>
+                <samlab-favorite-control params="otype: 'artifacts', oid: artifact.id"></samlab-favorite-control>
             </p>
         </div>
         <hr></hr>
@@ -24,37 +24,38 @@
                 <div class="dropdown-divider"></div>
                 <a class="dropdown-item" data-bind="click: $component.manage_attributes"><span class="fa fa-pencil fa-fw"></span>&nbsp;Manage Attributes</a>
                 <a class="dropdown-item" data-bind="click: $component.manage_tags"><span class="fa fa-tags fa-fw"></span>&nbsp;Manage Tags</a>
-                <a class="dropdown-item text-danger" data-bind="click: $component.delete_trial"><span class="fa fa-trash fa-fw"></span>&nbsp;Delete Trial</a>
+                <a class="dropdown-item text-danger" data-bind="click: $component.delete_artifact"><span class="fa fa-trash fa-fw"></span>&nbsp;Delete Artifact</a>
             </div>
         </div>
 
         <dl class="row mt-3">
             <dt class="col-md-3">Created:</dt>
-            <dd class="col-md-9" data-bind="text:trial.created_formatted"></dd>
+            <dd class="col-md-9" data-bind="text:artifact.created_formatted"></dd>
 
-            <!-- ko if: trial.modified -->
+            <!-- ko if: artifact.modified -->
             <dt class="col-md-3">Modified:</dt>
-            <dd class="col-md-9" data-bind="text:trial.modified_formatted"></dd>
+            <dd class="col-md-9" data-bind="text:artifact.modified_formatted"></dd>
             <!-- /ko -->
 
-            <!-- ko if: trial['modified-by'] -->
+            <!-- ko if: artifact['modified-by'] -->
             <dt class="col-md-3">Modified By:</dt>
-            <dd class="col-md-9" data-bind="text:trial['modified-by']"></dd>
+            <dd class="col-md-9" data-bind="text:artifact['modified-by']"></dd>
             <!-- /ko -->
 
             <dt class="col-md-3">Attributes:</dt>
             <dd class="col-md-9">
-                    <pre class="mt-1 text-primary" data-bind="text:trial['attributes-pre']"></pre>
+                <a href="#" data-bind="click: view_attributes">
+                    <pre class="mt-1 text-primary" data-bind="text:artifact['attributes-pre']"></pre>
+                </a>
             </dd>
 
             <dt class="col-md-3">Tags:</dt>
-            <dd class="col-md-9" data-bind="foreach: trial.tags">
+            <dd class="col-md-9" data-bind="foreach: artifact.tags">
                 <span class="badge badge-secondary"><span class="fa fa-tag"></span>&nbsp;<span data-bind="text: $data"></span></span>
             </dd>
         </dl>
 
         <b>Content:</b>
-        <samlab-content-list-control class="mt-2" params="otype: 'trials', oid: trial.id, content: trial.content"></samlab-content-list-control>
+        <samlab-content-list-control class="mt-2" params="otype: 'artifacts', oid: artifact.id, content: artifact.content"></samlab-content-list-control>
     </div>
 </div>
-

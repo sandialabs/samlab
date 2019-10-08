@@ -10,44 +10,44 @@ define([
     ], function(ko, mapping, object, server)
 {
     var module = mapping.fromJS({
-        trials: [],
+        experiments: [],
     });
 
-    function load_trials()
+    function load_experiments()
     {
-        server.load_json(module, "/trials?sort=created");
+        server.load_json(module, "/experiments?sort=created");
     }
 
     module.delete = function(id)
     {
-        server.load_json(module, "/trials/" + id, "DELETE");
+        server.load_json(module, "/experiments/" + id, "DELETE");
     };
 
     object.changed.subscribe(function(object)
     {
-        if(object.otype == "trials")
+        if(object.otype == "experiments")
         {
-            load_trials();
+            load_experiments();
         }
     });
 
     object.created.subscribe(function(object)
     {
-        if(object.otype == "trials")
+        if(object.otype == "experiments")
         {
-            load_trials();
+            load_experiments();
         }
     });
 
     object.deleted.subscribe(function(object)
     {
-        if(object.otype == "trials")
+        if(object.otype == "experiments")
         {
-            load_trials();
+            load_experiments();
         }
     });
 
-    load_trials();
+    load_experiments();
 
     return module;
 });

@@ -17,7 +17,7 @@
  *
  * Usage:
  *  var loader = new THREE.STLLoader();
- *  loader.load( './models/stl/slotted_disk.stl', function ( geometry ) {
+ *  loader.load( './artifacts/stl/slotted_disk.stl', function ( geometry ) {
  *    scene.add( new THREE.Mesh( geometry ) );
  *  });
  *

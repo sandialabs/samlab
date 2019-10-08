@@ -9,15 +9,15 @@ define([
     "samlab-content",
     "samlab-dashboard",
     "samlab-dialog",
-    "samlab-model",
+    "samlab-artifact",
     "samlab-object",
     "samlab-permissions",
     "samlab-server",
     "samlab-tag-manager",
     "samlab-content-list-control",
-    ], function(ko, mapping, attribute_manager, content, dashboard, dialog, model, object, permissions, server, tag_manager)
+    ], function(ko, mapping, attribute_manager, content, dashboard, dialog, artifact, object, permissions, server, tag_manager)
 {
-    var component_name= "samlab-model-widget";
+    var component_name= "samlab-artifact-widget";
     ko.components.register(component_name,
     {
         viewModel:
@@ -25,7 +25,7 @@ define([
             createViewModel: function(widget, component_info)
             {
                 var component = mapping.fromJS({
-                    model:
+                    artifact:
                     {
                         "attributes-pre": null,
                         content: [],
@@ -34,35 +34,35 @@ define([
                         "modified-by": null,
                         modified: null,
                         name: null,
-                        trial: null,
+                        experiment: null,
                         tags: [],
                     },
                     permissions: permissions,
                     selected_option: null,
                 });
 
-                var auto_delete_subscription = dashboard.auto_delete(widget, "models", widget.params.id);
-                var model_changed_subscription = object.notify_changed("models", widget.params.id, function()
+                var auto_delete_subscription = dashboard.auto_delete(widget, "artifacts", widget.params.id);
+                var artifact_changed_subscription = object.notify_changed("artifacts", widget.params.id, function()
                 {
-                    server.load_json(component, "/models/" + component.model.id());
+                    server.load_json(component, "/artifacts/" + component.artifact.id());
                 });
 
                 component.dispose = function()
                 {
                     auto_delete_subscription.dispose();
-                    model_changed_subscription.dispose();
-                    attribute_manager.release("models", component.model.id);
-                    tag_manager.release("models", component.model.id);
+                    artifact_changed_subscription.dispose();
+                    attribute_manager.release("artifacts", component.artifact.id);
+                    tag_manager.release("artifacts", component.artifact.id);
                 }
 
-                attribute_manager.manage("models", component.model.id);
-                tag_manager.manage("models", component.model.id);
+                attribute_manager.manage("artifacts", component.artifact.id);
+                tag_manager.manage("artifacts", component.artifact.id);
                 dashboard.active_widget.subscribe(function(active_widget)
                 {
                     if(active_widget != widget)
                         return;
-                    attribute_manager.manage("models", component.model.id);
-                    tag_manager.manage("models", component.model.id);
+                    attribute_manager.manage("artifacts", component.artifact.id);
+                    tag_manager.manage("artifacts", component.artifact.id);
                 });
 
                 component.groups =
@@ -71,25 +71,27 @@ define([
                         label: "Visualizations",
                         children:
                         [
-                            {label: "Model attributes", icon: "fa-align-left", widget: "samlab-model-attributes-widget", params: {id: component.model.id}},
-                            {label: "Training loss", icon: "fa-line-chart fa-flip-vertical", widget: "samlab-training-loss-widget", params: {id: component.model.id}},
-                            {label: "Training accuracy", icon: "fa-line-chart", widget: "samlab-training-accuracy-widget", params: {id: component.model.id}},
-                            {label: "Image classification", icon: "fa-picture-o", widget: "samlab-image-classification-widget", params: {id: component.model.id}},
-                            {label: "CNN layers", icon: "fa-picture-o", widget: "samlab-cnn-layer-widget", params: {id: component.model.id}},
+                            {label: "Model attributes", icon: "fa-align-left", widget: "samlab-artifact-attributes-widget", params: {id: component.artifact.id}},
+                            /*
+                            {label: "Training loss", icon: "fa-line-chart fa-flip-vertical", widget: "samlab-training-loss-widget", params: {id: component.artifact.id}},
+                            {label: "Training accuracy", icon: "fa-line-chart", widget: "samlab-training-accuracy-widget", params: {id: component.artifact.id}},
+                            {label: "Image classification", icon: "fa-picture-o", widget: "samlab-image-classification-widget", params: {id: component.artifact.id}},
+                            {label: "CNN layers", icon: "fa-picture-o", widget: "samlab-cnn-layer-widget", params: {id: component.artifact.id}},
+                            */
                         ],
                     },
                     {
                         label: "Parents",
                         children:
                         [
-                            { label: "Trial", icon: "fa-address-card", widget: "samlab-trial-widget", params: {id: component.model.trial}},
+                            { label: "Trial", icon: "fa-address-card", widget: "samlab-experiment-widget", params: {id: component.artifact.experiment}},
                         ],
                     },
                 ];
 
                 component.view_attributes = function()
                 {
-                    dashboard.add_widget("samlab-model-attributes-widget", {id: component.model.id});
+                    dashboard.add_widget("samlab-artifact-attributes-widget", {id: component.artifact.id});
                 }
 
                 component.activate_item = function(item)
@@ -107,7 +109,7 @@ define([
                     dashboard.add_widget("samlab-tag-manager-widget");
                 }
 
-                component.delete_model = function()
+                component.delete_artifact = function()
                 {
                     dialog.dialog(
                     {
@@ -116,28 +118,28 @@ define([
                         callback: function(button)
                         {
                             if(button.label == "Delete")
-                                model.delete(component.model.id());
+                                artifact.delete(component.artifact.id());
                         },
-                        message: "This will delete the model and its data, and close any related dashboard widgets.",
+                        message: "This will delete the artifact and its data, and close any related dashboard widgets.",
                         title: "Delete Model?",
                     });
                 };
 
-                component.model.created_formatted = ko.pureComputed(function()
+                component.artifact.created_formatted = ko.pureComputed(function()
                 {
-                    if(component.model.created())
-                        return new Date(component.model.created()).toLocaleString();
+                    if(component.artifact.created())
+                        return new Date(component.artifact.created()).toLocaleString();
                     return null;
                 });
 
-                component.model.modified_formatted = ko.pureComputed(function()
+                component.artifact.modified_formatted = ko.pureComputed(function()
                 {
-                    if(component.model.modified())
-                        return new Date(component.model.modified()).toLocaleString();
+                    if(component.artifact.modified())
+                        return new Date(component.artifact.modified()).toLocaleString();
                     return null;
                 });
 
-                server.load_json(component, "/models/" + component.model.id());
+                server.load_json(component, "/artifacts/" + component.artifact.id());
 
                 return component;
             }

@@ -29,7 +29,7 @@ from samlab.web.app import application, socketio, require_auth, require_permissi
 from samlab.web.app.database import database, fs
 
 
-@application.route("/<allow(observations,models):otype>/<oid>/content/<key>", methods=["DELETE"])
+@application.route("/<allow(observations,artifacts):otype>/<oid>/content/<key>", methods=["DELETE"])
 @require_auth
 def delete_otype_oid_content_key(otype, oid, key):
     require_permissions(["delete"])
@@ -41,7 +41,7 @@ def delete_otype_oid_content_key(otype, oid, key):
     return flask.jsonify()
 
 
-@application.route("/<allow(observations,trials,models):otype>/attributes/keys")
+@application.route("/<allow(observations,experiments,artifacts):otype>/attributes/keys")
 @require_auth
 def get_otype_attributes_keys(otype):
     require_permissions(["read"])
@@ -53,7 +53,7 @@ def get_otype_attributes_keys(otype):
     return flask.jsonify(keys=sorted(keys))
 
 
-@application.route("/<allow(observations,trials,models):otype>/<oid>/attributes/pre")
+@application.route("/<allow(observations,experiments,artifacts):otype>/<oid>/attributes/pre")
 @require_auth
 def get_otype_oid_attributes_pre(otype, oid):
     require_permissions(["read"])
@@ -68,7 +68,7 @@ def get_otype_oid_attributes_pre(otype, oid):
     return response
 
 
-@application.route("/<allow(observations,trials,models):otype>/content/keys")
+@application.route("/<allow(observations,experiments,artifacts):otype>/content/keys")
 @require_auth
 def get_otype_content_keys(otype):
     require_permissions(["read"])
@@ -80,7 +80,7 @@ def get_otype_content_keys(otype):
     return flask.jsonify(keys=sorted(keys))
 
 
-@application.route("/<allow(observations,trials,models):otype>/<oid>/content/<key>/data")
+@application.route("/<allow(observations,experiments,artifacts):otype>/<oid>/content/<key>/data")
 @require_auth
 def get_otype_oid_content_key_data(otype, oid, key):
     require_permissions(["read"])
@@ -122,7 +122,7 @@ def get_otype_oid_content_key_data(otype, oid, key):
     return response
 
 
-@application.route("/<allow(observations,trials,models):otype>/<oid>/content/<key>/array/image")
+@application.route("/<allow(observations,experiments,artifacts):otype>/<oid>/content/<key>/array/image")
 @require_auth
 def get_otype_oid_content_key_array_image(otype, oid, key):
     require_permissions(["read"])
@@ -164,7 +164,7 @@ def get_otype_oid_content_key_array_image(otype, oid, key):
     return response
 
 
-@application.route("/<allow(observations,trials,models):otype>/<oid>/content/<key>/array/metadata")
+@application.route("/<allow(observations,experiments,artifacts):otype>/<oid>/content/<key>/array/metadata")
 @require_auth
 def get_otype_oid_content_key_array_metadata(otype, oid, key):
     require_permissions(["read"])
@@ -193,7 +193,7 @@ def get_otype_oid_content_key_array_metadata(otype, oid, key):
     return flask.jsonify(metadata=metadata)
 
 
-@application.route("/<allow(observations,trials,models):otype>/<oid>/content/<key>/arrays/metadata")
+@application.route("/<allow(observations,experiments,artifacts):otype>/<oid>/content/<key>/arrays/metadata")
 @require_auth
 def get_otype_oid_content_key_arrays_metadata(otype, oid, key):
     require_permissions(["read"])
@@ -217,7 +217,7 @@ def get_otype_oid_content_key_arrays_metadata(otype, oid, key):
         return flask.jsonify(metadata=metadata)
 
 
-@application.route("/<allow(observations,trials,models):otype>/<oid>/content/<key>/arrays/<array>/data")
+@application.route("/<allow(observations,experiments,artifacts):otype>/<oid>/content/<key>/arrays/<array>/data")
 @require_auth
 def get_otype_oid_content_key_arrays_array_data(otype, oid, key, array):
     require_permissions(["read"])
@@ -237,7 +237,7 @@ def get_otype_oid_content_key_arrays_array_data(otype, oid, key, array):
         return flask.jsonify(data = arrays[array].tolist())
 
 
-@application.route("/<allow(observations,trials,models):otype>/<oid>/content/<key>/image/metadata")
+@application.route("/<allow(observations,experiments,artifacts):otype>/<oid>/content/<key>/image/metadata")
 @require_auth
 def get_otype_oid_content_key_image_metadata(otype, oid, key):
     require_permissions(["read"])
@@ -282,7 +282,7 @@ def get_sorted_objects(session, otype, search, sort, direction):
     return objects
 
 
-@application.route("/<allow(observations,trials,models):otype>/count")
+@application.route("/<allow(observations,experiments,artifacts):otype>/count")
 @require_auth
 def get_otype_count(otype):
     require_permissions(["read"])
@@ -298,7 +298,7 @@ def get_otype_count(otype):
     return flask.jsonify(session=session, otype=otype, search=search, count=len(objects))
 
 
-@application.route("/<allow(observations,trials,models):otype>/index/<oindex>")
+@application.route("/<allow(observations,experiments,artifacts):otype>/index/<oindex>")
 @require_auth
 def get_otype_index_oindex(otype, oindex):
     require_permissions(["read"])
@@ -333,7 +333,7 @@ def get_otype_index_oindex(otype, oindex):
     return flask.jsonify(session=session, otype=otype, search=search, sort=sort, direction=direction, oindex=oindex, oid=oid)
 
 
-@application.route("/<allow(observations,trials,models):otype>/id/<oid>")
+@application.route("/<allow(observations,experiments,artifacts):otype>/id/<oid>")
 @require_auth
 def get_otype_id_oid(otype, oid):
     require_permissions(["read"])
@@ -363,7 +363,7 @@ def get_otype_id_oid(otype, oid):
     return flask.jsonify(session=session, otype=otype, search=search, sort=sort, direction=direction, oid=oid, oindex=oindex)
 
 
-@application.route("/<allow(observations,trials,models):otype>/tags")
+@application.route("/<allow(observations,experiments,artifacts):otype>/tags")
 @require_auth
 def get_otype_tags(otype):
     require_permissions(["read"])
@@ -375,7 +375,7 @@ def get_otype_tags(otype):
     return flask.jsonify(tags=sorted(tags))
 
 
-@application.route("/<allow(observations,trials,models):otype>/<oid>/attributes", methods=["PUT"])
+@application.route("/<allow(observations,experiments,artifacts):otype>/<oid>/attributes", methods=["PUT"])
 @require_auth
 def put_otype_oid_attributes(otype, oid):
     require_permissions(["write"])
@@ -395,7 +395,7 @@ def put_otype_oid_attributes(otype, oid):
     return flask.jsonify()
 
 
-@application.route("/<allow(observations,trials,models):otype>/<oid>/tags", methods=["PUT"])
+@application.route("/<allow(observations,experiments,artifacts):otype>/<oid>/tags", methods=["PUT"])
 @require_auth
 def put_otype_oid_tags(otype, oid):
     require_permissions(["write"])

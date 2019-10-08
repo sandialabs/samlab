@@ -592,7 +592,7 @@ THREE.OBJLoader = ( function() {
 					// This should be detected and a dummy material created (later MultiMaterial and geometry groups).
 					// This requires some care to not create extra material on each smooth value for "normal" obj files.
 					// where explicit usemtl defines geometry groups.
-					// Example asset: examples/models/obj/cerberus/Cerberus.obj
+					// Example asset: examples/artifacts/obj/cerberus/Cerberus.obj
 
 					/*
 					 * http://paulbourke.net/dataformats/obj/
