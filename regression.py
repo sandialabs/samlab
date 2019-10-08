@@ -8,7 +8,7 @@ import subprocess
 parser = argparse.ArgumentParser("Run all Samlab regression tests.")
 arguments = parser.parse_args()
 
-subprocess.call(["coverage", "run", "--source", "samlab", "-m", "behave"])
+subprocess.call(["coverage", "run", "--source", "samlab", "-m", "behave", "--tags", "~@wip"])
 subprocess.call(["coverage", "report"])
 subprocess.call(["coverage", "html", "--directory", ".cover"])
 

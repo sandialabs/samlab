@@ -20,6 +20,7 @@ setup(
     description="Tools for managing machine learning experiments.",
     install_requires=[
         "arrow",
+        "blessings",
         "cachetools",
         "Flask",
         "flask-socketio",
