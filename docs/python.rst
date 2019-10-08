@@ -21,6 +21,7 @@ visualizations.
     python/samlab.deserialize.rst
     python/samlab.favorite.rst
     python/samlab.image.rst
+    python/samlab.interactive.rst
     python/samlab.manager.rst
     python/samlab.mime.rst
     python/samlab.model.rst
