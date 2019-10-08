@@ -2,18 +2,13 @@
 # (NTESS).  Under the terms of Contract DE-NA0003525 with NTESS, the U.S.
 # Government retains certain rights in this software.
 
-import logging
-import pprint
 import threading
 
-# Setup logging.
-log = logging.getLogger(__name__)
-
 # Get the web server.
-from samlab.web.app import application, socketio
+from samlab.web.app import socketio
 
 # Get the database.
-from samlab.web.app.database import database, fs
+from samlab.web.app.database import database
 
 
 def watch_objects(otype):
