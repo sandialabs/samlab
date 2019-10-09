@@ -2,7 +2,7 @@
 # (NTESS).  Under the terms of Contract DE-NA0003525 with NTESS, the U.S.
 # Government retains certain rights in this software.
 
-"""Utilities to simplify training artifacts."""
+"""Utilities to simplify user interaction during experiments."""
 
 import logging
 import os
@@ -17,7 +17,7 @@ log = logging.getLogger(__name__)
 class Stop(object):
     """Handle interrupts gracefully so training can be interrupted.
 
-    Create an instance of :class:`samlab.train.Stop` and check its
+    Create an instance of :class:`samlab.interactive.Stop` and check its
     `triggered` property periodically during training.  If `triggered`
     is `True` then the user has interrupted the process, either with
     CTRL-C or the Jupyter `Interrupt Kernel` button.

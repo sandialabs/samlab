@@ -80,7 +80,7 @@ Use :func:`samlab.experiment.create` to create experiments.
 .. _artifacts:
 
 Artifacts
-------
+---------
 
 Artifacts are the individual machine learning artifacts that you train as part of a
 experiment.  Each artifact will have `content` that stores serialized representations of the

@@ -8,7 +8,7 @@ Javascript API
 ==============
 
 The Samlab Javascript API is primarily of use for Samlab contributors adding
-new features to the :ref:`manager`.  If you just want to run experiments and
+new features to the :ref:`server`.  If you just want to run experiments and
 store results, see the :ref:`python-api`.
 
 .. toctree::

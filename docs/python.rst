@@ -22,7 +22,6 @@ visualizations.
     python/samlab.deserialize.rst
     python/samlab.experiment.rst
     python/samlab.favorite.rst
-    python/samlab.image.rst
     python/samlab.interactive.rst
     python/samlab.mime.rst
     python/samlab.object.rst

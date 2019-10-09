@@ -20,8 +20,8 @@ def select_device():
     Automatically chooses GPUs over CPUs, prioritizing GPUs that are lightly loaded.
 
     .. note::
-    Always returns a valid device, but there is no guarantee that a given device will have
-    sufficient resources for a given computation.
+        Always returns a valid device, but there is no guarantee that a given device will have
+        sufficient resources for a given computation.
     """
     if torch.cuda.is_available():
         GPU = collections.namedtuple("GPU", ["index", "name", "temperature", "utilization", "allocated", "total"])
