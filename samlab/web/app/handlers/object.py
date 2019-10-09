@@ -477,10 +477,10 @@ def get_otype_oid_plots_auto(otype, oid):
                 smoothed_val = last * smoothing + (1 - smoothing) * value
                 smoothed.append(smoothed_val)
                 last = smoothed_val
-            axes.plot(values, color=color, opacity=0.3, style={"stroke-width":1})
-            axes.plot(smoothed, color=color, opacity=1, style={"stroke-width":2})
+            axes.plot(values, color=color, opacity=0.3, style={"stroke-width":1}, title=name)
+            axes.plot(smoothed, color=color, opacity=1, style={"stroke-width":2}, title="{} (smoothed)".format(name))
         else:
-            axes.plot(values, color=color, opacity=1, style={"stroke-width":2})
+            axes.plot(values, color=color, opacity=1, style={"stroke-width":2}, title=name)
 
         series_index += 1
 
