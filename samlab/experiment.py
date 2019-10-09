@@ -11,7 +11,7 @@ import bson.objectid
 import gridfs
 import pymongo
 
-import samlab
+import samlab.object
 
 log = logging.getLogger(__name__)
 
@@ -30,7 +30,7 @@ def create(database, fs, name, attributes=None, content=None, tags=None):
         data through :func:`samlab.serialize.attributes` to ensure that it only
         contains types that can be stored in the database.
     content: dict, optional
-        Dict containing content to be stored for this artifact.  The value for
+        Dict containing content to be stored for this experiment.  The value for
         each key-value pair in the content should be created using functions in
         :mod:`samlab.serialize`.
     tags: list of str, optional
@@ -72,7 +72,7 @@ def create(database, fs, name, attributes=None, content=None, tags=None):
     return database.experiments.insert_one(document).inserted_id
 
 
-def delete(database, fs, eid):
+def delete(database, fs, experiment):
     """Delete a experiment from the :ref:`database <database>`.
 
     Note that this implicitly deletes any artifacts and data owned by the experiment.
@@ -86,24 +86,38 @@ def delete(database, fs, eid):
     """
     assert(isinstance(database, pymongo.database.Database))
     assert(isinstance(fs, gridfs.GridFS))
-    assert(isinstance(eid, bson.objectid.ObjectId))
+    eid = samlab.object.require_objectid(experiment)
 
-    # Delete favorites pointing to artifacts owned by thisexperiment 
+    # Delete favorites pointing to artifacts owned by this experiment.
     for artifact in database.artifacts.find({"experiment": eid}):
         database.favorites.delete_many({"otype": "artifacts", "oid": str(artifact["_id"])})
-    # Delete content owned by artifacts owned by thisexperiment 
+    # Delete content owned by artifacts owned by this experiment.
     for artifact in database.artifacts.find({"experiment": eid}):
         for key, value in artifact["content"].items():
             fs.delete(value["data"])
-    # Delete artifacts owned by thisexperiment 
+    # Delete artifacts owned by this experiment.
     database.artifacts.delete_many({"experiment": eid})
-    # Delete favorites pointing to thisexperiment 
+    # Delete favorites pointing to this experiment.
     database.favorites.delete_many({"otype": "experiments", "oid": str(eid)})
-    # Delete content owned by this experiment
+    # Delete content owned by this experiment.
     for experiment in database.experiments.find({"_id": eid}):
         for key, value in experiment["content"].items():
             fs.delete(value["data"])
-    # Delete the experiment
+    # Delete the experiment.
     database.experiments.delete_many({"_id": eid})
 
 
+def set_attributes(database, fs, experiment, attributes):
+    samlab.object.set_attributes(database, fs, "experiments", experiment, attributes)
+
+
+def set_content(database, fs, experiment, key, value):
+    samlab.object.set_content(database, fs, "experiments", experiment, key, value)
+
+
+def set_name(database, fs, experiment, name):
+    samlab.object.set_name(database, fs, "experiments", experiment, name)
+
+
+def set_tags(database, fs, experiment, tags):
+    samlab.object.set_tags(database, fs, "experiments", experiment, tags)

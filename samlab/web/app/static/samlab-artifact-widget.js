@@ -71,20 +71,15 @@ define([
                         label: "Visualizations",
                         children:
                         [
-                            {label: "Artifact attributes", icon: "fa-align-left", widget: "samlab-attributes-widget", params: {otype: "artifacts", oid: component.artifact.id}},
-                            /*
-                            {label: "Training loss", icon: "fa-line-chart fa-flip-vertical", widget: "samlab-training-loss-widget", params: {id: component.artifact.id}},
-                            {label: "Training accuracy", icon: "fa-line-chart", widget: "samlab-training-accuracy-widget", params: {id: component.artifact.id}},
-                            {label: "Image classification", icon: "fa-picture-o", widget: "samlab-image-classification-widget", params: {id: component.artifact.id}},
-                            {label: "CNN layers", icon: "fa-picture-o", widget: "samlab-cnn-layer-widget", params: {id: component.artifact.id}},
-                            */
+                            {label: "Attributes", icon: "fa-align-left", widget: "samlab-attributes-widget", params: {otype: "artifacts", oid: component.artifact.id}},
+                            {label: "Auto Plot", icon: "fa-line-chart", widget: "samlab-auto-plot-widget", params: {otype: "artifacts", oid: component.artifact.id, name: component.artifact.name}},
                         ],
                     },
                     {
                         label: "Parents",
                         children:
                         [
-                            { label: "Trial", icon: "fa-address-card", widget: "samlab-experiment-widget", params: {id: component.artifact.experiment}},
+                            { label: "Experiment", icon: "fa-address-card", widget: "samlab-experiment-widget", params: {id: component.artifact.experiment}},
                         ],
                     },
                 ];

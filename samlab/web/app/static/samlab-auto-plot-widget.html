@@ -1,0 +1,23 @@
+<div class="widget-content">
+    <div class="container-fluid">
+        <div class="grid-stack-item-handle">
+            <h1 class="h2" data-bind="text:object.name"></h1>
+            <p class="lead">
+                <span class="small text-muted">Artifact <span data-bind="text:object.oid"></span> auto plot</span>
+            </p>
+        </div>
+        <hr></hr>
+        <form class="form-inline">
+            <div class="form-group">
+                <label class="mr-2">Y Scale:</label>
+                <samlab-combo-control class="mr-2" params="current: yscale, items: yscale_items"></samlab-combo-control>
+            </div>
+
+            <div class="form-group">
+                <label class="mr-2">Smoothing:</label>
+                <input type="range" class="custom-range" data-bind="value:smoothing" min="0" max="0.999" step="0.001"></input>
+            </div>
+        </form>
+        <div style="display: flex; justify-content: center; align-items: center;" data-bind="html: plot"></div>
+    </div>
+</div>

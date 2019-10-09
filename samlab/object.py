@@ -19,11 +19,19 @@ import samlab.search
 log = logging.getLogger(__name__)
 
 
+def require_objectid(oid):
+    if isinstance(oid, dict):
+        oid = oid["_id"]
+    if not isinstance(oid, bson.objectid.ObjectId):
+        raise ValueError("A bson.objectid.ObjectId or MongoDB document with _id field is required.")
+    return oid
+
+
 def delete_content(database, fs, otype, oid, key):
     assert(isinstance(database, pymongo.database.Database))
     assert(isinstance(fs, gridfs.GridFS))
     assert(otype in ["observations", "experiments", "artifacts"])
-    assert(isinstance(oid, bson.objectid.ObjectId))
+    oid = require_objectid(oid)
     assert(isinstance(key, str))
 
     obj = database[otype].find_one({"_id": oid})
@@ -58,7 +66,7 @@ def set_attributes(database, fs, otype, oid, attributes):
     assert(isinstance(database, pymongo.database.Database))
     assert(isinstance(fs, gridfs.GridFS))
     assert(otype in ["observations", "experiments", "artifacts"])
-    assert(isinstance(oid, bson.objectid.ObjectId))
+    oid = require_objectid(oid)
     assert(isinstance(attributes, dict))
 
     obj = database[otype].find_one({"_id": oid})
@@ -72,7 +80,7 @@ def set_content(database, fs, otype, oid, key, value):
     assert(isinstance(database, pymongo.database.Database))
     assert(isinstance(fs, gridfs.GridFS))
     assert(otype in ["observations", "experiments", "artifacts"])
-    assert(isinstance(oid, bson.objectid.ObjectId))
+    oid = require_objectid(oid)
     assert(isinstance(key, str))
     assert(isinstance(value, dict))
 
@@ -90,11 +98,25 @@ def set_content(database, fs, otype, oid, key, value):
     database[otype].update_one({"_id": oid}, {"$set": {"content": content, "modified": arrow.utcnow().datetime}})
 
 
+def set_name(database, fs, otype, oid, name):
+    assert(isinstance(database, pymongo.database.Database))
+    assert(isinstance(fs, gridfs.GridFS))
+    assert(otype in ["observations", "experiments", "artifacts"])
+    oid = require_objectid(oid)
+    assert(isinstance(name, str))
+
+    obj = database[otype].find_one({"_id": oid})
+    if obj is None:
+        raise KeyError()
+
+    database[otype].update_one({"_id": oid}, {"$set": {"name": name, "modified": arrow.utcnow().datetime}})
+
+
 def set_tags(database, fs, otype, oid, tags):
     assert(isinstance(database, pymongo.database.Database))
     assert(isinstance(fs, gridfs.GridFS))
     assert(otype in ["observations", "experiments", "artifacts"])
-    assert(isinstance(oid, bson.objectid.ObjectId))
+    oid = require_objectid(oid)
     assert(isinstance(tags, list))
 
     obj = database[otype].find_one({"_id": oid})
@@ -108,7 +130,7 @@ def update_attributes(database, fs, otype, oid, new_attributes):
     assert(isinstance(database, pymongo.database.Database))
     assert(isinstance(fs, gridfs.GridFS))
     assert(otype in ["observations", "experiments", "artifacts"])
-    assert(isinstance(oid, bson.objectid.ObjectId))
+    oid = require_objectid(oid)
     assert(isinstance(new_attributes, dict))
 
     obj = database[otype].find_one({"_id": oid})
