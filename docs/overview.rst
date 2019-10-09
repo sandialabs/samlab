@@ -99,14 +99,14 @@ metrics collected during training, and-so-on.
 Use :func:`samlab.artifact.create` to create artifacts.
 
 
-.. _manager:
+.. _server:
 
-Samlab Manager
---------------
+Samlab Server
+-------------
 
-The Samlab manager is a web server providing a graphical user interface for
-viewing and modifying existing observations, experiments, and artifacts.  Using a web
-browser, you can search for observations, experiments, and artifacts by their labels
-and attributes, edit tags and attributes, provide ground-truth labels for
-newly-acquired observations, explore your experiments using interactive
-visualizations, and more.
+The Samlab server is a web server providing a graphical user interface for
+viewing and modifying existing observations, experiments, and artifacts.  Using
+a web browser, you can search for them by their labels and attributes, edit
+tags and attributes, provide ground-truth labels for newly-acquired
+observations, explore your experiments using interactive visualizations, and
+more.

@@ -126,7 +126,7 @@ class Server(object):
         return "mongodb://%s:%s" % (self._host, self._port)
 
     @property
-    def replica_set(self):
+    def replicaset(self):
         return "samlab"
 
     def stop(self):
@@ -146,7 +146,7 @@ class Server(object):
         log.info("Database server stopped.")
 
 
-def connect(name, uri="mongodb://localhost:27017", replica_set="samlab"):
+def connect(name, uri="mongodb://localhost:27017", replicaset="samlab"):
     """Open a database connection.
 
     Parameters
@@ -155,7 +155,7 @@ def connect(name, uri="mongodb://localhost:27017", replica_set="samlab"):
         Database name.
     uri: string, optional
         Database uri.
-    replica_set: string, optional
+    replicaset: string, optional
         Database replica set.
 
     Returns
@@ -167,9 +167,9 @@ def connect(name, uri="mongodb://localhost:27017", replica_set="samlab"):
     """
     assert(isinstance(name, six.string_types))
     assert(isinstance(uri, six.string_types))
-    assert(isinstance(replica_set, six.string_types))
+    assert(isinstance(replicaset, six.string_types))
 
-    client = pymongo.MongoClient(uri, replicaset=replica_set)
+    client = pymongo.MongoClient(uri, replicaset=replicaset)
     database = client[name]
     fs = gridfs.GridFS(database)
 
@@ -191,7 +191,6 @@ def connect(name, uri="mongodb://localhost:27017", replica_set="samlab"):
     database.observations.create_index("tags")
     database.experiments.create_index([("$**", pymongo.TEXT)])
     database.experiments.create_index("tags")
-
 
     return database, fs
 

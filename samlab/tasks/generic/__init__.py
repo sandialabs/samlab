@@ -15,8 +15,6 @@ import gridfs
 import huey
 import numpy
 import pymongo
-import sklearn.cluster
-import sklearn.preprocessing
 
 import samlab.deserialize
 import samlab.mime
@@ -39,43 +37,6 @@ def get_database(uri, name):
 
 class Queue(object):
     def __init__(self):
-        def cluster_content_impl(database_uri, database_name, otype, key, preprocessor, algorithm):
-            database, fs = get_database(database_uri, database_name)
-            oids = []
-            features = []
-            for o in database[otype].find({"content.%s" % key : {"$exists": True}}):
-                oids.append(o["_id"])
-                features.append(o["content"][key])
-
-            features = [numpy.ravel(samlab.deserialize.array(fs, f)) for f in features]
-            try:
-                features = numpy.row_stack(features)
-            except:
-                raise ValueError("'%s' isn't usable for feature vectors - the vector lengths aren't consistent." % key)
-
-            assert(features.ndim == 2)
-
-            preprocessor_name = preprocessor["name"]
-            if preprocessor_name == "minmax":
-                normalized = sklearn.preprocessing.minmax_scale(features, feature_range=(0, 1))
-            elif preprocessor_name == "scale":
-                normalized = sklearn.preprocessing.scale(features, with_mean=True, with_std=True)
-            else:
-                raise ValueError("Unknown preprocessor: %s" % preprocessor_name)
-
-            algorithm_name = algorithm["name"]
-            if algorithm_name == "dbscan":
-                eps = algorithm["params"]["eps"]
-                min_samples = algorithm["params"]["min-samples"]
-                metric = algorithm["params"]["metric"]
-                labels = sklearn.cluster.DBSCAN(eps=eps, min_samples=min_samples, metric=metric).fit_predict(normalized)
-                distances = [None] * len(labels)
-
-            clusters = [{"oid": oid, "label": label, "distance": distance} for oid, label, distance in zip(oids, labels, distances)]
-
-            return { "clusters": clusters }
-
-
         def export_observations_impl(database_uri, database_name, search):
             database, fs = get_database(database_uri, database_name)
             if search:
@@ -116,7 +77,6 @@ class Queue(object):
 
 
         self._queue = huey.RedisHuey("samlab-generic-queue")
-        self.cluster_content = huey.api.TaskWrapper(self._queue, cluster_content_impl)
         self.export_observations = huey.api.TaskWrapper(self._queue, export_observations_impl)
 
     @property

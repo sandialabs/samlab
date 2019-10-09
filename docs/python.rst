@@ -9,7 +9,7 @@ Python API
 
 The Samlab Python API is what you will use to run experiments and store results
 in the :ref:`database`.  Of course, you can use the Python API to query the
-database and retrieve results if you like, although the :ref:`manager` provides
+database and retrieve results if you like, although the :ref:`server` provides
 a more convenient, web-based user interface with interactivity and builtin
 visualizations.
 
@@ -17,19 +17,19 @@ visualizations.
     :maxdepth: 2
 
     python/samlab.rst
+    python/samlab.artifact.rst
     python/samlab.database.rst
     python/samlab.deserialize.rst
+    python/samlab.experiment.rst
     python/samlab.favorite.rst
     python/samlab.image.rst
     python/samlab.interactive.rst
-    python/samlab.manager.rst
     python/samlab.mime.rst
-    python/samlab.artifact.rst
-    python/samlab.experiment.rst
     python/samlab.object.rst
     python/samlab.observation.rst
     python/samlab.search.rst
     python/samlab.serialize.rst
+    python/samlab.server.rst
     python/samlab.tasks.generic.rst
     python/samlab.tasks.generic.run.rst
     python/samlab.tasks.rst

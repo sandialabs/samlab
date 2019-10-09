@@ -35,7 +35,7 @@ defaults = {
     "certificate": getattr(config, "certificate", None),
     "database_name": getattr(config, "database_name", "samlab"),
     "database_uri": getattr(config, "database_uri", "mongodb://localhost:27017"),
-    "database_replica_set": getattr(config, "database_replica_set", "samlab"),
+    "database_replicaset": getattr(config, "database_replicaset", "samlab"),
     "debug": getattr(config, "debug", False),
     "host": getattr(config, "host", "127.0.0.1"),
     "key": getattr(config, "key", None),
@@ -50,7 +50,7 @@ parser.set_defaults(**defaults)
 parser.add_argument("--certificate", help="TLS certificate.  Default: %(default)s")
 parser.add_argument("--database-name", help="Database containing experiments to be analyzed. Default: %(default)s")
 parser.add_argument("--database-uri", help="Database connection string. Default: %(default)s")
-parser.add_argument("--database-replica-set", help="Database replica set name. Default: %(default)s")
+parser.add_argument("--database-replicaset", help="Database replica set name. Default: %(default)s")
 parser.add_argument("--debug", action="store_true", help="Enable server debugging.")
 parser.add_argument("--host", help="Host interface for incoming connections. Default: %(default)s")
 parser.add_argument("--key", help="TLS private key.  Default: %(default)s")
@@ -70,7 +70,7 @@ application.config["certificate"] = arguments.certificate
 application.config["check-credentials"] = config.credential_check if hasattr(config, "credential_check") else samlab.web.app.credentials.pass_empty()
 application.config["database-name"] = arguments.database_name
 application.config["database-uri"] = arguments.database_uri
-application.config["database-replica-set"] = arguments.database_replica_set
+application.config["database-replicaset"] = arguments.database_replicaset
 application.config["debug"] = arguments.debug
 application.config["host"] = arguments.host
 application.config["key"] = arguments.key

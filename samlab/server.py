@@ -2,7 +2,7 @@
 # (NTESS).  Under the terms of Contract DE-NA0003525 with NTESS, the U.S.
 # Government retains certain rights in this software.
 
-"""Functionality for working programmatically with the :ref:`manager`."""
+"""Functionality for working programmatically with the :ref:`server`."""
 
 from __future__ import absolute_import, division, print_function, unicode_literals
 
@@ -21,25 +21,25 @@ log = logging.getLogger(__name__)
 
 
 class Server(object):
-    """Create an instance of :ref:`manager` for unit tests and tutorials.
+    """Create an instance of :ref:`server` for unit tests and tutorials.
 
     For your real work you will likely want to setup and administer a dedicated
-    instance of Samlab Manager; this class makes it easy to start a temporary
+    instance of Samlab Server; this class makes it easy to start a temporary
     instance for use in tutorials and our unit tests::
 
         >>> database = samlab.database.Server()
-        >>> manager = samlab.manager.Server(database="testing", uri=database.uri)
+        >>> server = samlab.server.Server(database="testing", uri=database.uri)
 
-        ... Use the manager here ...
+        ... Use the server here ...
 
-        >>> manager.stop()
+        >>> server.stop()
         >>> database.stop()
 
     Alternatively, you can use the server object as a context manager for automatic cleanup::
 
         >>> with samlab.database.Server() as database:
-        >>>     with samlab.manager.Server(database="testing", uri=database.uri) as manager:
-        ...         ... Use the manager here ...
+        >>>     with samlab.server.Server(database="testing", uri=database.uri) as server:
+        ...         ... Use the server here ...
 
         >>> # Both servers are automatically cleaned-up outside the `with` block.
 
@@ -50,16 +50,16 @@ class Server(object):
         Name of a MongoDB database.  The database will be created automatically if it doesn't exist.
     database_uri: string, required
         URI of a running MongoDB server.
-    database_replica_set: string, required
+    database_replicaset: string, required
         Name of an existing server replica set.
     host: string, optional
         Host interface for binding.  Defaults to localhost to prevent outside connections.
     port: int, optional
         Port for binding.  Defaults to a randomly-chosen open port.
     quiet: bool, optional
-        if `True` (the default), suppresses output from the samlab manager process.
+        if `True` (the default), suppresses output from the samlab server process.
     """
-    def __init__(self, database_name, database_uri, database_replica_set, host=None, port=None, quiet=True):
+    def __init__(self, database_name, database_uri, database_replicaset, host=None, port=None, quiet=True):
         # Choose an interface for binding.
         if host is None:
             host = "127.0.0.1"
@@ -86,27 +86,19 @@ class Server(object):
         log.info("Starting generic task queue: %s", " ".join(command))
         self._generic_task_queue = subprocess.Popen(command, stdout=output, stderr=output)
 
-        # Start the gpu task queue
-        command = ["huey_consumer", "samlab.tasks.gpu.run.queue"]
-        log.info("Starting gpu task queue: %s", " ".join(command))
-        env = copy.deepcopy(os.environ)
-        env["SAMLAB_QUEUE_NAME"] = "samlab-gpu-0"
-        env["CUDA_VISIBLE_DEVICES"] = "0"
-        self._gpu_task_queue = subprocess.Popen(command, env=env, stdout=output, stderr=output)
-
         # Start the server
-        command = ["samlab-manager", "--database-name", database_name, "--database-uri", database_uri, "--database-replica-set", database_replica_set, "--host", host, "--port", str(port)]
-        log.info("Starting Samlab manager: %s", " ".join(command))
+        command = ["samlab-server", "--database-name", database_name, "--database-uri", database_uri, "--database-replicaset", database_replicaset, "--host", host, "--port", str(port)]
+        log.info("Starting Samlab server: %s", " ".join(command))
         self._server = subprocess.Popen(command, stdout=output, stderr=output)
 
         self._database_name = database_name
         self._database_uri = database_uri
-        self._database_replica_set = database_replica_set
+        self._database_replicaset = database_replicaset
         self._host = host
         self._port = port
 
     def __repr__(self):
-        return "samlab.manager.Server(database_name=%r, database_uri=%r, database_replica_set=%r, host=%r, port=%r)" % (self._database_name, self._database_uri, self._database_replica_set, self._host, self._port)
+        return "samlab.server.Server(database_name=%r, database_uri=%r, database_replicaset=%r, host=%r, port=%r)" % (self._database_name, self._database_uri, self._database_replicaset, self._host, self._port)
 
     def __enter__(self):
         return self
@@ -121,7 +113,7 @@ class Server(object):
         return "http://%s:%s" % (self._host, self._port)
 
     def open_browser(self):
-        """Open a web browser pointed to the running manager."""
+        """Open a web browser pointed to the running server."""
         for i in range(10):
             try:
                 requests.get(self.uri + "/ready", proxies={"http": None})
@@ -129,29 +121,23 @@ class Server(object):
                 return
             except:
                 time.sleep(1.0)
-        raise RuntimeError("Couldn't connect to samlab-manager server.")
+        raise RuntimeError("Couldn't connect to samlab server.")
 
     def stop(self):
-        """Stop the running samlab-manager instance.
+        """Stop the running samlab-server instance.
 
         Raises
         ------
         RuntimeError, if called more than once, or called on an instance used a as a context manager.
         """
         if not self._server:
-            raise RuntimeError("samlab-manager server already stopped.")
+            raise RuntimeError("samlab server already stopped.")
 
-        log.info("Stopping Samlab manager.")
+        log.info("Stopping Samlab server.")
         self._server.terminate()
         self._server.wait()
         self._server = None
-        log.info("Samlab manager stopped.")
-
-        log.info("Stopping gpu task queue.")
-        self._gpu_task_queue.terminate()
-        self._gpu_task_queue.wait()
-        self._gpu_task_queue = None
-        log.info("GPU task queue stopped.")
+        log.info("Samlab server stopped.")
 
         log.info("Stopping generic task queue.")
         self._generic_task_queue.terminate()

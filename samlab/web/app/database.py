@@ -18,6 +18,6 @@ if "database-name" in application.config and "database-uri" in application.confi
     database, fs = samlab.database.connect(
         name=application.config["database-name"],
         uri=application.config["database-uri"],
-        replica_set=application.config["database-replica-set"],
+        replicaset=application.config["database-replicaset"],
         )
 
