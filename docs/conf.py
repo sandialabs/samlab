@@ -44,21 +44,12 @@ class module_proxy(object):
             return module_proxy()
 
 for module_name in [
-        "hyperopt",
-        "hyperopt.mongoexp",
         "numpy",
         "numpy.core.multiarray",
         "numpy.linalg",
         "numpy.ma",
         "numpy.random",
         "numpy.testing",
-        "scipy",
-        "scipy.stats",
-        "sklearn",
-        "sklearn.cluster",
-        "sklearn.metrics",
-        "sklearn.model_selection",
-        "sklearn.preprocessing",
         "torch",
         "torch.cuda",
         ]:

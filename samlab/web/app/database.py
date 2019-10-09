@@ -14,7 +14,7 @@ database = None
 fs = None
 
 # Create the database connection.
-if "database-name" in application.config and "database-uri" in application.config:
+if "database-name" in application.config and "database-uri" in application.config and "database-replicaset" in application.config:
     database, fs = samlab.database.connect(
         name=application.config["database-name"],
         uri=application.config["database-uri"],

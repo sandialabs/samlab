@@ -25,7 +25,6 @@ setup(
         "Flask",
         "flask-socketio",
         "huey",
-        "hyperopt",
         "ldap3",
         "nose",
         "pymongo>=3.6",
