@@ -12,7 +12,6 @@ import arrow
 import bson.objectid
 import gridfs
 import pymongo
-import six
 
 
 log = logging.getLogger(__name__)
@@ -43,7 +42,7 @@ def create(database, fs, experiment, name, attributes=None, content=None, tags=N
     assert(isinstance(database, pymongo.database.Database))
     assert(isinstance(fs, gridfs.GridFS))
     assert(isinstance(experiment, bson.objectid.ObjectId))
-    assert(isinstance(name, six.string_types))
+    assert(isinstance(name, str))
 
     if attributes is None:
         attributes = {}
@@ -58,7 +57,7 @@ def create(database, fs, experiment, name, attributes=None, content=None, tags=N
         tags = []
     assert(isinstance(tags, list))
     for tag in tags:
-        assert(isinstance(tag, six.string_types))
+        assert(isinstance(tag, str))
 
     document = {
         "attributes": attributes,

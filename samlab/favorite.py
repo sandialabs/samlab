@@ -5,7 +5,6 @@
 """Functionality for working with :ref:`favorites`."""
 
 import pymongo
-import six
 
 
 def create(database, otype, oid, name):
@@ -22,9 +21,9 @@ def create(database, otype, oid, name):
         Human-readable label for the favorite.
     """
     assert(isinstance(database, pymongo.database.Database))
-    assert(isinstance(otype, six.string_types))
-    assert(isinstance(oid, six.string_types))
-    assert(isinstance(name, six.string_types))
+    assert(isinstance(otype, str))
+    assert(isinstance(oid, str))
+    assert(isinstance(name, str))
 
     database.favorites.update_many({"otype": otype, "oid": oid}, {"$set": {"otype": otype, "oid": oid, "name": name}}, upsert=True)
 
@@ -41,7 +40,7 @@ def delete(database, otype, oid):
         ID of the object to be un-favorited.
     """
     assert(isinstance(database, pymongo.database.Database))
-    assert(isinstance(otype, six.string_types))
-    assert(isinstance(oid, six.string_types))
+    assert(isinstance(otype, str))
+    assert(isinstance(oid, str))
 
     database.favorites.delete_many({"otype": otype, "oid": oid})

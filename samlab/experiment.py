@@ -10,7 +10,6 @@ import arrow
 import bson.objectid
 import gridfs
 import pymongo
-import six
 
 import samlab
 
@@ -44,7 +43,7 @@ def create(database, fs, name, attributes=None, content=None, tags=None):
     """
     assert(isinstance(database, pymongo.database.Database))
     assert(isinstance(fs, gridfs.GridFS))
-    assert(isinstance(name, six.string_types))
+    assert(isinstance(name, str))
 
     if attributes is None:
         attributes = {}
@@ -59,7 +58,7 @@ def create(database, fs, name, attributes=None, content=None, tags=None):
         tags = []
     assert(isinstance(tags, list))
     for tag in tags:
-        assert(isinstance(tag, six.string_types))
+        assert(isinstance(tag, str))
 
 
     document = {

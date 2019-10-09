@@ -16,7 +16,6 @@ import bson
 import gridfs
 import numpy
 import pymongo
-import six
 
 import samlab
 import samlab.deserialize
@@ -65,7 +64,7 @@ def create(database, fs, attributes=None, content=None, tags=None):
         tags = []
     assert(isinstance(tags, list))
     for tag in tags:
-        assert(isinstance(tag, six.string_types))
+        assert(isinstance(tag, str))
 
     document = {
         "attributes": attributes,
@@ -145,7 +144,7 @@ def create_many(database, fs):
                 tags = []
             assert(isinstance(tags, list))
             for tag in tags:
-                assert(isinstance(tag, six.string_types))
+                assert(isinstance(tag, str))
 
             document = {
                 "attributes": attributes,
@@ -249,7 +248,7 @@ def set_tag(database, tag, state, filter=None, sort=None):
     sort: sort specification compatible with :meth:`pymongo.collection.Collection.find`, optional.
     """
     assert(isinstance(database, pymongo.database.Database))
-    assert(isinstance(tag, six.string_types))
+    assert(isinstance(tag, str))
 
     if filter is None:
         filter = {}
@@ -302,8 +301,8 @@ def resize_images(database, size, target_key, source_key="original", filter=None
     assert(isinstance(database, pymongo.database.Database))
     assert(isinstance(size, tuple))
     assert(len(size) == 2)
-    assert(isinstance(target_key, six.string_types))
-    assert(isinstance(source_key, six.string_types))
+    assert(isinstance(target_key, str))
+    assert(isinstance(source_key, str))
 
     import PIL.Image
 

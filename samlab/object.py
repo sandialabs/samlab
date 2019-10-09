@@ -13,7 +13,6 @@ import arrow
 import bson.objectid
 import gridfs
 import pymongo
-import six
 
 import samlab.search
 
@@ -40,7 +39,7 @@ def set_content(database, fs, otype, oid, key, value):
     assert(isinstance(fs, gridfs.GridFS))
     assert(otype in ["observations", "experiments", "artifacts"])
     assert(isinstance(oid, bson.objectid.ObjectId))
-    assert(isinstance(key, six.string_types))
+    assert(isinstance(key, str))
     assert(isinstance(value, dict))
 
     obj = database[otype].find_one({"_id": oid})
@@ -62,7 +61,7 @@ def delete_content(database, fs, otype, oid, key):
     assert(isinstance(fs, gridfs.GridFS))
     assert(otype in ["observations", "experiments", "artifacts"])
     assert(isinstance(oid, bson.objectid.ObjectId))
-    assert(isinstance(key, six.string_types))
+    assert(isinstance(key, str))
 
     obj = database[otype].find_one({"_id": oid})
     if obj is None:
@@ -159,7 +158,7 @@ class _IdSearchVisitor(object):
 def search(database, otype, search):
     assert(isinstance(database, pymongo.database.Database))
     assert(otype in ["observations", "experiments", "artifacts"])
-    assert(isinstance(search, six.string_types))
+    assert(isinstance(search, str))
 
     visitor = samlab.search.parser().parse(search).accept(_IdSearchVisitor(database[otype]))
     return visitor.ids

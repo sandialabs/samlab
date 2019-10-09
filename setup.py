@@ -31,7 +31,6 @@ setup(
         "pyparsing",
         "redis",
         "requests",
-        "six",
         "toyplot",
     ],
     maintainer="Timothy M. Shead",
