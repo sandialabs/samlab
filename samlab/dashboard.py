@@ -2,7 +2,7 @@
 # (NTESS).  Under the terms of Contract DE-NA0003525 with NTESS, the U.S.
 # Government retains certain rights in this software.
 
-"""Functionality for working programmatically with the :ref:`server`."""
+"""Functionality for working programmatically with the :ref:`dashboard`."""
 
 from __future__ import absolute_import, division, print_function, unicode_literals
 
@@ -21,14 +21,14 @@ log = logging.getLogger(__name__)
 
 
 class Server(object):
-    """Create an instance of :ref:`server` for unit tests and tutorials.
+    """Create an instance of :ref:`dashboard` for unit tests and tutorials.
 
     For your real work you will likely want to setup and administer a dedicated
-    instance of Samlab Server; this class makes it easy to start a temporary
+    instance of the Samlab dashboard server; this class makes it easy to start a temporary
     instance for use in tutorials and our unit tests::
 
         >>> database = samlab.database.Server()
-        >>> server = samlab.server.Server(database="testing", uri=database.uri)
+        >>> server = samlab.dashboard.Server(database="testing", uri=database.uri, replicaset=database.replicaset)
 
         ... Use the server here ...
 
@@ -38,7 +38,7 @@ class Server(object):
     Alternatively, you can use the server object as a context manager for automatic cleanup::
 
         >>> with samlab.database.Server() as database:
-        >>>     with samlab.server.Server(database="testing", uri=database.uri) as server:
+        >>>     with samlab.dashboard.Server(database="testing", uri=database.uri, replicaset=database.replicaset) as server:
         ...         ... Use the server here ...
 
         >>> # Both servers are automatically cleaned-up outside the `with` block.

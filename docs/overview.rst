@@ -99,12 +99,12 @@ metrics collected during training, and-so-on.
 Use :func:`samlab.artifact.create` to create artifacts.
 
 
-.. _server:
+.. _dashboard:
 
-Samlab Server
--------------
+Dashboard
+---------
 
-The Samlab server is a web server providing a graphical user interface for
+The Samlab dashboard is a web server providing a graphical user interface for
 viewing and modifying existing observations, experiments, and artifacts.  Using
 a web browser, you can search for them by their labels and attributes, edit
 tags and attributes, provide ground-truth labels for newly-acquired

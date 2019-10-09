@@ -149,8 +149,8 @@ class _IdSearchVisitor(object):
         result |= set([o["_id"] for o in self._collection.find(filter={"attributes." + term: {"$exists": True}}, projection={"_id": True})])
         # Match documents whose ID matches the search term.
         try:
-            tid = bson.objectid.ObjectId(term)
-            result |= set([o["_id"] for o in self._collection.find(filter={"_id": tid}, projection={"_id": True})])
+            oid = bson.objectid.ObjectId(term)
+            result |= set([o["_id"] for o in self._collection.find(filter={"_id": oid}, projection={"_id": True})])
         except:
             pass
         self._stack.append(result)

@@ -73,7 +73,7 @@ def create(database, fs, name, attributes=None, content=None, tags=None):
     return database.experiments.insert_one(document).inserted_id
 
 
-def delete(database, fs, tid):
+def delete(database, fs, eid):
     """Delete a experiment from the :ref:`database <database>`.
 
     Note that this implicitly deletes any artifacts and data owned by the experiment.
@@ -82,29 +82,29 @@ def delete(database, fs, tid):
     ----------
     database: database object returned by :func:`samlab.database.connect`, required
     fs: :class:`gridfs.GridFS`, required
-    tid: :class:`bson.objectid.ObjectId`, required
+    eid: :class:`bson.objectid.ObjectId`, required
         Unique database identifier for the experiment to be deleted.
     """
     assert(isinstance(database, pymongo.database.Database))
     assert(isinstance(fs, gridfs.GridFS))
-    assert(isinstance(tid, bson.objectid.ObjectId))
+    assert(isinstance(eid, bson.objectid.ObjectId))
 
     # Delete favorites pointing to artifacts owned by thisexperiment 
-    for artifact in database.artifacts.find({"experiment": tid}):
+    for artifact in database.artifacts.find({"experiment": eid}):
         database.favorites.delete_many({"otype": "artifacts", "oid": str(artifact["_id"])})
     # Delete content owned by artifacts owned by thisexperiment 
-    for artifact in database.artifacts.find({"experiment": tid}):
+    for artifact in database.artifacts.find({"experiment": eid}):
         for key, value in artifact["content"].items():
             fs.delete(value["data"])
     # Delete artifacts owned by thisexperiment 
-    database.artifacts.delete_many({"experiment": tid})
+    database.artifacts.delete_many({"experiment": eid})
     # Delete favorites pointing to thisexperiment 
-    database.favorites.delete_many({"otype": "experiments", "oid": str(tid)})
+    database.favorites.delete_many({"otype": "experiments", "oid": str(eid)})
     # Delete content owned by this experiment
-    for experiment in database.experiments.find({"_id": tid}):
+    for experiment in database.experiments.find({"_id": eid}):
         for key, value in experiment["content"].items():
             fs.delete(value["data"])
     # Delete the experiment
-    database.experiments.delete_many({"_id": tid})
+    database.experiments.delete_many({"_id": eid})
 
 

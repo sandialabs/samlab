@@ -72,7 +72,7 @@ def create(database, fs, experiment, name, attributes=None, content=None, tags=N
     return database.artifacts.insert_one(document).inserted_id
 
 
-def delete(database, fs, mid):
+def delete(database, fs, aid):
     """Delete a artifact from the :ref:`database <database>`.
 
     Note that this implicitly deletes any data owned by the artifact.
@@ -81,20 +81,20 @@ def delete(database, fs, mid):
     ----------
     database: database object returned by :func:`samlab.database.connect`, required
     fs: :class:`gridfs.GridFS`, required
-    mid: :class:`bson.objectid.ObjectId`, required
+    aid: :class:`bson.objectid.ObjectId`, required
         Unique database identifier for the artifact to be deleted.
     """
     assert(isinstance(database, pymongo.database.Database))
     assert(isinstance(fs, gridfs.GridFS))
-    assert(isinstance(mid, bson.objectid.ObjectId))
+    assert(isinstance(aid, bson.objectid.ObjectId))
 
     # Delete favorites pointing to thisartifact 
-    database.favorites.delete_many({"otype": "artifacts", "oid": str(mid)})
+    database.favorites.delete_many({"otype": "artifacts", "oid": str(aid)})
     # Delete content owned by thisartifact 
-    for artifact in database.artifacts.find({"_id": mid}):
+    for artifact in database.artifacts.find({"_id": aid}):
         for key, value in artifact["content"].items():
             fs.delete(value["data"])
     # Delete theartifact 
-    database.artifacts.delete_many({"_id": mid})
+    database.artifacts.delete_many({"_id": aid})
 
 

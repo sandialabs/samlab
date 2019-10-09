@@ -46,7 +46,7 @@ setup(
         },
     scripts = [
         "bin/samlab-gputop",
-        "bin/samlab-server",
+        "bin/samlab-dashboard",
         ],
     version=re.search(
         r"^__version__ = ['\"]([^'\"]*)['\"]",
