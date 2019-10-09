@@ -14,7 +14,6 @@ import flask
 import pymongo
 import toyplot.bitmap
 import toyplot.color
-import toyplot.html
 
 import samlab.deserialize
 import samlab.object

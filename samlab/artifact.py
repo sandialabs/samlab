@@ -13,6 +13,7 @@ import bson.objectid
 import gridfs
 import pymongo
 
+import samlab.object
 
 log = logging.getLogger(__name__)
 
@@ -97,3 +98,5 @@ def delete(database, fs, aid):
     database.artifacts.delete_many({"_id": aid})
 
 
+def set_tags(database, fs, aid, tags):
+    samlab.object.set_tags(database, fs, "artifacts", aid, tags)

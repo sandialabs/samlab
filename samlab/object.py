@@ -19,6 +19,26 @@ import samlab.search
 log = logging.getLogger(__name__)
 
 
+def delete_content(database, fs, otype, oid, key):
+    assert(isinstance(database, pymongo.database.Database))
+    assert(isinstance(fs, gridfs.GridFS))
+    assert(otype in ["observations", "experiments", "artifacts"])
+    assert(isinstance(oid, bson.objectid.ObjectId))
+    assert(isinstance(key, str))
+
+    obj = database[otype].find_one({"_id": oid})
+    if obj is None:
+        raise KeyError()
+    content = obj["content"]
+
+    # Delete existing content, if any
+    if key in content:
+        fs.delete(content[key]["data"])
+        del content[key]
+
+    database[otype].update_one({"_id": oid}, {"$set": {"content": content, "modified": arrow.utcnow().datetime}})
+
+
 def load(database, otype, filter=None, oids=None):
     """Load database objects of the given type."""
     assert(isinstance(database, pymongo.database.Database))
@@ -32,6 +52,20 @@ def load(database, otype, filter=None, oids=None):
         return [database[otype].find_one({"_id": oid}) for oid in oids]
 
     return list(database[otype].find())
+
+
+def set_attributes(database, fs, otype, oid, attributes):
+    assert(isinstance(database, pymongo.database.Database))
+    assert(isinstance(fs, gridfs.GridFS))
+    assert(otype in ["observations", "experiments", "artifacts"])
+    assert(isinstance(oid, bson.objectid.ObjectId))
+    assert(isinstance(attributes, dict))
+
+    obj = database[otype].find_one({"_id": oid})
+    if obj is None:
+        raise KeyError()
+
+    database[otype].update_one({"_id": oid}, {"$set": {"attributes": attributes, "modified": arrow.utcnow().datetime}})
 
 
 def set_content(database, fs, otype, oid, key, value):
@@ -53,41 +87,21 @@ def set_content(database, fs, otype, oid, key, value):
         del content[key]
 
     content[key] = {"data": fs.put(value["data"]), "content-type": value["content-type"], "filename": value.get("filename", None)}
-    database[otype].update_one({"_id": oid}, {"$set": {"content": content}})
+    database[otype].update_one({"_id": oid}, {"$set": {"content": content, "modified": arrow.utcnow().datetime}})
 
 
-def delete_content(database, fs, otype, oid, key):
+def set_tags(database, fs, otype, oid, tags):
     assert(isinstance(database, pymongo.database.Database))
     assert(isinstance(fs, gridfs.GridFS))
     assert(otype in ["observations", "experiments", "artifacts"])
     assert(isinstance(oid, bson.objectid.ObjectId))
-    assert(isinstance(key, str))
-
-    obj = database[otype].find_one({"_id": oid})
-    if obj is None:
-        raise KeyError()
-    content = obj["content"]
-
-    # Delete existing content, if any
-    if key in content:
-        fs.delete(content[key]["data"])
-        del content[key]
-
-    database[otype].update_one({"_id": oid}, {"$set": {"content": content}})
-
-
-def set_attributes(database, fs, otype, oid, attributes):
-    assert(isinstance(database, pymongo.database.Database))
-    assert(isinstance(fs, gridfs.GridFS))
-    assert(otype in ["observations", "experiments", "artifacts"])
-    assert(isinstance(oid, bson.objectid.ObjectId))
-    assert(isinstance(attributes, dict))
+    assert(isinstance(tags, list))
 
     obj = database[otype].find_one({"_id": oid})
     if obj is None:
         raise KeyError()
 
-    database[otype].update_one({"_id": oid}, {"$set": {"attributes": attributes}})
+    database[otype].update_one({"_id": oid}, {"$set": {"tags": tags, "modified": arrow.utcnow().datetime}})
 
 
 def update_attributes(database, fs, otype, oid, new_attributes):
@@ -103,7 +117,7 @@ def update_attributes(database, fs, otype, oid, new_attributes):
 
     attributes = obj["attributes"]
     attributes.update(new_attributes)
-    database[otype].update_one({"_id": oid}, {"$set": {"attributes": attributes}})
+    database[otype].update_one({"_id": oid}, {"$set": {"attributes": attributes, "modified": arrow.utcnow().datetime}})
 
 
 class _IdSearchVisitor(object):

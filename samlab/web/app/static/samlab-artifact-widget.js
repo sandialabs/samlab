@@ -71,7 +71,7 @@ define([
                         label: "Visualizations",
                         children:
                         [
-                            {label: "Model attributes", icon: "fa-align-left", widget: "samlab-artifact-attributes-widget", params: {id: component.artifact.id}},
+                            {label: "Artifact attributes", icon: "fa-align-left", widget: "samlab-attributes-widget", params: {otype: "artifacts", oid: component.artifact.id}},
                             /*
                             {label: "Training loss", icon: "fa-line-chart fa-flip-vertical", widget: "samlab-training-loss-widget", params: {id: component.artifact.id}},
                             {label: "Training accuracy", icon: "fa-line-chart", widget: "samlab-training-accuracy-widget", params: {id: component.artifact.id}},
@@ -91,7 +91,7 @@ define([
 
                 component.view_attributes = function()
                 {
-                    dashboard.add_widget("samlab-artifact-attributes-widget", {id: component.artifact.id});
+                    dashboard.add_widget("samlab-attributes-widget", {otype: "artifacts", oid: component.artifact.id});
                 }
 
                 component.activate_item = function(item)
