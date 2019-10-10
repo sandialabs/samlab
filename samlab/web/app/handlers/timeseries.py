@@ -35,6 +35,17 @@ def get_timeseries_keys():
     return flask.jsonify(result)
 
 
+@application.route("/timeseries/keys/series")
+@require_auth
+def get_timeseries_keys_series():
+    require_permissions(["read"])
+
+    result = {}
+    result["keys"] = database.timeseries.distinct("key")
+
+    return flask.jsonify(result)
+
+
 @application.route("/timeseries/plots/auto")
 @require_auth
 def get_timeseries_plots_auto():
