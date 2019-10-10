@@ -36,7 +36,7 @@ def delete_otype_oid_content_key(otype, oid, key):
     require_permissions(["delete"])
     oid = bson.objectid.ObjectId(oid)
     try:
-        samlab.object.delete_content(database, fs, otype, oid, key)
+        samlab.object.set_content(database, fs, otype, oid, key, value=None)
     except KeyError:
         flask.abort(404)
     return flask.jsonify()

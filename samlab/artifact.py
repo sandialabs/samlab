@@ -39,6 +39,11 @@ def create(database, fs, experiment, name, attributes=None, content=None, tags=N
         :mod:`samlab.serialize`.
     tags: list of str, optional
         Tags to be stored with this artifact.
+
+    Returns
+    -------
+    document: dict
+        Newly created artifact document, including the assigned id.
     """
     assert(isinstance(database, pymongo.database.Database))
     assert(isinstance(fs, gridfs.GridFS))
@@ -69,7 +74,9 @@ def create(database, fs, experiment, name, attributes=None, content=None, tags=N
         "experiment": eid,
     }
 
-    return database.artifacts.insert_one(document).inserted_id
+    document["_id"] = database.artifacts.insert_one(document).inserted_id
+
+    return document
 
 
 def delete(database, fs, artifact):

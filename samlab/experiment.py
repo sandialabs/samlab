@@ -38,8 +38,8 @@ def create(database, fs, name, attributes=None, content=None, tags=None):
 
     Returns
     -------
-    id: :class:`bson.objectid.ObjectId`
-        Unique database identifier for the newly created experiment.
+    experiment: dict
+        Newly created experiment, including its unique id.
     """
     assert(isinstance(database, pymongo.database.Database))
     assert(isinstance(fs, gridfs.GridFS))
@@ -69,7 +69,9 @@ def create(database, fs, name, attributes=None, content=None, tags=None):
         "tags": tags,
     }
 
-    return database.experiments.insert_one(document).inserted_id
+    document["_id"] = database.experiments.insert_one(document).inserted_id
+
+    return document
 
 
 def delete(database, fs, experiment):

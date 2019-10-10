@@ -221,23 +221,9 @@ class Connection(object):
         ------
         RuntimeError, if called more than once, or called on an instance used as a context manager.
         """
-        if not self._server:
-            raise RuntimeError("samlab server already stopped.")
+        if not self._database:
+            raise RuntimeError("Dashboard connection already closed.")
 
-        log.info("Stopping Samlab server.")
-        self._server.terminate()
-        self._server.wait()
-        self._server = None
-        log.info("Samlab server stopped.")
-
-        log.info("Stopping generic task queue.")
-        self._generic_task_queue.terminate()
-        self._generic_task_queue.wait()
-        self._generic_task_queue = None
-        log.info("Generic task queue stopped.")
-
-        log.info("Stopping message queue.")
-        self._message_queue.terminate()
-        self._message_queue.wait()
-        self._message_queue = None
-        log.info("Message queue stopped.")
+        self._database = None
+        self._fs = None
+        self._experiment = None
