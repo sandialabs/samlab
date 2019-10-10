@@ -94,6 +94,7 @@ import samlab.web.app.handlers.favorite
 import samlab.web.app.handlers.layout
 import samlab.web.app.handlers.object
 import samlab.web.app.handlers.observation
+import samlab.web.app.handlers.timeseries
 import samlab.web.app.watch
 
 # Start the server.

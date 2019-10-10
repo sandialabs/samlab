@@ -32,6 +32,7 @@ visualizations.
     python/samlab.tasks.generic.rst
     python/samlab.tasks.generic.run.rst
     python/samlab.tasks.rst
+    python/samlab.timeseries.rst
     python/samlab.torch.rst
     python/samlab.train.rst
     python/samlab.web.rst
@@ -50,5 +51,5 @@ visualizations.
     python/samlab.web.app.handlers.layout.rst
     python/samlab.web.app.handlers.object.rst
     python/samlab.web.app.handlers.observation.rst
-    python/samlab.web.app.handlers.rst
-    python/samlab.web.app.watch_database.rst
+    python/samlab.web.app.handlers.timeseries.rst
+    python/samlab.web.app.watch.rst

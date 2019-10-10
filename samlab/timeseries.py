@@ -15,14 +15,16 @@ import pymongo
 log = logging.getLogger(__name__)
 
 
-def add_scalar(database, fs, key, step, value):
+def add_scalar(database, fs, key, series, step, value):
     assert(isinstance(database, pymongo.database.Database))
     assert(isinstance(fs, gridfs.GridFS))
     assert(isinstance(key, str))
+    assert(isinstance(series, str))
     assert(isinstance(step, numbers.Number))
 
     document = {
         "key": key,
+        "series": series,
         "step": step,
         "value": value,
         "timestamp": arrow.utcnow().datetime,
