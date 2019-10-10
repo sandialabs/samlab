@@ -32,9 +32,17 @@ define([
 					yscale: widget.params.yscale,
                 });
 
+                var timeseries_changed_subscription = null;
+                var timeseries_deleted_subscription = timeseries.notify_deleted(function()
+                {
+                    log("timeseries deleted");
+                    component.load_plot();
+                });
+
                 component.dispose = function()
                 {
                     timeseries_changed_subscription.dispose();
+                    timeseries_deleted_subscription.dispose();
                 }
 
                 component.yscale_items =
@@ -52,8 +60,6 @@ define([
                 {
                     component.load_plot();
                 });
-
-                var timeseries_changed_subscription = null;
 
                 component.register_subscription = ko.computed(function()
                 {

@@ -13,9 +13,11 @@ define([
 
     var module = mapping.fromJS({
         changed: null,
+        deleted: null,
     });
 
     module.changed.extend({notify: "always"});
+    module.deleted.extend({rateLimit: {timeout: 500, method: "notifyWhenChangesStop"}});
 
     socket.on("timeseries-changed", function(object)
     {
@@ -23,18 +25,30 @@ define([
         module.changed(object);
     });
 
+    socket.on("timeseries-deleted", function(object)
+    {
+        module.deleted();
+    });
+
     module.notify_changed = function(key, callback)
     {
         var key = ko.unwrap(key)
         return module.changed.subscribe(function(object)
         {
-            if(object.key.startsWith(key))
+            if(object.key == undefined || object.key.startsWith(key))
             {
                 callback();
             }
         });
     }
 
+    module.notify_deleted = function(callback)
+    {
+        return module.deleted.subscribe(function()
+        {
+            callback();
+        });
+    }
 
     return module;
 });

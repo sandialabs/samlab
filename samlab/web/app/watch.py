@@ -35,11 +35,11 @@ def watch_timeseries():
     for change in database.timeseries.watch():
         operation = change["operationType"]
 
-        if operation in ["insert", "update"]:
+        if operation == "insert":
             key = change["fullDocument"]["key"]
             socketio.emit("timeseries-changed", {"key": key})
         elif operation == "delete":
-            socketio.emit("timeseries-changed", {})
+            socketio.emit("timeseries-deleted", {})
 
 
 threading.Thread(target=watch_objects, args=("artifacts",), daemon=True).start()
