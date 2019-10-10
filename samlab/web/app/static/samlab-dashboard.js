@@ -50,12 +50,12 @@ define(
         operations:
         [
             {
-                label: "Visualize",
+                label: "Lists",
                 children:
                 [
                     { label: "Observations", icon: "fa-list", component: "samlab-observations-widget", params: {}},
                     { label: "Experiments", icon: "fa-address-card", component: "samlab-experiments-widget"},
-                    { label: "Timeseries", icon: "fa-line-chart", component: "samlab-timeseries-plot-widget"},
+                    { label: "Timeseries", icon: "fa-line-chart", component: "samlab-timeseries-widget"},
                 ],
             },
             {

@@ -14,13 +14,7 @@ import subprocess
 import time
 import webbrowser
 
-import arrow
 import requests
-
-import samlab.artifact
-import samlab.database
-import samlab.experiment
-import samlab.serialize
 
 log = logging.getLogger(__name__)
 
@@ -170,60 +164,3 @@ class Server(object):
         log.info("Message queue stopped.")
 
 
-class Connection(object):
-    def __init__(self, trial_name=None, experiment_name=None, database_name="samlab", database_uri="mongodb://localhost:27017", database_replicaset="samlab", dashboard_uri="http://127.0.0.1:4000"):
-
-        if trial_name is None:
-            trial_name = arrow.now().format("YYYY-MM-DDTHH-mm-ss")
-
-        if experiment_name is None:
-            experiment_name = "experiment"
-
-        self._trial_name = trial_name
-        self._experiment_name = experiment_name
-        self._database_name = database_name
-        self._database_uri = database_uri
-        self._database_replicaset = database_replicaset
-        self._dashboard_uri = dashboard_uri
-        self._database, self._fs = samlab.database.connect(database_name, database_uri, database_replicaset)
-
-        self._experiment = self._database.experiments.find_one({"name": self._experiment_name})
-        if self._experiment:
-            self._experiment = self._experiment["_id"]
-        else:
-            self._experiment = samlab.experiment.create(self._database, self._fs, self._experiment_name)
-
-    def __repr__(self):
-        return "samlab.dashboard.Connection(trial_name=%r, experiment_name=%r, database_name=%r, database_uri=%r, database_replicaset=%r, dashboard_uri=%r)" % (self._trial_name, self._experiment_name, self._database_name, self._database_uri, self._database_replicaset, self._dashboard_uri)
-
-    def __enter__(self):
-        return self
-
-    def __exit__(self, exc_type, exc_val, exc_tb):
-        self.close()
-        return False
-
-    def add_scalar(self, key, value):
-        artifact = self._database.artifacts.find_one({"name": self._trial_name, "experiment": self._experiment})
-        if artifact:
-            artifact = artifact["_id"]
-        else:
-            artifact = samlab.artifact.create(self._database, self._fs, self._experiment, key)
-
-    def open_browser(self):
-        """Open a web browser pointed to the running server."""
-        webbrowser.open(self._dashboard_uri)
-
-    def close(self):
-        """Close the connection to the Samlab dashboard server.
-
-        Raises
-        ------
-        RuntimeError, if called more than once, or called on an instance used as a context manager.
-        """
-        if not self._database:
-            raise RuntimeError("Dashboard connection already closed.")
-
-        self._database = None
-        self._fs = None
-        self._experiment = None

@@ -6,49 +6,51 @@ define([
     "debug",
     "knockout",
     "knockout.mapping",
+    "samlab-server",
     "samlab-socket",
-    ], function(debug, ko, mapping, socket)
+    ], function(debug, ko, mapping, server, socket)
 {
     var log = debug("samlab-timeseries");
 
     var module = mapping.fromJS({
-        changed: null,
-        deleted: null,
+        keys: [],
+        sample: {
+            created: null,
+            updated: null,
+            deleted: null,
+        },
     });
 
-    module.changed.extend({notify: "always"});
-    module.deleted.extend({rateLimit: {timeout: 500, method: "notifyWhenChangesStop"}});
+    module.sample.created.extend({notify: "always"});
+    module.sample.updated.extend({notify: "always"});
+    module.sample.deleted.extend({notify: "always", rateLimit: {timeout: 500, method: "notifyWhenChangesStop"}});
 
-    socket.on("timeseries-changed", function(object)
+    socket.on("timeseries-sample-created", function(object)
     {
-        log("timeseries changed", object);
-        module.changed(object);
+        module.sample.created(object);
     });
 
-    socket.on("timeseries-deleted", function(object)
+    socket.on("timeseries-sample-updated", function(object)
     {
-        module.deleted();
+        module.sample.updated(object);
     });
 
-    module.notify_changed = function(key, callback)
+    socket.on("timeseries-sample-deleted", function(object)
     {
-        var key = ko.unwrap(key)
-        return module.changed.subscribe(function(object)
-        {
-            if(object.key == undefined || object.key.startsWith(key))
-            {
-                callback();
-            }
-        });
-    }
+        module.sample.deleted(object);
+    });
 
-    module.notify_deleted = function(callback)
+    // Load timeseries keys at startup and anytime there are changes, but limit the rate.
+    var load_keys = ko.computed(function()
     {
-        return module.deleted.subscribe(function()
-        {
-            callback();
-        });
-    }
+        log("Loading timeseries keys.");
+        server.load_json(module, "/timeseries/keys");
+
+        // Register the observables we want to track
+        module.sample.created();
+        module.sample.updated();
+        module.sample.deleted();
+    }).extend({notify: "always", rateLimit: {timeout: 500, method: "notifyWhenChangesStop"}});
 
     return module;
 });

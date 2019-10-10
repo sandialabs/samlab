@@ -37,9 +37,12 @@ def watch_timeseries():
 
         if operation == "insert":
             key = change["fullDocument"]["key"]
-            socketio.emit("timeseries-changed", {"key": key})
+            socketio.emit("timeseries-sample-created", {"key": key})
+        elif operation == "update":
+            key = change["fullDocument"]["key"]
+            socketio.emit("timeseries-sample-updated", {"key": key})
         elif operation == "delete":
-            socketio.emit("timeseries-deleted", {})
+            socketio.emit("timeseries-sample-deleted", {})
 
 
 threading.Thread(target=watch_objects, args=("artifacts",), daemon=True).start()

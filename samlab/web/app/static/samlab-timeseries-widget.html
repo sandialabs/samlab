@@ -1,0 +1,22 @@
+<div class="widget-content">
+    <div class="container-fluid">
+        <div class="grid-stack-item-handle">
+            <h1 class="h2">Timeseries</h1>
+        </div>
+        <hr></hr>
+        <table class="table table-borderless">
+            <thead>
+                <tr>
+                    <th></th>
+                    <th>Name</th>
+                </tr>
+            </thead>
+            <tbody data-bind="foreach: keys">
+                <tr>
+                    <td></td>
+                    <td><a href="#" data-bind="click: $component.open_timeseries"><span data-bind="text: $data"></span></a></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

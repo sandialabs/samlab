@@ -32,50 +32,21 @@ define([
 					yscale: widget.params.yscale,
                 });
 
-                var timeseries_changed_subscription = null;
-                var timeseries_deleted_subscription = timeseries.notify_deleted(function()
-                {
-                    log("timeseries deleted");
-                    component.load_plot();
-                });
-
-                component.dispose = function()
-                {
-                    timeseries_changed_subscription.dispose();
-                    timeseries_deleted_subscription.dispose();
-                }
-
                 component.yscale_items =
                 [
                     {key: "linear", label: "Linear"},
                     {key: "log", label: "Log"},
                 ];
 
-                component.load_plot = function()
+                // Load the plot at startup and anytime there are changes, but limit the rate.
+                var load_plot = ko.computed(function()
                 {
                     server.load_json(component, "/timeseries/plots/auto?key=" + component.timeseries.key() + "&yscale=" + component.yscale() + "&smoothing=" + component.smoothing());
-                };
 
-                component.auto_load_plot = ko.computed(function()
-                {
-                    component.load_plot();
-                });
-
-                component.register_subscription = ko.computed(function()
-                {
-                    log("register_subscription", component.timeseries.key());
-
-                    if(timeseries_changed_subscription)
-                    {
-                        timeseries_changed_subscription.dispose();
-                    }
-
-                    timeseries_changed_subscription = timeseries.notify_changed(component.timeseries.key(), function()
-                    {
-                        log("timeseries_changed");
-                        component.load_plot();
-                    });
-                });
+                    timeseries.sample.created();
+                    timeseries.sample.updated();
+                    timeseries.sample.deleted();
+                }).extend({rateLimit: {timeout: 500}});
 
                 return component;
             }
