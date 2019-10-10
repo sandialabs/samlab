@@ -58,8 +58,10 @@ class Server(object):
         Port for binding.  Defaults to a randomly-chosen open port.
     quiet: bool, optional
         if `True` (the default), suppresses output from the samlab server process.
+    debug: bool, optional
+        if `True`, allow samlab server debugging.
     """
-    def __init__(self, database_name, database_uri, database_replicaset, host=None, port=None, quiet=True):
+    def __init__(self, database_name, database_uri, database_replicaset, host=None, port=None, quiet=True, debug=False):
         # Choose an interface for binding.
         if host is None:
             host = "127.0.0.1"
@@ -88,6 +90,8 @@ class Server(object):
 
         # Start the server
         command = ["samlab-server", "--database-name", database_name, "--database-uri", database_uri, "--database-replicaset", database_replicaset, "--host", host, "--port", str(port)]
+        if debug:
+            command += ["--debug"]
         log.info("Starting Samlab server: %s", " ".join(command))
         self._server = subprocess.Popen(command, stdout=output, stderr=output)
 
