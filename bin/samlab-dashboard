@@ -39,7 +39,7 @@ defaults = {
     "debug": getattr(config, "debug", False),
     "host": getattr(config, "host", "127.0.0.1"),
     "key": getattr(config, "key", None),
-    "port": getattr(config, "port", 9000),
+    "port": getattr(config, "port", 4000),
     "server_name": getattr(config, "server_name", None),
     "server_description": getattr(config, "server_description", None),
     "session_timeout": getattr(config, "session_timeout", 15 * 60),

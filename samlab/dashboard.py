@@ -7,7 +7,6 @@
 from __future__ import absolute_import, division, print_function, unicode_literals
 
 import contextlib
-import copy
 import logging
 import os
 import socket
@@ -15,7 +14,13 @@ import subprocess
 import time
 import webbrowser
 
+import arrow
 import requests
+
+import samlab.artifact
+import samlab.database
+import samlab.experiment
+import samlab.serialize
 
 log = logging.getLogger(__name__)
 
@@ -61,16 +66,23 @@ class Server(object):
     debug: bool, optional
         if `True`, allow samlab server debugging.
     """
-    def __init__(self, database_name, database_uri, database_replicaset, host=None, port=None, quiet=True, debug=False):
+    def __init__(self, database_name="samlab", database_uri="mongodb://localhost:27017", database_replicaset="samlab", host=None, port=None, quiet=True, debug=False):
         # Choose an interface for binding.
         if host is None:
             host = "127.0.0.1"
 
         # Find an available port.
         if port is None:
-            with contextlib.closing(socket.socket(socket.AF_INET, socket.SOCK_STREAM)) as sock:
-                sock.bind((host, 0))
-                port = sock.getsockname()[1]
+            # Try using the default.
+            try:
+                port = 4000
+                with contextlib.closing(socket.socket(socket.AF_INET, socket.SOCK_STREAM)) as sock:
+                    sock.bind((host, port))
+            except Exception as e:
+                # Ask the OS for an available port.
+                with contextlib.closing(socket.socket(socket.AF_INET, socket.SOCK_STREAM)) as sock:
+                    sock.bind((host, 0))
+                    port = sock.getsockname()[1]
 
         # Optionally suppress output from the server.
         if quiet:
@@ -89,7 +101,7 @@ class Server(object):
         self._generic_task_queue = subprocess.Popen(command, stdout=output, stderr=output)
 
         # Start the server
-        command = ["samlab-server", "--database-name", database_name, "--database-uri", database_uri, "--database-replicaset", database_replicaset, "--host", host, "--port", str(port)]
+        command = ["samlab-dashboard", "--database-name", database_name, "--database-uri", database_uri, "--database-replicaset", database_replicaset, "--host", host, "--port", str(port)]
         if debug:
             command += ["--debug"]
         log.info("Starting Samlab server: %s", " ".join(command))
@@ -100,9 +112,11 @@ class Server(object):
         self._database_replicaset = database_replicaset
         self._host = host
         self._port = port
+        self._quiet = quiet
+        self._debug = debug
 
     def __repr__(self):
-        return "samlab.server.Server(database_name=%r, database_uri=%r, database_replicaset=%r, host=%r, port=%r)" % (self._database_name, self._database_uri, self._database_replicaset, self._host, self._port)
+        return "samlab.dashboard.Server(database_name=%r, database_uri=%r, database_replicaset=%r, host=%r, port=%r, quiet=%r, debug=%r)" % (self._database_name, self._database_uri, self._database_replicaset, self._host, self._port, self._quiet, self._debug)
 
     def __enter__(self):
         return self
@@ -133,6 +147,79 @@ class Server(object):
         Raises
         ------
         RuntimeError, if called more than once, or called on an instance used a as a context manager.
+        """
+        if not self._server:
+            raise RuntimeError("samlab server already stopped.")
+
+        log.info("Stopping Samlab server.")
+        self._server.terminate()
+        self._server.wait()
+        self._server = None
+        log.info("Samlab server stopped.")
+
+        log.info("Stopping generic task queue.")
+        self._generic_task_queue.terminate()
+        self._generic_task_queue.wait()
+        self._generic_task_queue = None
+        log.info("Generic task queue stopped.")
+
+        log.info("Stopping message queue.")
+        self._message_queue.terminate()
+        self._message_queue.wait()
+        self._message_queue = None
+        log.info("Message queue stopped.")
+
+
+class Connection(object):
+    def __init__(self, trial_name=None, experiment_name=None, database_name="samlab", database_uri="mongodb://localhost:27017", database_replicaset="samlab", dashboard_uri="http://127.0.0.1:4000"):
+
+        if trial_name is None:
+            trial_name = arrow.now().format("YYYY-MM-DDTHH-mm-ss")
+
+        if experiment_name is None:
+            experiment_name = "experiment"
+
+        self._trial_name = trial_name
+        self._experiment_name = experiment_name
+        self._database_name = database_name
+        self._database_uri = database_uri
+        self._database_replicaset = database_replicaset
+        self._dashboard_uri = dashboard_uri
+        self._database, self._fs = samlab.database.connect(database_name, database_uri, database_replicaset)
+
+        self._experiment = self._database.experiments.find_one({"name": self._experiment_name})
+        if self._experiment:
+            self._experiment = self._experiment["_id"]
+        else:
+            self._experiment = samlab.experiment.create(self._database, self._fs, self._experiment_name)
+
+    def __repr__(self):
+        return "samlab.dashboard.Connection(trial_name=%r, experiment_name=%r, database_name=%r, database_uri=%r, database_replicaset=%r, dashboard_uri=%r)" % (self._trial_name, self._experiment_name, self._database_name, self._database_uri, self._database_replicaset, self._dashboard_uri)
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        self.close()
+        return False
+
+    def add_scalar(self, key, value):
+        artifact = self._database.artifacts.find_one({"name": self._trial_name, "experiment": self._experiment})
+        if artifact:
+            artifact = artifact["_id"]
+        else:
+            artifact = samlab.artifact.create(self._database, self._fs, self._experiment, key)
+
+    def open_browser(self):
+        """Open a web browser pointed to the running server."""
+        webbrowser.open(self._dashboard_uri)
+
+    def close(self):
+        """Close the connection to the Samlab dashboard server.
+
+        Raises
+        ------
+        RuntimeError, if called more than once, or called on an instance used as a context manager.
         """
         if not self._server:
             raise RuntimeError("samlab server already stopped.")

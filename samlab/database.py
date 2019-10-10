@@ -82,9 +82,16 @@ class Server(object):
 
         # Find an available port.
         if port is None:
-            with contextlib.closing(socket.socket(socket.AF_INET, socket.SOCK_STREAM)) as sock:
-                sock.bind((host, 0))
-                port = sock.getsockname()[1]
+            # Try the default.
+            try:
+                port = 27017
+                with contextlib.closing(socket.socket(socket.AF_INET, socket.SOCK_STREAM)) as sock:
+                    sock.bind((host, port))
+            except:
+                # Let the OS assign a port.
+                with contextlib.closing(socket.socket(socket.AF_INET, socket.SOCK_STREAM)) as sock:
+                    sock.bind((host, 0))
+                    port = sock.getsockname()[1]
 
         # Optionally suppress output from the server.
         if quiet:
@@ -145,7 +152,7 @@ class Server(object):
         log.info("Database server stopped.")
 
 
-def connect(name, uri="mongodb://localhost:27017", replicaset="samlab"):
+def connect(name="samlab", uri="mongodb://localhost:27017", replicaset="samlab"):
     """Open a database connection.
 
     Parameters
