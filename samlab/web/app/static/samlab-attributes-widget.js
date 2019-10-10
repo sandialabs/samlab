@@ -3,35 +3,41 @@
 // Government retains certain rights in this software.
 
 define([
+    "debug",
     "knockout",
     "knockout.mapping",
     "samlab-dashboard",
     "samlab-object",
     "samlab-server",
-    ], function(ko, mapping, dashboard, object, server)
+    ], function(debug, ko, mapping, dashboard, object, server)
 {
-    var component_name = "samlab-artifact-attributes-widget";
+    var log = debug("samlab-attributes-widget");
+
+    var component_name = "samlab-attributes-widget";
     ko.components.register(component_name,
     {
         viewModel:
         {
             createViewModel: function(widget, component_info)
             {
+                log(widget);
+
                 var component = mapping.fromJS(
                 {
-                    artifact:
+                    object:
                     {
-                        id: widget.params.id,
+                        otype: widget.params.otype,
+                        oid: widget.params.oid,
                     },
-                    artifact_attributes_pre: "Loading \u2026",
+                    attributes_pre: "Loading \u2026",
                 });
 
-                var auto_delete_subscription = dashboard.auto_delete(widget, "artifacts", widget.params.id);
-                var artifact_changed_subscription = object.notify_changed("artifacts", widget.params.id, function()
+                var auto_delete_subscription = dashboard.auto_delete(widget, widget.params.otype, widget.params.oid);
+                var artifact_changed_subscription = object.notify_changed(widget.params.otype, widget.params.oid, function()
                 {
-                    server.load_text("/artifacts/" + component.artifact.id() + "/attributes/pre", function(value)
+                    server.load_text("/" + component.object.otype() + "/" + component.object.oid() + "/attributes/pre", function(value)
                     {
-                        component.artifact_attributes_pre(value);
+                        component.attributes_pre(value);
                     });
                 });
 
@@ -42,9 +48,9 @@ define([
                     artifact_changed_subscription.dispose();
                 }
 
-                server.load_text("/artifacts/" + component.artifact.id() + "/attributes/pre", function(value)
+                server.load_text("/" + component.object.otype() + "/" + component.object.oid() + "/attributes/pre", function(value)
                 {
-                    component.artifact_attributes_pre(value);
+                    component.attributes_pre(value);
                 });
 
                 return component;

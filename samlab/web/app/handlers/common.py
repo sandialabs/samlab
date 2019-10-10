@@ -8,7 +8,6 @@ import pprint
 import arrow
 import bson
 import flask
-import six
 
 # Setup logging.
 log = logging.getLogger(__name__)
@@ -21,7 +20,7 @@ from samlab.web.app.database import database, fs
 
 
 def get_otype_oid(otype, oid):
-    assert(isinstance(otype, six.string_types))
+    assert(isinstance(otype, str))
     assert(isinstance(oid, bson.objectid.ObjectId))
 
     require_permissions(["read"])

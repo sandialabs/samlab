@@ -10,9 +10,8 @@ import arrow
 import bson.objectid
 import gridfs
 import pymongo
-import six
 
-import samlab
+import samlab.object
 
 log = logging.getLogger(__name__)
 
@@ -31,7 +30,7 @@ def create(database, fs, name, attributes=None, content=None, tags=None):
         data through :func:`samlab.serialize.attributes` to ensure that it only
         contains types that can be stored in the database.
     content: dict, optional
-        Dict containing content to be stored for this artifact.  The value for
+        Dict containing content to be stored for this experiment.  The value for
         each key-value pair in the content should be created using functions in
         :mod:`samlab.serialize`.
     tags: list of str, optional
@@ -44,7 +43,7 @@ def create(database, fs, name, attributes=None, content=None, tags=None):
     """
     assert(isinstance(database, pymongo.database.Database))
     assert(isinstance(fs, gridfs.GridFS))
-    assert(isinstance(name, six.string_types))
+    assert(isinstance(name, str))
 
     if attributes is None:
         attributes = {}
@@ -59,7 +58,7 @@ def create(database, fs, name, attributes=None, content=None, tags=None):
         tags = []
     assert(isinstance(tags, list))
     for tag in tags:
-        assert(isinstance(tag, six.string_types))
+        assert(isinstance(tag, str))
 
 
     document = {
@@ -73,7 +72,7 @@ def create(database, fs, name, attributes=None, content=None, tags=None):
     return database.experiments.insert_one(document).inserted_id
 
 
-def delete(database, fs, tid):
+def delete(database, fs, experiment):
     """Delete a experiment from the :ref:`database <database>`.
 
     Note that this implicitly deletes any artifacts and data owned by the experiment.
@@ -82,29 +81,43 @@ def delete(database, fs, tid):
     ----------
     database: database object returned by :func:`samlab.database.connect`, required
     fs: :class:`gridfs.GridFS`, required
-    tid: :class:`bson.objectid.ObjectId`, required
+    eid: :class:`bson.objectid.ObjectId`, required
         Unique database identifier for the experiment to be deleted.
     """
     assert(isinstance(database, pymongo.database.Database))
     assert(isinstance(fs, gridfs.GridFS))
-    assert(isinstance(tid, bson.objectid.ObjectId))
+    eid = samlab.object.require_objectid(experiment)
 
-    # Delete favorites pointing to artifacts owned by thisexperiment 
-    for artifact in database.artifacts.find({"experiment": tid}):
+    # Delete favorites pointing to artifacts owned by this experiment.
+    for artifact in database.artifacts.find({"experiment": eid}):
         database.favorites.delete_many({"otype": "artifacts", "oid": str(artifact["_id"])})
-    # Delete content owned by artifacts owned by thisexperiment 
-    for artifact in database.artifacts.find({"experiment": tid}):
+    # Delete content owned by artifacts owned by this experiment.
+    for artifact in database.artifacts.find({"experiment": eid}):
         for key, value in artifact["content"].items():
             fs.delete(value["data"])
-    # Delete artifacts owned by thisexperiment 
-    database.artifacts.delete_many({"experiment": tid})
-    # Delete favorites pointing to thisexperiment 
-    database.favorites.delete_many({"otype": "experiments", "oid": str(tid)})
-    # Delete content owned by this experiment
-    for experiment in database.experiments.find({"_id": tid}):
+    # Delete artifacts owned by this experiment.
+    database.artifacts.delete_many({"experiment": eid})
+    # Delete favorites pointing to this experiment.
+    database.favorites.delete_many({"otype": "experiments", "oid": str(eid)})
+    # Delete content owned by this experiment.
+    for experiment in database.experiments.find({"_id": eid}):
         for key, value in experiment["content"].items():
             fs.delete(value["data"])
-    # Delete the experiment
-    database.experiments.delete_many({"_id": tid})
+    # Delete the experiment.
+    database.experiments.delete_many({"_id": eid})
 
 
+def set_attributes(database, fs, experiment, attributes):
+    samlab.object.set_attributes(database, fs, "experiments", experiment, attributes)
+
+
+def set_content(database, fs, experiment, key, value):
+    samlab.object.set_content(database, fs, "experiments", experiment, key, value)
+
+
+def set_name(database, fs, experiment, name):
+    samlab.object.set_name(database, fs, "experiments", experiment, name)
+
+
+def set_tags(database, fs, experiment, tags):
+    samlab.object.set_tags(database, fs, "experiments", experiment, tags)

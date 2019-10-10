@@ -31,7 +31,6 @@ setup(
         "pyparsing",
         "redis",
         "requests",
-        "six",
         "toyplot",
     ],
     maintainer="Timothy M. Shead",
@@ -46,7 +45,7 @@ setup(
         },
     scripts = [
         "bin/samlab-gputop",
-        "bin/samlab-server",
+        "bin/samlab-dashboard",
         ],
     version=re.search(
         r"^__version__ = ['\"]([^'\"]*)['\"]",

@@ -67,6 +67,13 @@ define([
                 component.groups =
                 [
                     {
+                        label: "Visualizations",
+                        children:
+                        [
+                            {label: "Attributes", icon: "fa-align-left", widget: "samlab-attributes-widget", params: {otype: "experiments", oid: component.experiment.id}},
+                        ],
+                    }, 
+                    {
                         label: "Artifacts",
                         children: component.artifacts.map(function(artifact)
                         {
@@ -74,6 +81,11 @@ define([
                         }),
                     },
                 ];
+
+                component.view_attributes = function()
+                {
+                    dashboard.add_widget("samlab-attributes-widget", {otype: "experiments", oid: component.experiment.id});
+                }
 
                 component.activate_item = function(item)
                 {

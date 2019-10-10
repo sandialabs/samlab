@@ -17,7 +17,6 @@ import time
 
 import gridfs
 import pymongo
-import six
 
 
 log = logging.getLogger(__name__)
@@ -165,9 +164,9 @@ def connect(name, uri="mongodb://localhost:27017", replicaset="samlab"):
     fs: :class:`gridfs.GridFS`
         Database file storage object.
     """
-    assert(isinstance(name, six.string_types))
-    assert(isinstance(uri, six.string_types))
-    assert(isinstance(replicaset, six.string_types))
+    assert(isinstance(name, str))
+    assert(isinstance(uri, str))
+    assert(isinstance(replicaset, str))
 
     client = pymongo.MongoClient(uri, replicaset=replicaset)
     database = client[name]

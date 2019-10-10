@@ -11,6 +11,7 @@ import arrow
 import bson
 import cachetools.func
 import flask
+import numpy
 import pymongo
 import toyplot.bitmap
 import toyplot.color
@@ -426,4 +427,66 @@ def put_otype_oid_tags(otype, oid):
     socketio.emit("tags-changed", otype) # TODO: Handle this in samlab.web.app.watch_database
 
     return flask.jsonify()
+
+
+@application.route("/<allow(observations,experiments,artifacts):otype>/<oid>/plots/auto")
+@require_auth
+def get_otype_oid_plots_auto(otype, oid):
+    require_permissions(["read"])
+
+    width = int(flask.request.args.get("width", 500))
+    height = int(flask.request.args.get("height", 500))
+    yscale = flask.request.args.get("yscale", "linear")
+    smoothing = float(flask.request.args.get("smoothing", "0"))
+
+    oid = bson.objectid.ObjectId(oid)
+    obj = database[otype].find_one({"_id": oid})
+
+    colormap = toyplot.color.brewer.map("Set2")
+    canvas = toyplot.Canvas(width=width, height=height)
+    axes = canvas.cartesian(xlabel="Step", yscale=yscale)
+
+    # Iterate over all content in the object.
+    series_index = 0
+    for name, content in obj["content"].items():
+        # Only consider numpy array collections.
+        if content["content-type"] != "application/x-numpy-arrays":
+            continue
+        arrays = samlab.deserialize.arrays(fs, content)
+
+        # We require an array named "values" that contains a timeseries.
+        if "values" not in arrays:
+            continue
+        values = arrays["values"]
+
+        # Only consider 1D arrays.
+        if values.ndim != 1:
+            continue
+
+        # We require an array of numbers.
+        if not issubclass(values.dtype.type, numpy.number):
+            continue
+
+        # Optionally smooth the data.
+        color = colormap.color(series_index)
+
+        if smoothing:
+            smoothed = []
+            last = values[0]
+            for value in values:
+                smoothed_val = last * smoothing + (1 - smoothing) * value
+                smoothed.append(smoothed_val)
+                last = smoothed_val
+            axes.plot(values, color=color, opacity=0.3, style={"stroke-width":1}, title=name)
+            axes.plot(smoothed, color=color, opacity=1, style={"stroke-width":2}, title="{} (smoothed)".format(name))
+        else:
+            axes.plot(values, color=color, opacity=1, style={"stroke-width":2}, title=name)
+
+        series_index += 1
+
+    result = {}
+    result["plot"] = toyplot.html.tostring(canvas)
+
+    return flask.jsonify(result)
+
 

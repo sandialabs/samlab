@@ -1,11 +1,10 @@
 <div class="widget-content">
     <div class="container-fluid">
         <div class="grid-stack-item-handle">
-            <h1 class="h2">Experiment</h1>
+            <h1 class="h2" data-bind="text:experiment.name">Experiment</h1>
             <p class="lead">
-                <span data-bind="text: experiment.name"></span>
-                <span class="small text-muted" data-bind="text: experiment.id"></span>
                 <samlab-favorite-control params="otype: 'experiments', oid: experiment.id"></samlab-favorite-control>
+                <span class="small text-muted">Experiment <span data-bind="text: experiment.id"></span></span>
             </p>
         </div>
         <hr></hr>
@@ -44,7 +43,9 @@
 
             <dt class="col-md-3">Attributes:</dt>
             <dd class="col-md-9">
+                <a href="#" data-bind="click: view_attributes">
                     <pre class="mt-1 text-primary" data-bind="text:experiment['attributes-pre']"></pre>
+                </a>
             </dd>
 
             <dt class="col-md-3">Tags:</dt>

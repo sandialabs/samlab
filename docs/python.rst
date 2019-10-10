@@ -18,6 +18,7 @@ visualizations.
 
     python/samlab.rst
     python/samlab.artifact.rst
+    python/samlab.dashboard.rst
     python/samlab.database.rst
     python/samlab.deserialize.rst
     python/samlab.experiment.rst
@@ -28,7 +29,6 @@ visualizations.
     python/samlab.observation.rst
     python/samlab.search.rst
     python/samlab.serialize.rst
-    python/samlab.server.rst
     python/samlab.tasks.generic.rst
     python/samlab.tasks.generic.run.rst
     python/samlab.tasks.rst

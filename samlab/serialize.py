@@ -15,7 +15,6 @@ import tempfile
 
 import numpy
 import pymongo
-import six
 
 
 log = logging.getLogger(__name__)
@@ -105,7 +104,7 @@ def image(img):
     """
     import PIL.Image
 
-    if isinstance(img, six.string_types):
+    if isinstance(img, str):
         path = img
         base_path, extension = os.path.splitext(path)
         extension = extension.lower()
@@ -152,7 +151,7 @@ def obj_mesh(path):
 
 
 def generic_path(path, content_type):
-    assert(isinstance(path, six.string_types))
+    assert(isinstance(path, str))
     assert(os.path.exists(path))
 
     return {
