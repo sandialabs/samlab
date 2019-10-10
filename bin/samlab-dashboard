@@ -94,7 +94,7 @@ import samlab.web.app.handlers.favorite
 import samlab.web.app.handlers.layout
 import samlab.web.app.handlers.object
 import samlab.web.app.handlers.observation
-import samlab.web.app.watch_database
+import samlab.web.app.watch
 
 # Start the server.
 if application.config["certificate"] and application.config["key"]:

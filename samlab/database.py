@@ -181,22 +181,26 @@ def connect(name="samlab", uri="mongodb://localhost:27017", replicaset="samlab")
 
     # Force the database into existence, so we can follow change streams.
     with contextlib.suppress(pymongo.errors.CollectionInvalid):
-        database.create_collection("layouts")
-    with contextlib.suppress(pymongo.errors.CollectionInvalid):
         database.create_collection("artifacts")
+    with contextlib.suppress(pymongo.errors.CollectionInvalid):
+        database.create_collection("experiments")
     with contextlib.suppress(pymongo.errors.CollectionInvalid):
         database.create_collection("observations")
     with contextlib.suppress(pymongo.errors.CollectionInvalid):
-        database.create_collection("experiments")
+        database.create_collection("layouts")
+    with contextlib.suppress(pymongo.errors.CollectionInvalid):
+        database.create_collection("timeseries")
 
     # Create database indexes
     database.layouts.create_index("lid")
     database.artifacts.create_index([("$**", pymongo.TEXT)])
     database.artifacts.create_index("tags")
-    database.observations.create_index([("$**", pymongo.TEXT)])
-    database.observations.create_index("tags")
     database.experiments.create_index([("$**", pymongo.TEXT)])
     database.experiments.create_index("tags")
+    database.observations.create_index([("$**", pymongo.TEXT)])
+    database.observations.create_index("tags")
+    database.timeseries.create_index([("$**", pymongo.TEXT)])
+    database.timeseries.create_index("key")
 
     return database, fs
 

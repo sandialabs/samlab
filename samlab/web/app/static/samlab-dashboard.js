@@ -16,6 +16,7 @@ define(
         "samlab-object",
         "samlab-permissions",
         "samlab-server",
+        "samlab-timeseries",
         "text!samlab-dashboard.html",
         "URI",
         "css!jquery.gridster.css",
@@ -25,7 +26,7 @@ define(
         "samlab-dropdown-body",
         "samlab-favorite-control",
         "samlab-gridster-binding",
-    ], function(debug, jquery, ko, mapping, lodash, mousetrap, dom, favorite, notify, object, permissions, server, template, URI)
+    ], function(debug, jquery, ko, mapping, lodash, mousetrap, dom, favorite, notify, object, permissions, server, timeseries, template, URI)
 {
     var log = debug("samlab-dashboard");
 

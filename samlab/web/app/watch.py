@@ -2,7 +2,10 @@
 # (NTESS).  Under the terms of Contract DE-NA0003525 with NTESS, the U.S.
 # Government retains certain rights in this software.
 
+import logging
 import threading
+
+log = logging.getLogger(__name__)
 
 # Get the web server.
 from samlab.web.app import socketio
@@ -12,6 +15,8 @@ from samlab.web.app.database import database
 
 
 def watch_objects(otype):
+    log.info("Watching {} for changes.".format(otype))
+
     for change in database[otype].watch():
         operation = change["operationType"]
         oid = change["documentKey"]["_id"]
@@ -24,9 +29,19 @@ def watch_objects(otype):
             socketio.emit("object-deleted", {"otype": otype, "oid": oid})
 
 
-threading.Thread(target=watch_objects, args=("observations",), daemon=True).start()
-threading.Thread(target=watch_objects, args=("experiments",), daemon=True).start()
+def watch_timeseries():
+    log.info("Watching timeseries for changes.")
+
+    for change in database.timeseries.watch():
+        operation = change["operationType"]
+        key = change["fullDocument"]["key"]
+        socketio.emit("timeseries-changed", {"key": key})
+
+
 threading.Thread(target=watch_objects, args=("artifacts",), daemon=True).start()
 threading.Thread(target=watch_objects, args=("deliveries",), daemon=True).start()
+threading.Thread(target=watch_objects, args=("experiments",), daemon=True).start()
 threading.Thread(target=watch_objects, args=("favorites",), daemon=True).start()
+threading.Thread(target=watch_objects, args=("observations",), daemon=True).start()
+threading.Thread(target=watch_timeseries, daemon=True).start()
 
