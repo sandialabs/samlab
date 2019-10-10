@@ -38,10 +38,10 @@ def get_timeseries_keys():
 def get_timeseries_plots_auto():
     require_permissions(["read"])
 
-    height = int(flask.request.args.get("height", 500))
+    height = int(float(flask.request.args.get("height", 500)))
     key = flask.request.args.get("key")
     smoothing = float(flask.request.args.get("smoothing", "0"))
-    width = int(flask.request.args.get("width", 500))
+    width = int(float(flask.request.args.get("width", 500)))
     yscale = flask.request.args.get("yscale", "linear")
 
     colormap = toyplot.color.brewer.map("Set2")
