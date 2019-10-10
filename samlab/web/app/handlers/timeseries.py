@@ -22,6 +22,17 @@ from samlab.web.app import application, require_auth, require_permissions
 from samlab.web.app.database import database, fs
 
 
+@application.route("/timeseries/keys")
+@require_auth
+def get_timeseries_keys():
+    require_permissions(["read"])
+
+    result = {}
+    result["keys"] = database.timeseries.distinct("key")
+
+    return flask.jsonify(result)
+
+
 @application.route("/timeseries/plots/auto")
 @require_auth
 def get_timeseries_plots_auto():
