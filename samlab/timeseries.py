@@ -37,6 +37,14 @@ def add_scalar(database, fs, key, series, step, value):
     return document
 
 
+def delete(database, fs, key):
+    assert(isinstance(database, pymongo.database.Database))
+    assert(isinstance(fs, gridfs.GridFS))
+    assert(isinstance(key, str))
+
+    database.timeseries.delete_many({"key": key})
+
+
 class Writer(object):
     def __init__(self, key=None, trial=None, database_name="samlab", database_uri="mongodb://localhost:27017", database_replicaset="samlab", dashboard_uri="http://127.0.0.1:4000"):
 

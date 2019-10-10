@@ -12,6 +12,8 @@ import toyplot.bitmap
 import toyplot.color
 import toyplot.html
 
+import samlab.timeseries
+
 # Setup logging.
 log = logging.getLogger(__name__)
 
@@ -87,5 +89,16 @@ def get_timeseries_plots_auto():
     result["plot"] = toyplot.html.tostring(canvas)
 
     return flask.jsonify(result)
+
+
+@application.route("/timeseries/samples", methods=["DELETE"])
+@require_auth
+def delete_timeseries_samples():
+    require_permissions(["delete"])
+
+    key = flask.request.args.get("key")
+
+    samlab.timeseries.delete(database, fs, key=key)
+    return flask.jsonify()
 
 

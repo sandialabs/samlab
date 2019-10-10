@@ -52,6 +52,11 @@ define([
         module.sample.deleted();
     }).extend({notify: "always", rateLimit: {timeout: 500, method: "notifyWhenChangesStop"}});
 
+    module.delete_samples = function(key)
+    {
+        server.delete("/timeseries/samples?key=" + key);
+    };
+
     return module;
 });
 

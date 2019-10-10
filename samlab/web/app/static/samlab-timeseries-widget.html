@@ -8,7 +8,8 @@
             <tbody data-bind="foreach: keys">
                 <tr>
                     <td></td>
-                    <td><a href="#" data-bind="click: $component.open_timeseries"><span data-bind="text: $data"></span></a></td>
+                    <td><a href="#" data-bind="click: $component.open_key"><span data-bind="text: $data"></span></a></td>
+                    <td><a href="#" data-bind="click: $component.delete_key"><span class="fa fa-trash fa-fw text-danger"></span></a></td>
                 </tr>
             </tbody>
         </table>
