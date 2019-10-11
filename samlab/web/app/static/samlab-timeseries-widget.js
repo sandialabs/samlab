@@ -27,16 +27,36 @@ define([
                 component.experiments = timeseries.experiments;
                 component.keys = timeseries.keys;
 
-                component.open_experiment = function(item)
+                component.toggle_experiment = function(item)
                 {
-                    item.keys().forEach(function(key)
+                    dashboard.widgets().forEach(function(widget)
                     {
-                        dashboard.add_widget("samlab-timeseries-plot-widget", {key: key});
+                        if(widget.component() != "samlab-timeseries-plot-widget")
+                            return;
+                        widget.params.smoothing(Math.random());
                     });
                 }
 
-                component.open_key = function(item)
+                component.toggle_key = function(item)
                 {
+                    // Close existing widgets.
+                    var remove = [];
+                    dashboard.widgets().forEach(function(widget)
+                    {
+                        if(widget.component() != "samlab-timeseries-plot-widget")
+                            return;
+                        if(widget.params.key() != item.key())
+                            return;
+                        remove.push(widget);
+                    });
+                    remove.forEach(function(widget)
+                    {
+                        dashboard.remove_widget(widget);
+                    });
+                    if(remove.length)
+                        return;
+
+                    // Otherwise, open a new widget.
                     dashboard.add_widget("samlab-timeseries-plot-widget", {key: item.key()});
                 };
 

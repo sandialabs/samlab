@@ -358,6 +358,7 @@ define(
 
     module.remove_widget = function(widget)
     {
+        log("remove_widget", widget);
         module.unbind({widget: widget});
         state.remove_active(widget);
         state.widgets.remove(widget);
@@ -437,6 +438,11 @@ define(
                 module.remove_widget(widget);
             }
         });
+    }
+
+    module.widgets = function()
+    {
+        return state.widgets();
     }
 
     // Setup the initial dashboard state

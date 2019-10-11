@@ -7,31 +7,34 @@
         <table class="table table-borderless table-sm">
             <thead class="thead-light">
                 <tr>
-                    <td>Experiments</td>
+                    <td colspan="3">Experiments</td>
                 </tr>
             </thead>
             <tbody data-bind="foreach: experiments">
                 <tr>
-                    <td><a href="#" data-bind="click: $component.open_experiment"><span data-bind="text:experiment"></span></a></td>
-                    <td><a href="#" data-bind="click: function() { $component.delete_experiment($data.experiment())}"><span class="fa fa-trash fa-fw text-danger"></span></a></td>
+                    <td><button type="button" class="btn btn-light btn-sm px-1 py-0" class="font-size: 0.4em" data-bind="click: $component.toggle_experiment"><span class="fa fa-eye fa-fw"></span></button></td>
+                    <td><span data-bind="text:experiment"></span></td>
+                    <td><button type="button" class="btn btn-light btn-sm px-1 py-0" data-bind="click: function() { $component.delete_experiment($data.experiment())}"><span class="fa fa-trash fa-fw text-danger"></span></button></td>
                 </tr>
                 <!-- ko foreach: trials -->
                 <tr>
+                    <td><button type="button" class="btn btn-light btn-sm px-1 py-0" class="font-size: 0.4em" data-bind="click: $component.toggle_trial"><span class="fa fa-eye fa-fw"></span></button></td>
                     <td><span class="ml-3" data-bind="text:trial, style: {color:color}"></span></td>
-                    <td><a href="#" data-bind="click: function() { $component.delete_trial($parent.experiment(), trial())}"><span class="small fa fa-trash fa-fw text-danger"></span></a></td>
+                    <td><button type="button" class="btn btn-light btn-sm px-1 py-0" data-bind="click: function() { $component.delete_trial($parent.experiment(), trial())}"><span class="small fa fa-trash fa-fw text-danger"></span></button></td>
                 </tr>
                 <!-- /ko -->
             </tbody>
 
             <thead class="thead-light">
                 <tr>
-                    <td>Keys</td>
+                    <td colspan="3">Keys</td>
                 </tr>
             </thead>
             <tbody data-bind="foreach: keys">
                 <tr>
-                    <td><a href="#" data-bind="click: $component.open_key"><span data-bind="text:key"></span></a></td>
-                    <td><a href="#" data-bind="click: function() { $component.delete_key($data.key())}"><span class="fa fa-trash fa-fw text-danger"></span></a></td>
+                    <td><button type="button" class="btn btn-light btn-sm px-1 py-0" class="font-size: 0.4em" data-bind="click: $component.toggle_key"><span class="fa fa-eye fa-fw"></span></button></td>
+                    <td><span data-bind="text:key"></span></td>
+                    <td><button type="button" class="btn btn-light btn-sm px-1 py-0" data-bind="click: function() { $component.delete_key($data.key())}"><span class="fa fa-trash fa-fw text-danger"></span></button></td>
                 </tr>
             </tbody>
         </table>

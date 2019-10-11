@@ -71,7 +71,7 @@ define([
 
     var module =
     {
-        widget: { params: {key: "", yscale: "linear", smoothing: 0.0}},
+        widget: { width: 4, height: 8, params: {key: "", yscale: "linear", smoothing: 0.5}},
     };
 
     return module;
