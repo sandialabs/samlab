@@ -124,6 +124,18 @@ class Server(object):
         """Address of the running server that can be used with web clients."""
         return "http://%s:%s" % (self._host, self._port)
 
+    @property
+    def database_name(self):
+        return self._database_name
+
+    @property
+    def database_uri(self):
+        return self._database_uri
+
+    @property
+    def database_replicaset(self):
+        return self._database_replicaset
+
     def open_browser(self):
         """Open a web browser pointed to the running server."""
         for i in range(10):

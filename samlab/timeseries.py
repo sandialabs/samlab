@@ -72,6 +72,22 @@ class Writer(object):
         self.close()
         return False
 
+    @property
+    def database_name(self):
+        return self._database_name
+
+    @property
+    def database_uri(self):
+        return self._database_uri
+
+    @property
+    def database_replicaset(self):
+        return self._database_replicaset
+
+    @property
+    def dashboard_uri(self):
+        return self._dashboard_uri
+
     def add_scalar(self, key, step, value):
         samlab.timeseries.add_scalar(self._database, self._fs, self._key + "/" + key, self._trial, step, value)
 
