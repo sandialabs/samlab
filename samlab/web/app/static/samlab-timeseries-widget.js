@@ -31,16 +31,13 @@ define([
                 {
                     item.keys().forEach(function(key)
                     {
-                        dashboard.add_widget("samlab-timeseries-plot-widget", {experiment: item.experiment, key: key});
+                        dashboard.add_widget("samlab-timeseries-plot-widget", {key: key});
                     });
                 }
 
                 component.open_key = function(item)
                 {
-                    item.experiments().forEach(function(experiment)
-                    {
-                        dashboard.add_widget("samlab-timeseries-plot-widget", {experiment: experiment, key: item.key()});
-                    });
+                    dashboard.add_widget("samlab-timeseries-plot-widget", {key: item.key()});
                 };
 
                 component.delete_experiment = function(experiment)

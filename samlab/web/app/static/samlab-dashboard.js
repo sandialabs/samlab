@@ -305,7 +305,7 @@ define(
                     params: {},
                     x: null,
                     y: null,
-                    width: 3,
+                    width: 4,
                     height: 6,
                 });
 

@@ -29,7 +29,6 @@ define([
                 {
                     timeseries:
                     {
-                        experiment: widget.params.experiment,
                         key: widget.params.key,
                     },
                     plot: null,
@@ -51,7 +50,7 @@ define([
                 // Load the plot at startup and anytime there are changes, but limit the rate.
                 var load_plot = ko.computed(function()
                 {
-                    server.load_json(component, "/timeseries/plots/auto?experiment=" + component.timeseries.experiment() + "&key=" + component.timeseries.key() + "&yscale=" + component.yscale() + "&smoothing=" + component.smoothing() + "&width=" + container.width() + "&height=" + component.height());
+                    server.load_json(component, "/timeseries/plots/auto?key=" + component.timeseries.key() + "&yscale=" + component.yscale() + "&smoothing=" + component.smoothing() + "&width=" + container.width() + "&height=" + component.height());
 
                     timeseries.sample.created();
                     timeseries.sample.updated();
@@ -72,7 +71,7 @@ define([
 
     var module =
     {
-        widget: { params: {experiment: "", key: "", yscale: "linear", smoothing: 0.0}},
+        widget: { params: {key: "", yscale: "linear", smoothing: 0.0}},
     };
 
     return module;

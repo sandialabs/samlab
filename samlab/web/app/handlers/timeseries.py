@@ -83,7 +83,6 @@ def get_timeseries_metadata():
 def get_timeseries_plots_auto():
     require_permissions(["read"])
 
-    experiment = flask.request.args.get("experiment")
     height = int(float(flask.request.args.get("height", 500)))
     key = flask.request.args.get("key")
     smoothing = float(flask.request.args.get("smoothing", "0"))
@@ -97,36 +96,43 @@ def get_timeseries_plots_auto():
     values = collections.defaultdict(list)
     timestamps = collections.defaultdict(list)
 
-    for sample in database.timeseries.find({"experiment": experiment, "key": key}):
-        series = sample.get("trial")
+    for sample in database.timeseries.find({"key": key}):
+        experiment = sample.get("experiment")
+        trial = sample.get("trial")
         step = sample["step"]
         value = sample["value"]
         timestamp = sample["timestamp"]
-        steps[series].append(step)
-        values[series].append(value)
-        timestamps[series].append(timestamp)
+        steps[(experiment, trial)].append(step)
+        values[(experiment, trial)].append(value)
+        timestamps[(experiment, trial)].append(timestamp)
 
-    for series in steps:
-        steps[series] = numpy.array(steps[series])
-        values[series] = numpy.array(values[series])
-        timestamps[series] = numpy.array(timestamps[series])
+    for item in steps:
+        steps[item] = numpy.array(steps[item])
+        values[item] = numpy.array(values[item])
+        timestamps[item] = numpy.array(timestamps[item])
 
-    for index, series in enumerate(steps):
-        color = _get_color(experiment, series)
+    for index, item in enumerate(steps):
+        experiment, trial = item
+        color = _get_color(experiment, trial)
 
         # Display smoothed data.
         if smoothing:
             smoothed = []
-            last = values[series][0]
-            for value in values[series]:
+            last = values[item][0]
+            for value in values[item]:
                 smoothed_val = last * smoothing + (1 - smoothing) * value
                 smoothed.append(smoothed_val)
                 last = smoothed_val
-            axes.plot(steps[series], values[series], color=color, opacity=0.3, style={"stroke-width":1}, title=series)
-            axes.plot(steps[series], smoothed, color=color, opacity=1, style={"stroke-width":2}, title="{} (smoothed)".format(series))
+
+            title = "{} / {}".format(experiment, trial)
+            axes.plot(steps[item], values[item], color=color, opacity=0.25, style={"stroke-width":1}, title=title)
+
+            title = "{} / {} (smoothed)".format(experiment, trial)
+            axes.plot(steps[item], smoothed, color=color, opacity=1, style={"stroke-width":2}, title=title)
         # Just display the data
         else:
-            axes.plot(steps[series], values[series], color=color, opacity=1, style={"stroke-width":2}, title=series)
+            title = "{} / {}".format(experiment, trial)
+            axes.plot(steps[item], values[item], color=color, opacity=1, style={"stroke-width":2}, title=title)
 
     result = {}
     result["plot"] = toyplot.html.tostring(canvas)
