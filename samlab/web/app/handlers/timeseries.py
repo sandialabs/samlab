@@ -24,59 +24,33 @@ from samlab.web.app import application, require_auth, require_permissions
 from samlab.web.app.database import database, fs
 
 
-@application.route("/timeseries/experiments")
+@application.route("/timeseries/metadata")
 @require_auth
-def get_timeseries_experiments():
+def get_timeseries_metadata():
     require_permissions(["read"])
 
     experiment_trials = collections.defaultdict(set)
     experiment_keys = collections.defaultdict(set)
+    trial_experiments = collections.defaultdict(set)
+    trial_keys = collections.defaultdict(set)
+    key_experiments = collections.defaultdict(set)
+    key_trials = collections.defaultdict(set)
+
     for item in database.timeseries.aggregate([{"$group": {"_id": {"experiment": "$experiment", "trial": "$trial", "key": "$key"}}}, {"$sort":{"_id": 1}}]):
         experiment_trials[item["_id"]["experiment"]].add(item["_id"]["trial"])
         experiment_keys[item["_id"]["experiment"]].add(item["_id"]["key"])
-
-    items = [{"experiment": experiment, "keys": sorted(experiment_keys[experiment]), "trials": sorted(experiment_trials[experiment])} for experiment in sorted(experiment_trials.keys())]
-
-    result = {}
-    result["experiments"] = items
-
-    return flask.jsonify(result)
-
-
-@application.route("/timeseries/keys")
-@require_auth
-def get_timeseries_keys():
-    require_permissions(["read"])
-
-    key_experiments = collections.defaultdict(set)
-    key_trials = collections.defaultdict(set)
-    for item in database.timeseries.aggregate([{"$group": {"_id": {"experiment": "$experiment", "trial": "$trial", "key": "$key"}}}, {"$sort":{"_id": 1}}]):
+        trial_experiments[item["_id"]["trial"]].add(item["_id"]["experiment"])
+        trial_keys[item["_id"]["trial"]].add(item["_id"]["key"])
         key_experiments[item["_id"]["key"]].add(item["_id"]["experiment"])
         key_trials[item["_id"]["key"]].add(item["_id"]["trial"])
 
-    items = [{"key":key, "experiments": sorted(key_experiments[key]), "trials": sorted(key_trials[key])} for key in sorted(key_experiments.keys())]
+
+    palette = toyplot.color.brewer.palette("Set2")
 
     result = {}
-    result["keys"] = items
-
-    return flask.jsonify(result)
-
-
-@application.route("/timeseries/trials")
-@require_auth
-def get_timeseries_trials():
-    require_permissions(["read"])
-
-    trial_experiments = collections.defaultdict(set)
-    trial_keys = collections.defaultdict(set)
-    for item in database.timeseries.aggregate([{"$group": {"_id": {"experiment": "$experiment", "trial": "$trial", "key": "$key"}}}, {"$sort":{"_id": 1}}]):
-        trial_experiments[item["_id"]["trial"]].add(item["_id"]["experiment"])
-        trial_keys[item["_id"]["trial"]].add(item["_id"]["key"])
-
-    items = [{"trial": trial, "experiments": sorted(trial_experiments[trial]), "keys": sorted(trial_keys[trial])} for trial in sorted(trial_experiments.keys())]
-
-    result = {}
-    result["trials"] = items
+    result["experiments"] = [{"experiment": experiment, "keys": sorted(experiment_keys[experiment]), "trials": sorted(experiment_trials[experiment])} for experiment in sorted(experiment_trials.keys())]
+    result["trials"] = [{"trial": trial, "color": toyplot.color.to_css(palette[hash(trial) % len(palette)]), "experiments": sorted(trial_experiments[trial]), "keys": sorted(trial_keys[trial])} for trial in sorted(trial_experiments.keys())]
+    result["keys"] = [{"key":key, "experiments": sorted(key_experiments[key]), "trials": sorted(key_trials[key])} for key in sorted(key_experiments.keys())]
 
     return flask.jsonify(result)
 
