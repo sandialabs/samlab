@@ -25,7 +25,6 @@ define([
                 });
 
                 component.experiments = timeseries.experiments;
-                component.trials = timeseries.trials;
                 component.keys = timeseries.keys;
 
                 component.open_experiment = function(item)
@@ -33,14 +32,6 @@ define([
                     item.keys().forEach(function(key)
                     {
                         dashboard.add_widget("samlab-timeseries-plot-widget", {experiment: item.experiment, key: key});
-                    });
-                }
-
-                component.open_trial = function(item)
-                {
-                    item.keys().forEach(function(key)
-                    {
-                        dashboard.add_widget("samlab-timeseries-plot-widget", {key: key});
                     });
                 }
 
@@ -52,8 +43,10 @@ define([
                     });
                 };
 
-                component.delete_experiment = function(item)
+                component.delete_experiment = function(experiment)
                 {
+                    log(experiment);
+
                     dialog.dialog(
                     {
                         alert: "This operation is immediate and cannot be undone.",
@@ -61,15 +54,17 @@ define([
                         callback: function(button)
                         {
                             if(button.label == "Delete")
-                                timeseries.delete_samples({experiment: item.experiment()});
+                                timeseries.delete_samples({experiment: experiment});
                         },
                         message: "This will delete its data across all trials and keys.",
-                        title: "Delete " + item.experiment() + "?",
+                        title: "Delete " + experiment + "?",
                     });
                 }
 
-                component.delete_trial = function(item)
+                component.delete_trial = function(experiment, trial)
                 {
+                    log(experiment, trial);
+
                     dialog.dialog(
                     {
                         alert: "This operation is immediate and cannot be undone.",
@@ -77,15 +72,17 @@ define([
                         callback: function(button)
                         {
                             if(button.label == "Delete")
-                                timeseries.delete_samples({trial: item.trial()});
+                                timeseries.delete_samples({experiment: experiment, trial: trial});
                         },
                         message: "This will delete its data across all experiments and keys.",
-                        title: "Delete " + item.trial() + "?",
+                        title: "Delete " + experiment + " " + trial + "?",
                     });
                 }
 
-                component.delete_key = function(item)
+                component.delete_key = function(key)
                 {
+                    log(key);
+
                     dialog.dialog(
                     {
                         alert: "This operation is immediate and cannot be undone.",
@@ -93,32 +90,13 @@ define([
                         callback: function(button)
                         {
                             if(button.label == "Delete")
-                                timeseries.delete_samples({key: item.key()});
+                                timeseries.delete_samples({key: key});
                         },
                         message: "This will delete its data across all experiments and trials.",
-                        title: "Delete " + item.key() + "?",
+                        title: "Delete " + key + "?",
                     });
                 };
 
-/*
-                component.delete_key_series = function(key, series)
-                {
-                    console.log("delete_key_series", arguments);
-
-                    dialog.dialog(
-                    {
-                        alert: "This operation is immediate and cannot be undone.",
-                        buttons: [{label: "Delete", class_name: "btn-danger"}, {label: "Cancel", class_name: "btn-secondary"}],
-                        callback: function(button)
-                        {
-                            if(button.label == "Delete")
-                                timeseries.delete_samples(key, series);
-                        },
-                        message: "This will delete the timeseries and all its samples.",
-                        title: "Delete " + key + " " + series + "?",
-                    });
-                };
-*/
                 return component;
             }
         },

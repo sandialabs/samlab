@@ -21,7 +21,6 @@ define([
             updated: null,
             deleted: null,
         },
-        trials: [],
     });
 
     module.sample.created.extend({notify: "always"});

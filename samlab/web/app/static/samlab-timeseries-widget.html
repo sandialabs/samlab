@@ -13,12 +13,12 @@
             <tbody data-bind="foreach: experiments">
                 <tr>
                     <td><a href="#" data-bind="click: $component.open_experiment"><span data-bind="text:experiment"></span></a></td>
-                    <td><a href="#" data-bind="click: $component.delete_experiment"><span class="fa fa-trash fa-fw text-danger"></span></a></td>
+                    <td><a href="#" data-bind="click: function() { $component.delete_experiment($data.experiment())}"><span class="fa fa-trash fa-fw text-danger"></span></a></td>
                 </tr>
                 <!-- ko foreach: trials -->
                 <tr>
                     <td><span class="ml-3 small" data-bind="text:$data"></span></td>
-                    <td><a href="#" data-bind="click: $component.delete_trial"><span class="small fa fa-trash fa-fw text-danger"></span></a></td>
+                    <td><a href="#" data-bind="click: function() { $component.delete_trial($parent.experiment(), $data)}"><span class="small fa fa-trash fa-fw text-danger"></span></a></td>
                 </tr>
                 <!-- /ko -->
             </tbody>
@@ -31,7 +31,7 @@
             <tbody data-bind="foreach: keys">
                 <tr>
                     <td><a href="#" data-bind="click: $component.open_key"><span data-bind="text:key"></span></a></td>
-                    <td><a href="#" data-bind="click: $component.delete_key"><span class="fa fa-trash fa-fw text-danger"></span></a></td>
+                    <td><a href="#" data-bind="click: function() { $component.delete_key($data.key())}"><span class="fa fa-trash fa-fw text-danger"></span></a></td>
                 </tr>
             </tbody>
         </table>

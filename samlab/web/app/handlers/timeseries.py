@@ -3,6 +3,7 @@
 # Government retains certain rights in this software.
 
 import collections
+import hashlib
 import logging
 import re
 
@@ -24,33 +25,52 @@ from samlab.web.app import application, require_auth, require_permissions
 from samlab.web.app.database import database, fs
 
 
+def _get_color(experiment, trial):
+    index = int(hashlib.sha1((experiment + trial).encode("utf8")).hexdigest(), 16) % len(_get_color.palette)
+    return _get_color.palette[index]
+_get_color.palette = toyplot.color.brewer.palette("Set2")
+
 @application.route("/timeseries/metadata")
 @require_auth
 def get_timeseries_metadata():
     require_permissions(["read"])
 
+    experiments = set()
+    keys = set()
+
     experiment_trials = collections.defaultdict(set)
     experiment_keys = collections.defaultdict(set)
-    trial_experiments = collections.defaultdict(set)
-    trial_keys = collections.defaultdict(set)
     key_experiments = collections.defaultdict(set)
     key_trials = collections.defaultdict(set)
 
-    for item in database.timeseries.aggregate([{"$group": {"_id": {"experiment": "$experiment", "trial": "$trial", "key": "$key"}}}, {"$sort":{"_id": 1}}]):
-        experiment_trials[item["_id"]["experiment"]].add(item["_id"]["trial"])
-        experiment_keys[item["_id"]["experiment"]].add(item["_id"]["key"])
-        trial_experiments[item["_id"]["trial"]].add(item["_id"]["experiment"])
-        trial_keys[item["_id"]["trial"]].add(item["_id"]["key"])
-        key_experiments[item["_id"]["key"]].add(item["_id"]["experiment"])
-        key_trials[item["_id"]["key"]].add(item["_id"]["trial"])
+    for item in database.timeseries.aggregate([{"$group": {"_id": {"experiment": "$experiment", "trial": "$trial", "key": "$key"}}}]):
+        experiment = item["_id"]["experiment"]
+        trial = item["_id"]["trial"]
+        key = item["_id"]["key"]
 
+        experiments.add(experiment)
+        keys.add(key)
 
-    palette = toyplot.color.brewer.palette("Set2")
+        experiment_trials[experiment].add(trial)
+        experiment_keys[experiment].add(key)
+        key_experiments[key].add(experiment)
+        key_trials[key].add(trial)
 
-    result = {}
-    result["experiments"] = [{"experiment": experiment, "keys": sorted(experiment_keys[experiment]), "trials": sorted(experiment_trials[experiment])} for experiment in sorted(experiment_trials.keys())]
-    result["trials"] = [{"trial": trial, "color": toyplot.color.to_css(palette[hash(trial) % len(palette)]), "experiments": sorted(trial_experiments[trial]), "keys": sorted(trial_keys[trial])} for trial in sorted(trial_experiments.keys())]
-    result["keys"] = [{"key":key, "experiments": sorted(key_experiments[key]), "trials": sorted(key_trials[key])} for key in sorted(key_experiments.keys())]
+    result = {"experiments": [], "keys": []}
+
+    for experiment in sorted(experiments):
+        result["experiments"].append({
+            "experiment": experiment,
+            "keys": sorted(experiment_keys[experiment]),
+            "trials": sorted(experiment_trials[experiment]),
+            })
+
+    for key in sorted(keys):
+        result["keys"].append({
+            "key":key,
+            "experiments": sorted(key_experiments[key]),
+            "trials": sorted(key_trials[key]),
+            })
 
     return flask.jsonify(result)
 
@@ -67,7 +87,6 @@ def get_timeseries_plots_auto():
     width = int(float(flask.request.args.get("width", 500)))
     yscale = flask.request.args.get("yscale", "linear")
 
-    palette = toyplot.color.brewer.palette("Set2")
     canvas = toyplot.Canvas(width=width, height=height)
     axes = canvas.cartesian(xlabel="Step", yscale=yscale)
 
@@ -90,7 +109,7 @@ def get_timeseries_plots_auto():
         timestamps[series] = numpy.array(timestamps[series])
 
     for index, series in enumerate(steps):
-        color = palette[hash(series) % len(palette)]
+        color = _get_color(experiment, series)
 
         # Display smoothed data.
         if smoothing:
