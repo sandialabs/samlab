@@ -62,7 +62,10 @@ def get_timeseries_metadata():
         result["experiments"].append({
             "experiment": experiment,
             "keys": sorted(experiment_keys[experiment]),
-            "trials": sorted(experiment_trials[experiment]),
+            "trials": [{
+                "trial": trial,
+                "color": toyplot.color.to_css(_get_color(experiment, trial)),
+                } for trial in sorted(experiment_trials[experiment])],
             })
 
     for key in sorted(keys):

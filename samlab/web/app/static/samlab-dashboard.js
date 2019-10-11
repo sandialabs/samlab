@@ -35,9 +35,9 @@ define(
 
     document.querySelector("#samlab-dashboard").append(dom.parse(template));
 
-    var rows = 12;
-    var cols = 12;
-    var gap = 12;
+    var rows = 24;
+    var cols = 24;
+    var gap = 6;
     var bar_height = jquery("#samlab-dashboard .dashboard-bar").outerHeight(true);
     var cell_width = (window.innerWidth - ((cols+1) * gap)) / cols;
     var cell_height = (window.innerHeight - bar_height - ((rows+1) * gap)) / rows;

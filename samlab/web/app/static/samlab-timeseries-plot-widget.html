@@ -1,15 +1,15 @@
 <div class="widget-content">
     <div class="container-fluid">
         <div class="grid-stack-item-handle">
-            <h1 class="h4"><span data-bind="text:timeseries.key"></span> <span class="text-muted small" data-bind="text:timeseries.experiment"><span></h1>
+            <h1 class="h5"><span data-bind="text:timeseries.key"></span></h1>
             <form class="form-inline">
-                <samlab-combo-control class="mr-2" params="current: yscale, items: yscale_items"></samlab-combo-control>
-                <label class="mr-2">Smoothing:</label>
-                <input type="range" style="display: inline-block; width: 25%;" class="custom-range" data-bind="value:smoothing" min="0" max="0.999" step="0.001"></input>
+                <label class="mr-2 small">Smoothing:</label>
+                <input type="range" style="display: inline-block; width: 25%;" class="custom-range mr-2" data-bind="value:smoothing" min="0" max="0.999" step="0.001"></input>
+                <samlab-combo-control params="current: yscale, items: yscale_items"></samlab-combo-control>
             </form>
         </div>
         <hr></hr>
-        <div class="plot" style="position: absolute; left: 0; right: 0; top: 100px; bottom: 0;">
+        <div class="plot" style="position: absolute; left: 0; right: 0; top: 65px; bottom: 0;">
             <div style="display: flex; justify-content: center; align-items: center;" data-bind="html: plot"></div>
         </div>
     </div>

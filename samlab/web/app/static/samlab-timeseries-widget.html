@@ -1,7 +1,7 @@
 <div class="widget-content">
     <div class="container-fluid">
         <div class="grid-stack-item-handle">
-            <h1 class="h4">Timeseries</h1>
+            <h1 class="h5">Timeseries</h1>
         </div>
         <hr></hr>
         <table class="table table-borderless table-sm">
@@ -17,8 +17,8 @@
                 </tr>
                 <!-- ko foreach: trials -->
                 <tr>
-                    <td><span class="ml-3 small" data-bind="text:$data"></span></td>
-                    <td><a href="#" data-bind="click: function() { $component.delete_trial($parent.experiment(), $data)}"><span class="small fa fa-trash fa-fw text-danger"></span></a></td>
+                    <td><span class="ml-3" data-bind="text:trial, style: {color:color}"></span></td>
+                    <td><a href="#" data-bind="click: function() { $component.delete_trial($parent.experiment(), trial())}"><span class="small fa fa-trash fa-fw text-danger"></span></a></td>
                 </tr>
                 <!-- /ko -->
             </tbody>
