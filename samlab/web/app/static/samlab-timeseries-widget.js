@@ -22,8 +22,9 @@ define([
             createViewModel: function(widget, component_info)
             {
                 var component = mapping.fromJS({
-                    keys: timeseries.keys,
                 });
+
+                component.keys = timeseries.keys;
 
                 component.open_key = function(key)
                 {
