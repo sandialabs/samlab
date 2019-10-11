@@ -25,6 +25,7 @@ define([
                 });
 
                 component.keys = timeseries.keys;
+                component.keys_series = timeseries.keys_series;
 
                 component.open_key = function(key)
                 {
@@ -42,8 +43,26 @@ define([
                             if(button.label == "Delete")
                                 timeseries.delete_samples(key);
                         },
-                        message: "This will delete the timeseries and all its samples.",
+                        message: "This will delete all of its timeseries and samples.",
                         title: "Delete " + key + "?",
+                    });
+                };
+
+                component.delete_key_series = function(key, series)
+                {
+                    console.log("delete_key_series", arguments);
+
+                    dialog.dialog(
+                    {
+                        alert: "This operation is immediate and cannot be undone.",
+                        buttons: [{label: "Delete", class_name: "btn-danger"}, {label: "Cancel", class_name: "btn-secondary"}],
+                        callback: function(button)
+                        {
+                            if(button.label == "Delete")
+                                timeseries.delete_samples(key, series);
+                        },
+                        message: "This will delete the timeseries and all its samples.",
+                        title: "Delete " + key + " " + series + "?",
                     });
                 };
 

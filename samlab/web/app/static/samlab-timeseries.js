@@ -14,6 +14,7 @@ define([
 
     var module = mapping.fromJS({
         keys: [],
+        keys_series: [],
         sample: {
             created: null,
             updated: null,
@@ -45,6 +46,7 @@ define([
     {
         log("Loading timeseries keys.");
         server.load_json(module, "/timeseries/keys");
+        server.load_json(module, "/timeseries/keys/series");
 
         // Register the observables we want to track
         module.sample.created();
@@ -52,9 +54,12 @@ define([
         module.sample.deleted();
     }).extend({notify: "always", rateLimit: {timeout: 500, method: "notifyWhenChangesStop"}});
 
-    module.delete_samples = function(key)
+    module.delete_samples = function(key, series)
     {
-        server.delete("/timeseries/samples?key=" + key);
+        var uri = "/timeseries/samples?key=" + key;
+        if(series != undefined)
+            uri = uri + "&series=" + series;
+        server.delete(uri);
     };
 
     return module;

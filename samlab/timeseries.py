@@ -37,12 +37,15 @@ def add_scalar(database, fs, key, series, step, value):
     return document
 
 
-def delete(database, fs, key):
+def delete(database, fs, key, series=None):
     assert(isinstance(database, pymongo.database.Database))
     assert(isinstance(fs, gridfs.GridFS))
     assert(isinstance(key, str))
 
-    database.timeseries.delete_many({"key": key})
+    document = {"key": key}
+    if series is not None:
+        document["series"] = series
+    database.timeseries.delete_many(document)
 
 
 class Writer(object):

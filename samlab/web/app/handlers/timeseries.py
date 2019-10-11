@@ -30,7 +30,7 @@ def get_timeseries_keys():
     require_permissions(["read"])
 
     result = {}
-    result["keys"] = database.timeseries.distinct("key")
+    result["keys"] = sorted(database.timeseries.distinct("key"))
 
     return flask.jsonify(result)
 
@@ -40,8 +40,13 @@ def get_timeseries_keys():
 def get_timeseries_keys_series():
     require_permissions(["read"])
 
+    keys = collections.defaultdict(list)
+    for item in database.timeseries.aggregate([{"$group": {"_id": {"key": "$key", "series": "$series"}}}, {"$sort":{"_id": 1}}]):
+        keys[item["_id"]["key"]].append(item["_id"]["series"])
+    keys = [{"key":key, "series": series} for key, series in keys.items()]
+
     result = {}
-    result["keys"] = database.timeseries.distinct("key")
+    result["keys_series"] = keys
 
     return flask.jsonify(result)
 
@@ -57,7 +62,7 @@ def get_timeseries_plots_auto():
     width = int(float(flask.request.args.get("width", 500)))
     yscale = flask.request.args.get("yscale", "linear")
 
-    colormap = toyplot.color.brewer.map("Set2")
+    palette = toyplot.color.brewer.palette("Set2")
     canvas = toyplot.Canvas(width=width, height=height)
     axes = canvas.cartesian(xlabel="Step", yscale=yscale)
 
@@ -80,7 +85,7 @@ def get_timeseries_plots_auto():
         timestamps[series] = numpy.array(timestamps[series])
 
     for index, series in enumerate(steps):
-        color = colormap.color(index)
+        color = palette[hash(series) % len(palette)]
 
         # Display smoothed data.
         if smoothing:
@@ -108,8 +113,9 @@ def delete_timeseries_samples():
     require_permissions(["delete"])
 
     key = flask.request.args.get("key")
+    series = flask.request.args.get("series", None)
 
-    samlab.timeseries.delete(database, fs, key=key)
+    samlab.timeseries.delete(database, fs, key=key, series=series)
     return flask.jsonify()
 
 
