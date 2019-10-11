@@ -5,18 +5,56 @@
         </div>
         <hr></hr>
         <table class="table table-borderless table-sm">
+            <thead class="thead-light">
+                <tr>
+                    <td>Experiments</td>
+                </tr>
+            </thead>
+            <tbody data-bind="foreach: experiments">
+                <tr>
+                    <td><a href="#" data-bind="click: $component.open_experiment"><span data-bind="text:$data.experiment"></span></a></td>
+                    <td><a href="#" data-bind="click: $component.delete_experiment"><span class="fa fa-trash fa-fw text-danger"></span></a></td>
+                </tr>
+            </tbody>
+
+            <thead class="thead-light">
+                <tr>
+                    <td>Trials</td>
+                </tr>
+            </thead>
+            <tbody data-bind="foreach: trials">
+                <tr>
+                    <td><a href="#" data-bind="click: $component.open_trial"><span data-bind="text:$data.trial"></span></a></td>
+                    <td><a href="#" data-bind="click: $component.delete_trial"><span class="fa fa-trash fa-fw text-danger"></span></a></td>
+                </tr>
+            </tbody>
+
+            <thead class="thead-light">
+                <tr>
+                    <td>Keys</td>
+                </tr>
+            </thead>
+            <tbody data-bind="foreach: keys">
+                <tr>
+                    <td><a href="#" data-bind="click: $component.open_key"><span data-bind="text:$data.key"></span></a></td>
+                    <td><a href="#" data-bind="click: $component.delete_key"><span class="fa fa-trash fa-fw text-danger"></span></a></td>
+                </tr>
+            </tbody>
+
+<!--
             <tbody data-bind="foreach: keys_series">
                 <tr>
                     <td><a href="#" data-bind="click:function() {$component.open_key($data.key())}"><span data-bind="text:key"></span></a></td>
                     <td><a href="#" data-bind="click:function() {$component.delete_key($data.key())}"><span class="fa fa-trash fa-fw text-danger"></span></a></td>
                 </tr>
-                <!-- ko foreach: series -->
+                ko foreach: series
                 <tr>
                     <td><span class="ml-3 small" data-bind="text:$data"></span></td>
                     <td><a href="#" data-bind="click:function() {$component.delete_key_series($parent.key(), $data)}"><span class="small fa fa-trash fa-fw text-danger"></span></a></td>
                 </tr>
-                <!-- /ko -->
+                /ko 
             </tbody>
+-->
         </table>
     </div>
 </div>

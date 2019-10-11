@@ -1,7 +1,7 @@
 <div class="widget-content">
     <div class="container-fluid">
         <div class="grid-stack-item-handle">
-            <h1 class="h4" data-bind="text:timeseries.key"></h1>
+            <h1 class="h4"><span data-bind="text:timeseries.key"></span> <span class="text-muted small" data-bind="text:timeseries.experiment"><span></h1>
             <form class="form-inline">
                 <samlab-combo-control class="mr-2" params="current: yscale, items: yscale_items"></samlab-combo-control>
                 <label class="mr-2">Smoothing:</label>

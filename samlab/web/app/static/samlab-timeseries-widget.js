@@ -9,7 +9,7 @@ define([
     "samlab-dashboard",
     "samlab-dialog",
     "samlab-timeseries",
-    ], function(debug, ko, mapping, dashboard, dialog,timeseries)
+    ], function(debug, ko, mapping, dashboard, dialog, timeseries)
 {
     var component_name = "samlab-timeseries-widget";
 
@@ -24,15 +24,35 @@ define([
                 var component = mapping.fromJS({
                 });
 
+                component.experiments = timeseries.experiments;
+                component.trials = timeseries.trials;
                 component.keys = timeseries.keys;
-                component.keys_series = timeseries.keys_series;
 
-                component.open_key = function(key)
+                component.open_experiment = function(item)
                 {
-                    dashboard.add_widget("samlab-timeseries-plot-widget", {key: key});
+                    item.keys().forEach(function(key)
+                    {
+                        dashboard.add_widget("samlab-timeseries-plot-widget", {experiment: item.experiment, key: key});
+                    });
+                }
+
+                component.open_trial = function(item)
+                {
+                    item.keys().forEach(function(key)
+                    {
+                        dashboard.add_widget("samlab-timeseries-plot-widget", {key: key});
+                    });
+                }
+
+                component.open_key = function(item)
+                {
+                    item.experiments().forEach(function(experiment)
+                    {
+                        dashboard.add_widget("samlab-timeseries-plot-widget", {experiment: experiment, key: item.key()});
+                    });
                 };
 
-                component.delete_key = function(key)
+                component.delete_experiment = function(item)
                 {
                     dialog.dialog(
                     {
@@ -41,13 +61,46 @@ define([
                         callback: function(button)
                         {
                             if(button.label == "Delete")
-                                timeseries.delete_samples(key);
+                                timeseries.delete_samples({experiment: item.experiment()});
                         },
-                        message: "This will delete all of its timeseries and samples.",
-                        title: "Delete " + key + "?",
+                        message: "This will delete its data across all trials and keys.",
+                        title: "Delete " + item.experiment() + "?",
+                    });
+                }
+
+                component.delete_trial = function(item)
+                {
+                    dialog.dialog(
+                    {
+                        alert: "This operation is immediate and cannot be undone.",
+                        buttons: [{label: "Delete", class_name: "btn-danger"}, {label: "Cancel", class_name: "btn-secondary"}],
+                        callback: function(button)
+                        {
+                            if(button.label == "Delete")
+                                timeseries.delete_samples({trial: item.trial()});
+                        },
+                        message: "This will delete its data across all experiments and keys.",
+                        title: "Delete " + item.trial() + "?",
+                    });
+                }
+
+                component.delete_key = function(item)
+                {
+                    dialog.dialog(
+                    {
+                        alert: "This operation is immediate and cannot be undone.",
+                        buttons: [{label: "Delete", class_name: "btn-danger"}, {label: "Cancel", class_name: "btn-secondary"}],
+                        callback: function(button)
+                        {
+                            if(button.label == "Delete")
+                                timeseries.delete_samples({key: item.key()});
+                        },
+                        message: "This will delete its data across all experiments and trials.",
+                        title: "Delete " + item.key() + "?",
                     });
                 };
 
+/*
                 component.delete_key_series = function(key, series)
                 {
                     console.log("delete_key_series", arguments);
@@ -65,7 +118,7 @@ define([
                         title: "Delete " + key + " " + series + "?",
                     });
                 };
-
+*/
                 return component;
             }
         },

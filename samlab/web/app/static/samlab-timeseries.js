@@ -8,18 +8,20 @@ define([
     "knockout.mapping",
     "samlab-server",
     "samlab-socket",
-    ], function(debug, ko, mapping, server, socket)
+    "URI",
+    ], function(debug, ko, mapping, server, socket, URI)
 {
     var log = debug("samlab-timeseries");
 
     var module = mapping.fromJS({
+        experiments: [],
         keys: [],
-        keys_series: [],
         sample: {
             created: null,
             updated: null,
             deleted: null,
         },
+        trials: [],
     });
 
     module.sample.created.extend({notify: "always"});
@@ -44,9 +46,10 @@ define([
     // Load timeseries keys at startup and anytime there are changes, but limit the rate.
     var load_keys = ko.computed(function()
     {
-        log("Loading timeseries keys.");
+        log("Loading timeseries metadata.");
+        server.load_json(module, "/timeseries/experiments");
+        server.load_json(module, "/timeseries/trials");
         server.load_json(module, "/timeseries/keys");
-        server.load_json(module, "/timeseries/keys/series");
 
         // Register the observables we want to track
         module.sample.created();
@@ -54,11 +57,17 @@ define([
         module.sample.deleted();
     }).extend({notify: "always", rateLimit: {timeout: 500, method: "notifyWhenChangesStop"}});
 
-    module.delete_samples = function(key, series)
+    module.delete_samples = function(params)
     {
-        var uri = "/timeseries/samples?key=" + key;
-        if(series != undefined)
-            uri = uri + "&series=" + series;
+        var uri = URI("/timeseries/samples");
+
+        if(params.experiment)
+            uri.addQuery("experiment", params.experiment);
+        if(params.trial)
+            uri.addQuery("trial", params.trial);
+        if(params.key)
+            uri.addQuery("key", params.key);
+
         server.delete(uri);
     };
 

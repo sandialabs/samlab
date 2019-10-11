@@ -17,16 +17,18 @@ import samlab.database
 log = logging.getLogger(__name__)
 
 
-def add_scalar(database, fs, key, series, step, value):
+def add_scalar(database, fs, experiment, trial, key, step, value):
     assert(isinstance(database, pymongo.database.Database))
     assert(isinstance(fs, gridfs.GridFS))
+    assert(isinstance(experiment, str))
+    assert(isinstance(trial, str))
     assert(isinstance(key, str))
-    assert(isinstance(series, str))
     assert(isinstance(step, numbers.Number))
 
     document = {
+        "experiment": experiment,
+        "trial": trial,
         "key": key,
-        "series": series,
         "step": step,
         "value": value,
         "timestamp": arrow.utcnow().datetime,
@@ -37,27 +39,34 @@ def add_scalar(database, fs, key, series, step, value):
     return document
 
 
-def delete(database, fs, key, series=None):
+def delete(database, fs, experiment=None, trial=None, key=None):
     assert(isinstance(database, pymongo.database.Database))
     assert(isinstance(fs, gridfs.GridFS))
-    assert(isinstance(key, str))
+    assert(isinstance(experiment, (str, type(None))))
+    assert(isinstance(trial, (str, type(None))))
+    assert(isinstance(key, (str, type(None))))
 
-    document = {"key": key}
-    if series is not None:
-        document["series"] = series
+    document = {}
+    if experiment is not None:
+        document["experiment"] = experiment
+    if trial is not None:
+        document["trial"] = trial
+    if key is not None:
+        document["key"] = key
+
     database.timeseries.delete_many(document)
 
 
 class Writer(object):
-    def __init__(self, key=None, trial=None, database_name="samlab", database_uri="mongodb://localhost:27017", database_replicaset="samlab", dashboard_uri="http://127.0.0.1:4000"):
+    def __init__(self, experiment=None, trial=None, database_name="samlab", database_uri="mongodb://localhost:27017", database_replicaset="samlab", dashboard_uri="http://127.0.0.1:4000"):
 
-        if key is None:
-            key = "default"
+        if experiment is None:
+            experiment = "experiment"
 
         if trial is None:
             trial = arrow.now().format("YYYY-MM-DDTHH-mm-ss")
 
-        self._key = key
+        self._experiment = experiment
         self._trial = trial
         self._database_name = database_name
         self._database_uri = database_uri
@@ -66,7 +75,7 @@ class Writer(object):
         self._database, self._fs = samlab.database.connect(database_name, database_uri, database_replicaset)
 
     def __repr__(self):
-        return "samlab.dashboard.Connection(key=%r, trial=%r, database_name=%r, database_uri=%r, database_replicaset=%r, dashboard_uri=%r)" % (self._key, self._trial, self._database_name, self._database_uri, self._database_replicaset, self._dashboard_uri)
+        return "samlab.dashboard.Connection(experiment=%r, trial=%r, database_name=%r, database_uri=%r, database_replicaset=%r, dashboard_uri=%r)" % (self._experiment, self._trial, self._database_name, self._database_uri, self._database_replicaset, self._dashboard_uri)
 
     def __enter__(self):
         return self
@@ -74,6 +83,14 @@ class Writer(object):
     def __exit__(self, exc_type, exc_val, exc_tb):
         self.close()
         return False
+
+    @property
+    def experiment(self):
+        return self._experiment
+
+    @property
+    def trial(self):
+        return self._trial
 
     @property
     def database_name(self):
@@ -92,7 +109,7 @@ class Writer(object):
         return self._dashboard_uri
 
     def add_scalar(self, key, step, value):
-        samlab.timeseries.add_scalar(self._database, self._fs, self._key + "/" + key, self._trial, step, value)
+        samlab.timeseries.add_scalar(self._database, self._fs, self._experiment, self._trial, key, step, value)
 
     def open_browser(self):
         """Open a web browser pointed to the running server."""

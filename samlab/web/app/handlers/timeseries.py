@@ -24,29 +24,59 @@ from samlab.web.app import application, require_auth, require_permissions
 from samlab.web.app.database import database, fs
 
 
+@application.route("/timeseries/experiments")
+@require_auth
+def get_timeseries_experiments():
+    require_permissions(["read"])
+
+    experiment_trials = collections.defaultdict(set)
+    experiment_keys = collections.defaultdict(set)
+    for item in database.timeseries.aggregate([{"$group": {"_id": {"experiment": "$experiment", "trial": "$trial", "key": "$key"}}}, {"$sort":{"_id": 1}}]):
+        experiment_trials[item["_id"]["experiment"]].add(item["_id"]["trial"])
+        experiment_keys[item["_id"]["experiment"]].add(item["_id"]["key"])
+
+    items = [{"experiment": experiment, "keys": sorted(experiment_keys[experiment]), "trials": sorted(experiment_trials[experiment])} for experiment in sorted(experiment_trials.keys())]
+
+    result = {}
+    result["experiments"] = items
+
+    return flask.jsonify(result)
+
+
 @application.route("/timeseries/keys")
 @require_auth
 def get_timeseries_keys():
     require_permissions(["read"])
 
+    key_experiments = collections.defaultdict(set)
+    key_trials = collections.defaultdict(set)
+    for item in database.timeseries.aggregate([{"$group": {"_id": {"experiment": "$experiment", "trial": "$trial", "key": "$key"}}}, {"$sort":{"_id": 1}}]):
+        key_experiments[item["_id"]["key"]].add(item["_id"]["experiment"])
+        key_trials[item["_id"]["key"]].add(item["_id"]["trial"])
+
+    items = [{"key":key, "experiments": sorted(key_experiments[key]), "trials": sorted(key_trials[key])} for key in sorted(key_experiments.keys())]
+
     result = {}
-    result["keys"] = sorted(database.timeseries.distinct("key"))
+    result["keys"] = items
 
     return flask.jsonify(result)
 
 
-@application.route("/timeseries/keys/series")
+@application.route("/timeseries/trials")
 @require_auth
-def get_timeseries_keys_series():
+def get_timeseries_trials():
     require_permissions(["read"])
 
-    keys = collections.defaultdict(list)
-    for item in database.timeseries.aggregate([{"$group": {"_id": {"key": "$key", "series": "$series"}}}, {"$sort":{"_id": 1}}]):
-        keys[item["_id"]["key"]].append(item["_id"]["series"])
-    keys = [{"key":key, "series": series} for key, series in keys.items()]
+    trial_experiments = collections.defaultdict(set)
+    trial_keys = collections.defaultdict(set)
+    for item in database.timeseries.aggregate([{"$group": {"_id": {"experiment": "$experiment", "trial": "$trial", "key": "$key"}}}, {"$sort":{"_id": 1}}]):
+        trial_experiments[item["_id"]["trial"]].add(item["_id"]["experiment"])
+        trial_keys[item["_id"]["trial"]].add(item["_id"]["key"])
+
+    items = [{"trial": trial, "experiments": sorted(trial_experiments[trial]), "keys": sorted(trial_keys[trial])} for trial in sorted(trial_experiments.keys())]
 
     result = {}
-    result["keys_series"] = keys
+    result["trials"] = items
 
     return flask.jsonify(result)
 
@@ -56,6 +86,7 @@ def get_timeseries_keys_series():
 def get_timeseries_plots_auto():
     require_permissions(["read"])
 
+    experiment = flask.request.args.get("experiment")
     height = int(float(flask.request.args.get("height", 500)))
     key = flask.request.args.get("key")
     smoothing = float(flask.request.args.get("smoothing", "0"))
@@ -70,8 +101,8 @@ def get_timeseries_plots_auto():
     values = collections.defaultdict(list)
     timestamps = collections.defaultdict(list)
 
-    for sample in database.timeseries.find({"key": key}):
-        series = sample.get("series", "default")
+    for sample in database.timeseries.find({"experiment": experiment, "key": key}):
+        series = sample.get("trial")
         step = sample["step"]
         value = sample["value"]
         timestamp = sample["timestamp"]
@@ -112,10 +143,12 @@ def get_timeseries_plots_auto():
 def delete_timeseries_samples():
     require_permissions(["delete"])
 
-    key = flask.request.args.get("key")
-    series = flask.request.args.get("series", None)
+    experiment = flask.request.args.get("experiment", None)
+    trial = flask.request.args.get("trial", None)
+    key = flask.request.args.get("key", None)
 
-    samlab.timeseries.delete(database, fs, key=key, series=series)
+    samlab.timeseries.delete(database, fs, experiment=experiment, trial=trial, key=key)
+
     return flask.jsonify()
 
 
