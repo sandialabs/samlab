@@ -63,16 +63,12 @@ def get_timeseries_metadata():
 def post_timeseries_plots_auto():
     require_permissions(["read"])
 
-    experiments = flask.request.json.get("experiments", [])
+    exclusions = flask.request.json.get("exclusions", [])
     height = int(float(flask.request.json.get("height", 500)))
     key = flask.request.json.get("key")
     smoothing = float(flask.request.json.get("smoothing", "0"))
-    trials = flask.request.json.get("trials", [])
     width = int(float(flask.request.json.get("width", 500)))
     yscale = flask.request.json.get("yscale", "linear")
-
-    log.debug("experiments: {}".format(experiments))
-    log.debug("trials: {}".format(trials))
 
     canvas = toyplot.Canvas(width=width, height=height)
     axes = canvas.cartesian(xlabel="Step", yscale=yscale)
@@ -81,12 +77,21 @@ def post_timeseries_plots_auto():
     values = collections.defaultdict(list)
     timestamps = collections.defaultdict(list)
 
-    query = {"key": key, "experiment": {"$nin": experiments.get("exclude", [])}}
-    log.debug("query: {}".format(query))
+    experiments = set()
+    trials = set()
+    for exclusion in exclusions:
+        if "experiment" in exclusion and "trial" in exclusion:
+            trials.add((exclusion["experiment"], exclusion["trial"]))
+        elif "experiment" in exclusion:
+            experiments.add(exclusion["experiment"])
+
+    query = {"key": key, "experiment": {"$nin": list(experiments)}}
 
     for sample in database.timeseries.find(query):
         experiment = sample.get("experiment")
         trial = sample.get("trial")
+        if (experiment, trial) in trials:
+            continue
         step = sample["step"]
         value = sample["value"]
         timestamp = sample["timestamp"]

@@ -27,46 +27,18 @@ define([
                 component.experiments = timeseries.experiments;
                 component.keys = timeseries.keys;
 
-                component.toggle_experiment = function(experiment)
+                component.show = function(item)
                 {
-                    dashboard.widgets().forEach(function(widget)
-                    {
-                        if(widget.component() != "samlab-timeseries-plot-widget")
-                            return;
-                        widget.params.experiments.exclude.push(experiment);
-                    });
-                }
-
-                component.toggle_trial = function(experiment, trial)
-                {
-                    dashboard.widgets().forEach(function(widget)
-                    {
-                        if(widget.component() != "samlab-timeseries-plot-widget")
-                            return;
-                        widget.params.trials.exclude.push([experiment, trial]);
-                    });
+                    timeseries.show(item);
                 };
 
-                component.toggle_key = function(key)
+                component.hide = function(item)
                 {
-                    // Close existing widgets.
-                    var remove = [];
-                    dashboard.widgets().forEach(function(widget)
-                    {
-                        if(widget.component() != "samlab-timeseries-plot-widget")
-                            return;
-                        if(widget.params.key() != key)
-                            return;
-                        remove.push(widget);
-                    });
-                    remove.forEach(function(widget)
-                    {
-                        dashboard.remove_widget(widget);
-                    });
-                    if(remove.length)
-                        return;
+                    timeseries.hide(item);
+                }
 
-                    // Otherwise, open a new widget.
+                component.open_key = function(key)
+                {
                     dashboard.add_widget("samlab-timeseries-plot-widget", {key: key});
                 };
 

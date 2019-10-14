@@ -440,11 +440,6 @@ define(
         });
     }
 
-    module.widgets = function()
-    {
-        return state.widgets();
-    }
-
     // Setup the initial dashboard state
     var uri = URI(window.location);
     if(uri.hasSearch("lid"))
