@@ -35,59 +35,44 @@ _get_color.palette = toyplot.color.brewer.palette("Set2")
 def get_timeseries_metadata():
     require_permissions(["read"])
 
-    experiments = set()
-    keys = set()
-
     experiment_trials = collections.defaultdict(set)
-    experiment_keys = collections.defaultdict(set)
-    key_experiments = collections.defaultdict(set)
-    key_trials = collections.defaultdict(set)
 
-    for item in database.timeseries.aggregate([{"$group": {"_id": {"experiment": "$experiment", "trial": "$trial", "key": "$key"}}}]):
+    for item in database.timeseries.aggregate([{"$group": {"_id": {"experiment": "$experiment", "trial": "$trial"}}}]):
         experiment = item["_id"]["experiment"]
         trial = item["_id"]["trial"]
-        key = item["_id"]["key"]
-
-        experiments.add(experiment)
-        keys.add(key)
-
         experiment_trials[experiment].add(trial)
-        experiment_keys[experiment].add(key)
-        key_experiments[key].add(experiment)
-        key_trials[key].add(trial)
 
-    result = {"experiments": [], "keys": []}
+    result = {"experiments": []}
 
-    for experiment in sorted(experiments):
+    for experiment in sorted(experiment_trials.keys()):
         result["experiments"].append({
             "experiment": experiment,
-            "keys": sorted(experiment_keys[experiment]),
             "trials": [{
                 "trial": trial,
                 "color": toyplot.color.to_css(_get_color(experiment, trial)),
                 } for trial in sorted(experiment_trials[experiment])],
             })
 
-    for key in sorted(keys):
-        result["keys"].append({
-            "key":key,
-            "experiments": sorted(key_experiments[key]),
-            "trials": sorted(key_trials[key]),
-            })
+    result["keys"] = database.timeseries.distinct("key")
 
     return flask.jsonify(result)
 
 
-@application.route("/timeseries/plots/auto")
+@application.route("/timeseries/plots/auto", methods=["POST"])
 @require_auth
-def get_timeseries_plots_auto():
+def post_timeseries_plots_auto():
     require_permissions(["read"])
 
-    height = int(float(flask.request.args.get("height", 500)))
-    key = flask.request.args.get("key")
-    smoothing = float(flask.request.args.get("smoothing", "0"))
-    width = int(float(flask.request.args.get("width", 500)))
-    yscale = flask.request.args.get("yscale", "linear")
+    experiments = flask.request.json.get("experiments", [])
+    height = int(float(flask.request.json.get("height", 500)))
+    key = flask.request.json.get("key")
+    smoothing = float(flask.request.json.get("smoothing", "0"))
+    trials = flask.request.json.get("trials", [])
+    width = int(float(flask.request.json.get("width", 500)))
+    yscale = flask.request.json.get("yscale", "linear")
+
+    log.debug("experiments: {}".format(experiments))
+    log.debug("trials: {}".format(trials))
 
     canvas = toyplot.Canvas(width=width, height=height)
     axes = canvas.cartesian(xlabel="Step", yscale=yscale)
@@ -96,7 +81,10 @@ def get_timeseries_plots_auto():
     values = collections.defaultdict(list)
     timestamps = collections.defaultdict(list)
 
-    for sample in database.timeseries.find({"key": key}):
+    query = {"key": key, "experiment": {"$nin": experiments.get("exclude", [])}}
+    log.debug("query: {}".format(query))
+
+    for sample in database.timeseries.find(query):
         experiment = sample.get("experiment")
         trial = sample.get("trial")
         step = sample["step"]

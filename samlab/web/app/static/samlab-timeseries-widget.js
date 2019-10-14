@@ -27,17 +27,27 @@ define([
                 component.experiments = timeseries.experiments;
                 component.keys = timeseries.keys;
 
-                component.toggle_experiment = function(item)
+                component.toggle_experiment = function(experiment)
                 {
                     dashboard.widgets().forEach(function(widget)
                     {
                         if(widget.component() != "samlab-timeseries-plot-widget")
                             return;
-                        widget.params.smoothing(Math.random());
+                        widget.params.experiments.exclude.push(experiment);
                     });
                 }
 
-                component.toggle_key = function(item)
+                component.toggle_trial = function(experiment, trial)
+                {
+                    dashboard.widgets().forEach(function(widget)
+                    {
+                        if(widget.component() != "samlab-timeseries-plot-widget")
+                            return;
+                        widget.params.trials.exclude.push([experiment, trial]);
+                    });
+                };
+
+                component.toggle_key = function(key)
                 {
                     // Close existing widgets.
                     var remove = [];
@@ -45,7 +55,7 @@ define([
                     {
                         if(widget.component() != "samlab-timeseries-plot-widget")
                             return;
-                        if(widget.params.key() != item.key())
+                        if(widget.params.key() != key)
                             return;
                         remove.push(widget);
                     });
@@ -57,7 +67,7 @@ define([
                         return;
 
                     // Otherwise, open a new widget.
-                    dashboard.add_widget("samlab-timeseries-plot-widget", {key: item.key()});
+                    dashboard.add_widget("samlab-timeseries-plot-widget", {key: key});
                 };
 
                 component.delete_experiment = function(experiment)

@@ -11,7 +11,8 @@ define([
     "samlab-dashboard",
     "samlab-server",
     "samlab-timeseries",
-    ], function(debug, element_resize, jquery, ko, mapping, dashboard, server, timeseries)
+    "URI",
+    ], function(debug, element_resize, jquery, ko, mapping, dashboard, server, timeseries, URI)
 {
     var component_name = "samlab-timeseries-plot-widget";
 
@@ -27,19 +28,21 @@ define([
 
                 var component = mapping.fromJS(
                 {
+                    height: container.innerHeight(),
+                    experiments: widget.params.experiments,
+                    trials: widget.params.trials,
+                    plot: null,
+					smoothing: widget.params.smoothing,
                     timeseries:
                     {
                         key: widget.params.key,
                     },
-                    plot: null,
-					smoothing: widget.params.smoothing,
-					yscale: widget.params.yscale,
                     width: container.innerWidth(),
-                    height: container.innerHeight(),
+					yscale: widget.params.yscale,
                 });
 
-                component.width.extend({rateLimit: {timeout: 100, method: "notifyWhenChangesStop"}});
                 component.height.extend({rateLimit: {timeout: 100, method: "notifyWhenChangesStop"}});
+                component.width.extend({rateLimit: {timeout: 100, method: "notifyWhenChangesStop"}});
 
                 component.yscale_items =
                 [
@@ -50,7 +53,22 @@ define([
                 // Load the plot at startup and anytime there are changes, but limit the rate.
                 var load_plot = ko.computed(function()
                 {
-                    server.load_json(component, "/timeseries/plots/auto?key=" + component.timeseries.key() + "&yscale=" + component.yscale() + "&smoothing=" + component.smoothing() + "&width=" + container.width() + "&height=" + component.height());
+                    var data = {
+                        experiments: { exclude: component.experiments.exclude() },
+                        height: component.height(),
+                        key: component.timeseries.key(),
+                        smoothing: component.smoothing(),
+                        trials: { exclude: component.trials.exclude() },
+                        width: component.width(),
+                        yscale: component.yscale(),
+                    }
+
+                    log("load_plot", data);
+
+                    server.post_json("/timeseries/plots/auto", data, {success: function(data)
+                    {
+                        component.plot(data.plot);
+                    }});
 
                     timeseries.sample.created();
                     timeseries.sample.updated();
@@ -71,7 +89,7 @@ define([
 
     var module =
     {
-        widget: { width: 4, height: 8, params: {key: "", yscale: "linear", smoothing: 0.5}},
+        widget: { width: 4, height: 8, params: {key: "", yscale: "linear", smoothing: 0.5, experiments: {exclude: []}, trials: {exclude: []}}},
     };
 
     return module;
