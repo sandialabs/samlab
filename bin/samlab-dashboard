@@ -87,7 +87,7 @@ for key, value in sorted(application.config.items()):
 # Load request handlers (note: must happen *after* all configuration).
 import samlab.web.app.handlers
 import samlab.web.app.handlers.artifact
-import samlab.web.app.handlers.async
+import samlab.web.app.handlers.asynchronous
 import samlab.web.app.handlers.delivery
 import samlab.web.app.handlers.experiment
 import samlab.web.app.handlers.favorite
