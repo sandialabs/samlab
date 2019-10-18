@@ -47,6 +47,8 @@ define([
                     });
                 });
 
+
+
                 component.dispose = function()
                 {
                     auto_delete_subscription.dispose();
@@ -95,6 +97,11 @@ define([
                         title: "Delete Observation?",
                     });
                 };
+
+                component.observation.name = ko.pureComputed(function()
+                {
+                    return "Observation-" + component.observation.id().substring(16);
+                });
 
                 component.observation.created_formatted = ko.pureComputed(function()
                 {
