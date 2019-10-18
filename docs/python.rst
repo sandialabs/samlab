@@ -43,7 +43,7 @@ visualizations.
     python/samlab.web.app.database.rst
     python/samlab.web.app.handlers.rst
     python/samlab.web.app.handlers.artifact.rst
-    python/samlab.web.app.handlers.async.rst
+    python/samlab.web.app.handlers.asynchronous.rst
     python/samlab.web.app.handlers.common.rst
     python/samlab.web.app.handlers.delivery.rst
     python/samlab.web.app.handlers.experiment.rst
