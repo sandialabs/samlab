@@ -376,6 +376,13 @@ def get_otype_tags(otype):
     return flask.jsonify(tags=sorted(tags))
 
 
+def _add_modified(update):
+    update["modified"] = arrow.utcnow().datetime
+    if hasattr(flask.request.authorization, "username"):
+        update["modified-by"] = flask.request.authorization.username
+    return update
+
+
 @application.route("/<allow(observations,experiments,artifacts):otype>/<oid>/attributes", methods=["PUT"])
 @require_auth
 def put_otype_oid_attributes(otype, oid):
@@ -386,10 +393,8 @@ def put_otype_oid_attributes(otype, oid):
     attributes = obj["attributes"]
     attributes.update(flask.request.json)
 
-    database[otype].update_one(
-        {"_id": oid},
-        {"$set": {"attributes": attributes, "modified-by": flask.request.authorization.username, "modified": arrow.utcnow().datetime}}
-        )
+    update = {"$set": _add_modified({"attributes": attributes})}
+    database[otype].update_one({"_id": oid}, update)
 
     socketio.emit("attribute-keys-changed", otype) # TODO: Handle this in samlab.web.app.watch_database
 
@@ -419,10 +424,10 @@ def put_otype_oid_tags(otype, oid):
             tags.add(tag)
     tags = list(tags)
 
-    database[otype].update_one(
-        {"_id": oid},
-        {"$set": {"tags": tags, "modified-by": flask.request.authorization.username, "modified": arrow.utcnow().datetime}}
-        )
+    log.debug(flask.request.authorization)
+
+    update = {"$set": _add_modified({"tags": tags})}
+    database[otype].update_one({"_id": oid}, update)
 
     socketio.emit("tags-changed", otype) # TODO: Handle this in samlab.web.app.watch_database
 
