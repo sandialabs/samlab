@@ -3,14 +3,18 @@
 // Government retains certain rights in this software.
 
 define([
+    "debug",
     "knockout",
     "knockout.mapping",
     "samlab-content",
+    "samlab-dashboard",
     "samlab-dialog",
     "samlab-object",
-    ], function(ko, mapping, content, dialog, object)
+    ], function(debug, ko, mapping, content, dashboard, dialog, object)
 {
     var component_name = "samlab-content-list-control";
+    var log = debug(component_name);
+
     ko.components.register(component_name,
     {
         viewModel:
@@ -23,6 +27,16 @@ define([
                 });
 
                 component.content = params.content;
+
+                component.is_image = function(item)
+                {
+                    return content.is_image(item["content-type"]);;
+                }
+
+                component.bounding_boxes = function(item)
+                {
+                    dashboard.add_widget("samlab-bounding-boxes-widget", {otype: component.otype, oid: component.oid, key: item.key});
+                }
 
                 component.show_content = function(item)
                 {

@@ -27,6 +27,13 @@ define([
         "video/quicktime": "samlab-video-widget",
     };
 
+    module.is_image = function(content_type)
+    {
+        type_subtype = ko.unwrap(content_type).split(";")[0];
+        type = type_subtype.split("/")[0];
+        return type == "image";
+    }
+
     module.show = function(otype, oid, key, content_type)
     {
         otype = ko.unwrap(otype);
