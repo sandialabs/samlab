@@ -22,9 +22,9 @@ define([
             {
                 var component = mapping.fromJS({
                     annotations: [
-                        {bbox: [10, 10, 50, 50], color: "red", username: "zgastel"},
-                        {bbox: [100, 100, 50, 50], color: "green", username: "tshead"},
-                        {bbox: [200, 200, 50, 50], color: "blue", username: "zgastel"},
+//                        {bbox: [10, 10, 50, 50], color: "red", username: "zgastel"},
+//                        {bbox: [100, 100, 50, 50], color: "green", username: "tshead"},
+//                        {bbox: [200, 200, 50, 50], color: "blue", username: "zgastel"},
                     ],
                     color: widget.params.color(),
                     current_annotation: null,
@@ -120,14 +120,27 @@ define([
                     }
                 }
 
+                component.load_annotations = ko.computed(function()
+                {
+                    server.get_json("/" + component.otype() + "/" + component.oid() + "/attributes", {
+                        success: function(data)
+                        {
+                            log("attributes", data);
+                            var annotations = data["attributes"]["samlab:content"][component.key()]["annotations"];
+                            component.annotations(mapping.fromJS(annotations));
+                        },
+                    });
+                });
+
                 component.save_annotations = function()
                 {
-                    log("save_annotations");
                     var data = {};
                     data["samlab:content"] = {}
                     data["samlab:content"][component.key()] = {annotations: mapping.toJS(component.annotations())};
                     server.put_json("/" + component.otype() + "/" + component.oid() + "/attributes", data);
                 }
+
+                //component.load_annotations();
 
                 server.load_json(component, "/" + component.otype() + "/" + component.oid() + "/content/" + component.key() + "/image/metadata");
 

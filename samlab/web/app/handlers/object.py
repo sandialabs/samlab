@@ -399,22 +399,31 @@ def _add_modified(update):
     return update
 
 
-@application.route("/<allow(observations,experiments,artifacts):otype>/<oid>/attributes", methods=["PUT"])
+@application.route("/<allow(observations,experiments,artifacts):otype>/<oid>/attributes", methods=["GET", "PUT"])
 @require_auth
-def put_otype_oid_attributes(otype, oid):
-    require_permissions(["write"])
-    oid = bson.objectid.ObjectId(oid)
-    obj = database[otype].find_one({"_id": oid})
+def get_put_otype_oid_attributes(otype, oid):
+    if flask.request.method == "GET":
+        require_permissions(["read"])
 
-    attributes = obj["attributes"]
-    attributes.update(flask.request.json)
+        oid = bson.objectid.ObjectId(oid)
+        obj = database[otype].find_one({"_id": oid})
 
-    update = {"$set": _add_modified({"attributes": attributes})}
-    database[otype].update_one({"_id": oid}, update)
+        attributes = obj["attributes"]
+        return flask.jsonify(attributes=attributes)
+    elif flask.request.method == "PUT":
+        require_permissions(["write"])
+        oid = bson.objectid.ObjectId(oid)
+        obj = database[otype].find_one({"_id": oid})
 
-    socketio.emit("attribute-keys-changed", otype) # TODO: Handle this in samlab.web.app.watch_database
+        attributes = obj["attributes"]
+        attributes.update(flask.request.json)
 
-    return flask.jsonify()
+        update = {"$set": _add_modified({"attributes": attributes})}
+        database[otype].update_one({"_id": oid}, update)
+
+        socketio.emit("attribute-keys-changed", otype) # TODO: Handle this in samlab.web.app.watch_database
+
+        return flask.jsonify()
 
 
 @application.route("/<allow(observations,experiments,artifacts):otype>/<oid>/tags", methods=["PUT"])

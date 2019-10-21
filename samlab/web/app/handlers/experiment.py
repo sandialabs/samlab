@@ -57,6 +57,7 @@ def get_delete_experiments_experiment(oid):
     oid = bson.objectid.ObjectId(oid)
 
     if flask.request.method == "GET":
+        require_permissions(["read"])
         return samlab.web.app.handlers.common.get_otype_oid("experiments", oid)
     elif flask.request.method == "DELETE":
         require_permissions(["delete"])
