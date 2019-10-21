@@ -12,6 +12,7 @@ define([
     "samlab-server",
     "samlab-tag-manager",
     "samlab-experiment",
+    "samlab-attributes-control",
     "samlab-content-list-control",
     ], function(ko, mapping, attribute_manager, dashboard, dialog, object, server, tag_manager, experiment)
 {
@@ -70,9 +71,8 @@ define([
                         label: "Visualizations",
                         children:
                         [
-                            {label: "Attributes", icon: "fa-align-left", widget: "samlab-attributes-widget", params: {otype: "experiments", oid: component.experiment.id}},
                         ],
-                    }, 
+                    },
                     {
                         label: "Artifacts",
                         children: component.artifacts.map(function(artifact)
@@ -81,11 +81,6 @@ define([
                         }),
                     },
                 ];
-
-                component.view_attributes = function()
-                {
-                    dashboard.add_widget("samlab-attributes-widget", {otype: "experiments", oid: component.experiment.id});
-                }
 
                 component.activate_item = function(item)
                 {

@@ -14,6 +14,7 @@ define([
     "samlab-permissions",
     "samlab-server",
     "samlab-tag-manager",
+    "samlab-attributes-control",
     "samlab-content-list-control",
     ], function(ko, mapping, attribute_manager, content, dashboard, dialog, object, observation, permissions, server, tag_manager)
 {
@@ -26,7 +27,6 @@ define([
             {
                 var component = mapping.fromJS({
                     observation: {
-                        "attributes-pre": null,
                         content: [],
                         created: null,
                         id: widget.params.id,
@@ -41,10 +41,6 @@ define([
                 var observation_changed_subscription = object.notify_changed("observations", widget.params.id, function()
                 {
                     server.load_json(component, "/observations/" + component.observation.id());
-                    server.load_text("/observations/" + component.observation.id() + "/attributes/pre", function(data)
-                    {
-                        component.observation["attributes-pre"](data);
-                    });
                 });
 
 
@@ -119,10 +115,6 @@ define([
                 });
 
                 server.load_json(component, "/observations/" + component.observation.id());
-                server.load_text("/observations/" + component.observation.id() + "/attributes/pre", function(data)
-                {
-                    component.observation["attributes-pre"](data);
-                });
 
                 return component;
             }

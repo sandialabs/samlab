@@ -14,6 +14,7 @@ define([
     "samlab-permissions",
     "samlab-server",
     "samlab-tag-manager",
+    "samlab-artifacts-control",
     "samlab-content-list-control",
     ], function(ko, mapping, attribute_manager, content, dashboard, dialog, artifact, object, permissions, server, tag_manager)
 {
@@ -27,7 +28,6 @@ define([
                 var component = mapping.fromJS({
                     artifact:
                     {
-                        "attributes-pre": null,
                         content: [],
                         created: null,
                         id: widget.params.id,
@@ -71,7 +71,6 @@ define([
                         label: "Visualizations",
                         children:
                         [
-                            {label: "Attributes", icon: "fa-align-left", widget: "samlab-attributes-widget", params: {otype: "artifacts", oid: component.artifact.id}},
                             {label: "Auto Plot", icon: "fa-line-chart", widget: "samlab-auto-plot-widget", params: {otype: "artifacts", oid: component.artifact.id, name: component.artifact.name}},
                         ],
                     },
@@ -83,11 +82,6 @@ define([
                         ],
                     },
                 ];
-
-                component.view_attributes = function()
-                {
-                    dashboard.add_widget("samlab-attributes-widget", {otype: "artifacts", oid: component.artifact.id});
-                }
 
                 component.activate_item = function(item)
                 {

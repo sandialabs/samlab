@@ -28,13 +28,6 @@ def get_index():
     return open(os.path.join(base_dir, "..", "static", "index.html"), "r").read()
 
 
-@application.route("/ready")
-@require_auth
-def get_ready():
-    require_permissions(["read"])
-    return flask.jsonify(ready=True)
-
-
 @application.route("/database")
 @require_auth
 def get_database():
@@ -42,23 +35,13 @@ def get_database():
     return flask.jsonify(database=application.config["database-name"])
 
 
-@application.route("/server")
+@application.route("/identity")
 @require_auth
-def get_server():
-    require_permissions(["read"])
-    return flask.jsonify(server={"name": application.config["server-name"], "description": application.config["server-description"]})
-
-
-@application.route("/permissions")
-@require_auth
-def get_permissions():
-    permissions = {
-        "delete": application.config["acl"](flask.request.authorization, ["delete"]),
-        "developer": application.config["acl"](flask.request.authorization, ["developer"]),
-        "read": application.config["acl"](flask.request.authorization, ["read"]),
-        "write": application.config["acl"](flask.request.authorization, ["write"]),
-    }
-    return flask.jsonify(permissions=permissions)
+def get_identity():
+    username = "unknown"
+    if hasattr(flask.request.authorization, "username"):
+        username = flask.request.authorization.username
+    return flask.jsonify(username=username)
 
 
 @application.route("/notify", methods=["POST"])
@@ -77,5 +60,31 @@ def post_notify():
 
     socketio.emit("notify", flask.request.json)
     return flask.jsonify()
+
+
+@application.route("/permissions")
+@require_auth
+def get_permissions():
+    permissions = {
+        "delete": application.config["acl"](flask.request.authorization, ["delete"]),
+        "developer": application.config["acl"](flask.request.authorization, ["developer"]),
+        "read": application.config["acl"](flask.request.authorization, ["read"]),
+        "write": application.config["acl"](flask.request.authorization, ["write"]),
+    }
+    return flask.jsonify(permissions=permissions)
+
+
+@application.route("/ready")
+@require_auth
+def get_ready():
+    require_permissions(["read"])
+    return flask.jsonify(ready=True)
+
+
+@application.route("/server")
+@require_auth
+def get_server():
+    require_permissions(["read"])
+    return flask.jsonify(server={"name": application.config["server-name"], "description": application.config["server-description"]})
 
 

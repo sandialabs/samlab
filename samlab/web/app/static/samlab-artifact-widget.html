@@ -1,7 +1,7 @@
 <div class="widget-content">
     <div class="container-fluid">
         <div class="grid-stack-item-handle">
-            <h1 class="h2" data-bind="text: artifact.name"></h1>
+            <h1 class="h5" data-bind="text: artifact.name"></h1>
             <p class="lead">
                 <samlab-favorite-control params="otype: 'artifacts', oid: artifact.id"></samlab-favorite-control>
                 <span class="small text-muted">Artifact <span data-bind="text: artifact.id"></span></span>
@@ -28,24 +28,9 @@
         </div>
 
         <dl class="row mt-3">
-            <dt class="col-md-3">Created:</dt>
-            <dd class="col-md-9" data-bind="text:artifact.created_formatted"></dd>
-
-            <!-- ko if: artifact.modified -->
-            <dt class="col-md-3">Modified:</dt>
-            <dd class="col-md-9" data-bind="text:artifact.modified_formatted"></dd>
-            <!-- /ko -->
-
-            <!-- ko if: artifact['modified-by'] -->
-            <dt class="col-md-3">Modified By:</dt>
-            <dd class="col-md-9" data-bind="text:artifact['modified-by']"></dd>
-            <!-- /ko -->
-
             <dt class="col-md-3">Attributes:</dt>
             <dd class="col-md-9">
-                <a href="#" data-bind="click: view_attributes">
-                    <pre class="mt-1 text-primary" data-bind="text:artifact['attributes-pre']"></pre>
-                </a>
+                <samlab-attributes-control params="otype: 'artifacts', oid: artifact.id"></samlab-attributes-control>
             </dd>
 
             <dt class="col-md-3">Tags:</dt>
@@ -56,5 +41,16 @@
 
         <b>Content:</b>
         <samlab-content-list-control class="mt-2" params="otype: 'artifacts', oid: artifact.id, content: artifact.content"></samlab-content-list-control>
+
+        <p class="text-muted mt-2" style="font-size: 70%">
+            Created <span data-bind="text:artifact.created_formatted"></span>
+            <!-- ko if: artifact.modified -->
+            <span>| Modified <span data-bind="text:artifact.modified_formatted"></span></span>
+                <!-- ko if: artifact['modified-by'] -->
+                by <span data-bind="text:artifact['modified-by']"></span>
+                <!-- /ko -->
+            <!-- /ko -->
+        </p>
+        <p>&nbsp;</p>
     </div>
 </div>

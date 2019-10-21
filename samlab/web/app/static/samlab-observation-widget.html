@@ -22,7 +22,7 @@
         <dl class="row mt-3">
             <dt class="col-md-3">Attributes:</dt>
             <dd class="col-md-9">
-                <pre class="mt-1" data-bind="text:observation['attributes-pre']"></pre>
+                <samlab-attributes-control params="otype: 'observations', oid: observation.id"></samlab-attributes-control>
             </dd>
 
             <dt class="col-md-3">Tags:</dt>
@@ -46,6 +46,7 @@
 
         <b>Content:</b>
         <samlab-content-list-control params="otype: 'observations', oid: observation.id, content: observation.content"></samlab-content-list-control>
+
         <p class="text-muted mt-2" style="font-size: 70%">
             Created <span data-bind="text:observation.created_formatted"></span>
             <!-- ko if: observation.modified -->

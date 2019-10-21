@@ -2,50 +2,35 @@
     <div class="container-fluid">
         <div class="grid-stack-item-handle">
             <h1 class="h5" data-bind="text:experiment.name">Experiment</h1>
-            <p class="lead">
+            <form class="form-inline">
                 <samlab-favorite-control params="otype: 'experiments', oid: experiment.id"></samlab-favorite-control>
                 <span class="small text-muted">Experiment <span data-bind="text: experiment.id"></span></span>
-            </p>
+                <div class="dropdown ml-2">
+                    <button type="button" class="btn btn-sm btn-outline-secondary dropdown-toggle" data-toggle="dropdown" data-boundary="window">Operations</button>
+                    <div class="dropdown-menu">
+                        <!-- ko foreach: groups -->
+                            <!-- ko if: $index -->
+                            <div class="dropdown-divider"></div>
+                            <!-- /ko -->
+                            <h6 class="dropdown-header" data-bind="text: label"></h6>
+                            <!-- ko foreach: children -->
+                            <a class="dropdown-item" data-bind="click: $component.activate_item"><span class="fa fa-fw" data-bind="css: icon"></span>&nbsp;<span data-bind="text: label"></span></a>
+                            <!-- /ko -->
+                        <!-- /ko -->
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" data-bind="click: $component.manage_attributes"><span class="fa fa-pencil fa-fw"></span>&nbsp;Manage Attributes</a>
+                        <a class="dropdown-item" data-bind="click: $component.manage_tags"><span class="fa fa-tags fa-fw"></span>&nbsp;Manage Tags</a>
+                        <a class="dropdown-item text-danger" data-bind="click: $component.delete_experiment"><span class="fa fa-trash fa-fw"></span>&nbsp;Delete Experiment</a>
+                    </div>
+                </div>
+            </form>
         </div>
         <hr></hr>
-        <div class="dropdown">
-            <button type="button" class="btn btn-outline-secondary dropdown-toggle" data-toggle="dropdown" data-boundary="window">Operations</button>
-            <div class="dropdown-menu">
-                <!-- ko foreach: groups -->
-                    <!-- ko if: $index -->
-                    <div class="dropdown-divider"></div>
-                    <!-- /ko -->
-                    <h6 class="dropdown-header" data-bind="text: label"></h6>
-                    <!-- ko foreach: children -->
-                    <a class="dropdown-item" data-bind="click: $component.activate_item"><span class="fa fa-fw" data-bind="css: icon"></span>&nbsp;<span data-bind="text: label"></span></a>
-                    <!-- /ko -->
-                <!-- /ko -->
-                <div class="dropdown-divider"></div>
-                <a class="dropdown-item" data-bind="click: $component.manage_attributes"><span class="fa fa-pencil fa-fw"></span>&nbsp;Manage Attributes</a>
-                <a class="dropdown-item" data-bind="click: $component.manage_tags"><span class="fa fa-tags fa-fw"></span>&nbsp;Manage Tags</a>
-                <a class="dropdown-item text-danger" data-bind="click: $component.delete_experiment"><span class="fa fa-trash fa-fw"></span>&nbsp;Delete Experiment</a>
-            </div>
-        </div>
 
         <dl class="row mt-3">
-            <dt class="col-md-3">Created:</dt>
-            <dd class="col-md-9" data-bind="text:experiment.created_formatted"></dd>
-
-            <!-- ko if: experiment.modified -->
-            <dt class="col-md-3">Modified:</dt>
-            <dd class="col-md-9" data-bind="text:experiment.modified_formatted"></dd>
-            <!-- /ko -->
-
-            <!-- ko if: experiment['modified-by'] -->
-            <dt class="col-md-3">Modified By:</dt>
-            <dd class="col-md-9" data-bind="text:experiment['modified-by']"></dd>
-            <!-- /ko -->
-
             <dt class="col-md-3">Attributes:</dt>
             <dd class="col-md-9">
-                <a href="#" data-bind="click: view_attributes">
-                    <pre class="mt-1 text-primary" data-bind="text:experiment['attributes-pre']"></pre>
-                </a>
+                <samlab-attributes-control params="otype: 'experiments', oid: experiment.id"></samlab-attributes-control>
             </dd>
 
             <dt class="col-md-3">Tags:</dt>
@@ -56,6 +41,17 @@
 
         <b>Content:</b>
         <samlab-content-list-control class="mt-2" params="otype: 'experiments', oid: experiment.id, content: experiment.content"></samlab-content-list-control>
+
+        <p class="text-muted mt-2" style="font-size: 70%">
+            Created <span data-bind="text:experiment.created_formatted"></span>
+            <!-- ko if: experiment.modified -->
+            <span>| Modified <span data-bind="text:experiment.modified_formatted"></span></span>
+                <!-- ko if: experiment['modified-by'] -->
+                by <span data-bind="text:experiment['modified-by']"></span>
+                <!-- /ko -->
+            <!-- /ko -->
+        </p>
+        <p>&nbsp;</p>
     </div>
 </div>
 

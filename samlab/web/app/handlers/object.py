@@ -69,6 +69,22 @@ def get_otype_oid_attributes_pre(otype, oid):
     return response
 
 
+@application.route("/<allow(observations,experiments,artifacts):otype>/<oid>/attributes/summary")
+@require_auth
+def get_otype_oid_attributes_summary(otype, oid):
+    require_permissions(["read"])
+    oid = bson.objectid.ObjectId(oid)
+    obj = database[otype].find_one({"_id": oid})
+
+    if obj is None:
+        flask.abort(404)
+
+    markup = "{" + ", ".join([key + ":&hellip;" for key in obj["attributes"]]) + "}"
+    response = flask.make_response(markup)
+    response.headers["content-type"] = "text/html"
+    return response
+
+
 @application.route("/<allow(observations,experiments,artifacts):otype>/content/keys")
 @require_auth
 def get_otype_content_keys(otype):

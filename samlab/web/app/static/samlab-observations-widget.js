@@ -20,6 +20,7 @@ define([
     "samlab-socket",
     "samlab-tag-manager",
     "samlab-uuidv4",
+    "samlab-attributes-control",
     "samlab-content-list-control",
     ], function(debug, ko, mapping, lodash, URI, attribute_manager, content, dashboard, dialog, notify, object, observation, permissions, server, socket, tag_manager, uuidv4)
 {
@@ -274,7 +275,7 @@ define([
                             component.deleted(true);
                         }
                     })
-                    server.load_text("/observations/" + oid + "/attributes/pre", function(data)
+                    server.load_text("/observations/" + oid + "/attributes/summary", function(data)
                     {
                         component.observation["attributes-pre"](data);
                     });

@@ -7,8 +7,9 @@ define([
     "knockout",
     "knockout.mapping",
     "samlab-dashboard",
+    "samlab-identity",
     "samlab-server",
-    ], function(debug, ko, mapping, dashboard, server)
+    ], function(debug, ko, mapping, dashboard, identity, server)
 {
     var component_name = "samlab-bounding-boxes-widget";
     var log = debug(component_name);
@@ -33,12 +34,13 @@ define([
                     oid: widget.params.oid(),
                     otype: widget.params.otype(),
                     title: "Bounding Boxes Editor",
+                    username: identity.username,
                 });
 
                 component.mode_items =
                 [
-                    {key: "add", label: "Add bounding boxes"},
-                    {key: "delete", label: "Delete bounding boxes"},
+                    {key: "add", label: "<span class='text-success fa fa-plus fa-fw'/>&nbsp;Add bounding boxes"},
+                    {key: "delete", label: "<span class='text-danger fa fa-trash fa-fw'/>&nbsp;Delete bounding boxes"},
                 ];
 
                 component.color_items =
@@ -72,6 +74,7 @@ define([
                     if(component.mode() == "delete")
                     {
                         component.annotations.remove(item);
+                        component.save_annotations();
                         event.stopPropagation();
                     }
                 }
@@ -83,7 +86,7 @@ define([
                         component.current_annotation(mapping.fromJS({
                             bbox: [event.offsetX, event.offsetY, 0, 0],
                             color: component.color(),
-                            username: "foo",
+                            username: component.username(),
                         }));
                         component.annotations.push(component.current_annotation());
                         event.stopPropagation();
@@ -113,7 +116,17 @@ define([
                     if(component.current_annotation() != null)
                     {
                         component.current_annotation(null);
+                        component.save_annotations();
                     }
+                }
+
+                component.save_annotations = function()
+                {
+                    log("save_annotations");
+                    var data = {};
+                    data["samlab:content"] = {}
+                    data["samlab:content"][component.key()] = {annotations: mapping.toJS(component.annotations())};
+                    server.put_json("/" + component.otype() + "/" + component.oid() + "/attributes", data);
                 }
 
                 server.load_json(component, "/" + component.otype() + "/" + component.oid() + "/content/" + component.key() + "/image/metadata");
