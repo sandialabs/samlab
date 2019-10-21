@@ -19,7 +19,7 @@ define([
             {
                 var component = mapping.fromJS({
                     content_type: widget.params["content-type"],
-                    label: object.label(widget.params.otype, {singular: true, capitalize: true}) + " Content",
+                    label: object.label(widget.params.otype, {singular: true, capitalize: true}),
                     metadata: {size: []},
                     oid: widget.params.oid,
                     otype: widget.params.otype,
