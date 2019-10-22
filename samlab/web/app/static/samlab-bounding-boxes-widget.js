@@ -21,11 +21,7 @@ define([
             createViewModel: function(widget, component_info)
             {
                 var component = mapping.fromJS({
-                    annotations: [
-//                        {bbox: [10, 10, 50, 50], color: "red", username: "zgastel"},
-//                        {bbox: [100, 100, 50, 50], color: "green", username: "tshead"},
-//                        {bbox: [200, 200, 50, 50], color: "blue", username: "zgastel"},
-                    ],
+                    annotations: [],
                     color: widget.params.color(),
                     current_annotation: null,
                     key: widget.params.key(),
@@ -39,8 +35,9 @@ define([
 
                 component.mode_items =
                 [
-                    {key: "add", label: "<span class='text-success fa fa-plus fa-fw'/>&nbsp;Add bounding boxes"},
-                    {key: "delete", label: "<span class='text-danger fa fa-trash fa-fw'/>&nbsp;Delete bounding boxes"},
+                    {key: "add", label: "<span class='text-success fa fa-plus fa-fw'/>&nbsp;Add"},
+                    //{key: "edit", label: "<span class='text-dark fa fa-pencil fa-fw'/>&nbsp;Edit"},
+                    {key: "delete", label: "<span class='text-danger fa fa-trash fa-fw'/>&nbsp;Delete"},
                 ];
 
                 component.color_items =
@@ -87,6 +84,7 @@ define([
                             bbox: [event.offsetX, event.offsetY, 0, 0],
                             color: component.color(),
                             username: component.username(),
+                            key: component.key(),
                         }));
                         component.annotations.push(component.current_annotation());
                         event.stopPropagation();
@@ -122,27 +120,31 @@ define([
 
                 component.load_annotations = ko.computed(function()
                 {
-                    server.get_json("/" + component.otype() + "/" + component.oid() + "/attributes", {
-                        success: function(data)
+                    server.get_json("/" + component.otype() + "/" + component.oid() + "/attributes",
+                    {
+                        success: function(attributes)
                         {
-                            log("attributes", data);
-                            var annotations = data["attributes"]["samlab:content"][component.key()]["annotations"];
-                            component.annotations(mapping.fromJS(annotations));
+                            attributes = mapping.fromJS(attributes);
+                            log("load_annotations", attributes);
+                            if("samlab:annotations" in attributes.attributes)
+                            {
+                                component.annotations(attributes.attributes["samlab:annotations"]());
+                            }
                         },
                     });
                 });
 
                 component.save_annotations = function()
                 {
-                    var data = {};
-                    data["samlab:content"] = {}
-                    data["samlab:content"][component.key()] = {annotations: mapping.toJS(component.annotations())};
-                    server.put_json("/" + component.otype() + "/" + component.oid() + "/attributes", data);
+                    var payload = {"samlab:annotations": mapping.toJS(component.annotations())};
+                    server.put_json("/" + component.otype() + "/" + component.oid() + "/attributes", payload);
                 }
 
                 //component.load_annotations();
 
                 server.load_json(component, "/" + component.otype() + "/" + component.oid() + "/content/" + component.key() + "/image/metadata");
+
+                log("component", component);
 
                 return component;
             },
