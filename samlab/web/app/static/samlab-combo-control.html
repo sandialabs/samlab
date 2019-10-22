@@ -1,6 +1,6 @@
 <div class="dropdown">
     <button type="button" class="btn btn-sm btn-outline-secondary dropdown-toggle" data-toggle="dropdown" data-boundary="window" data-bind="attr: {disabled: disabled}, html: current_label"></button>
-    <div class="dropdown-menu" data-bind="foreach: items">
+    <div class="dropdown-menu" style="min-width: 0" data-bind="foreach: items">
         <!-- ko if: "heading" in $data -->
         <h6 class="dropdown-header" data-bind="text: heading"></h6>
         <!-- /ko -->
