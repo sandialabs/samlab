@@ -66,6 +66,12 @@ define([
                     return "0 0 " + component.metadata.size()[0] + " " + component.metadata.size()[1];
                 });
 
+                component.clear = function()
+                {
+                    component.annotations([]);
+                    component.save_annotations();
+                }
+
                 component.on_click_box = function(item, event)
                 {
                     if(component.mode() == "delete")
