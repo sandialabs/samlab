@@ -8,7 +8,8 @@ define([
     "knockout.mapping",
     "samlab-object",
     "samlab-server",
-    ], function(debug, ko, mapping, object, server)
+    "URI",
+    ], function(debug, ko, mapping, object, server, URI)
 {
     var component_name = "samlab-attributes-control";
 
@@ -40,28 +41,24 @@ define([
                 component.toggle_expanded = function()
                 {
                     component.expanded(!component.expanded());
-                    component.load_markup();
                 }
 
-                component.load_markup = function()
+                component.load_markup = ko.computed(function()
                 {
-                    if(component.expanded())
-                    {
-                        server.load_text("/" + component.otype() + "/" + component.oid() + "/attributes/pre", function(value)
-                        {
-                            component.markup(value);
-                        });
-                    }
-                    else
-                    {
-                        server.load_text("/" + component.otype() + "/" + component.oid() + "/attributes/summary", function(value)
-                        {
-                            component.markup(value);
-                        });
-                    }
-                }
+                    if(component.otype() == null || component.oid() == null)
+                        return;
 
-                component.load_markup();
+                    var uri = new URI("/" + component.otype() + "/" + component.oid());
+                    if(component.expanded())
+                        uri.path(uri.path() + "/attributes/pre");
+                    else
+                        uri.path(uri.path() + "/attributes/summary");
+
+                    server.load_text(uri, function(value)
+                    {
+                        component.markup(value);
+                    });
+                });
 
                 return component;
             }
