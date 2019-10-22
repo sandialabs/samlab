@@ -82,6 +82,7 @@ define([
                     {
                         component.current_annotation(mapping.fromJS({
                             bbox: [event.offsetX, event.offsetY, 0, 0],
+                            bbox_mode: "XYWH_ABS",
                             color: component.color(),
                             username: component.username(),
                             key: component.key(),
