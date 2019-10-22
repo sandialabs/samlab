@@ -50,7 +50,6 @@ define([
     // Load timeseries keys at startup and anytime there are changes, but limit the rate.
     var load_metadata = ko.computed(function()
     {
-        log("Loading timeseries metadata.");
         server.load_json(module, "/timeseries/metadata");
 
         // Register the observables we want to track
