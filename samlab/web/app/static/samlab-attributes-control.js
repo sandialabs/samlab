@@ -43,8 +43,9 @@ define([
                     component.expanded(!component.expanded());
                 }
 
-                component.load_markup = ko.computed(function()
+                component.load_markup = function()
                 {
+                    log("load_markup");
                     if(component.otype() == null || component.oid() == null)
                         return;
 
@@ -58,6 +59,11 @@ define([
                     {
                         component.markup(value);
                     });
+                };
+
+                component.auto_load_markup = ko.computed(function()
+                {
+                    component.load_markup();
                 });
 
                 return component;
