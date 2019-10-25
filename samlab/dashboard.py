@@ -84,15 +84,15 @@ class Server(object):
         else:
             output = None
 
-        # Start the message queue
-        command = ["redis-server", "--bind", "127.0.0.1", "--save", ""]
-        log.info("Starting message queue: %s", " ".join(command))
-        self._message_queue = subprocess.Popen(command, stdout=output, stderr=output)
-
-        # Start the generic task queue
-        command = ["huey_consumer", "samlab.tasks.generic.run.queue"]
-        log.info("Starting generic task queue: %s", " ".join(command))
-        self._generic_task_queue = subprocess.Popen(command, stdout=output, stderr=output)
+#        # Start the message queue
+#        command = ["redis-server", "--bind", "127.0.0.1", "--save", ""]
+#        log.info("Starting message queue: %s", " ".join(command))
+#        self._message_queue = subprocess.Popen(command, stdout=output, stderr=output)
+#
+#        # Start the generic task queue
+#        command = ["huey_consumer", "samlab.tasks.generic.run.queue"]
+#        log.info("Starting generic task queue: %s", " ".join(command))
+#        self._generic_task_queue = subprocess.Popen(command, stdout=output, stderr=output)
 
         # Start the server
         command = ["samlab-dashboard", "--database-name", database_name, "--database-uri", database_uri, "--database-replicaset", database_replicaset, "--host", host, "--port", str(port)]
@@ -163,16 +163,16 @@ class Server(object):
         self._server = None
         log.info("Samlab server stopped.")
 
-        log.info("Stopping generic task queue.")
-        self._generic_task_queue.terminate()
-        self._generic_task_queue.wait()
-        self._generic_task_queue = None
-        log.info("Generic task queue stopped.")
-
-        log.info("Stopping message queue.")
-        self._message_queue.terminate()
-        self._message_queue.wait()
-        self._message_queue = None
-        log.info("Message queue stopped.")
+#        log.info("Stopping generic task queue.")
+#        self._generic_task_queue.terminate()
+#        self._generic_task_queue.wait()
+#        self._generic_task_queue = None
+#        log.info("Generic task queue stopped.")
+#
+#        log.info("Stopping message queue.")
+#        self._message_queue.terminate()
+#        self._message_queue.wait()
+#        self._message_queue = None
+#        log.info("Message queue stopped.")
 
 

@@ -14,6 +14,12 @@
             <svg data-bind="attr: {viewBox: viewbox}, event: {mousedown: on_mousedown, mousemove: on_mousemove, mouseup: on_mouseup}" font-size="12" stroke-width="1">
                 <!-- ko foreach: annotations -->
                 <rect fill-opacity="0.2" data-bind="attr: {x:bbox()[0], y:bbox()[1], width:bbox()[2], height:bbox()[3], fill:color, stroke:color}, click: $parent.on_click_box"/>
+                <g style="visibility: hidden">
+                    <circle data-bind="attr: {cx: bbox()[0], cy:bbox()[1], r:3, fill:color, stroke:color}"/>
+                    <circle data-bind="attr: {cx: bbox()[0]+bbox()[2], cy:bbox()[1], r:3, fill:color, stroke:color}"/>
+                    <circle data-bind="attr: {cx: bbox()[0], cy:bbox()[1]+bbox()[3], r:3, fill:color, stroke:color}"/>
+                    <circle data-bind="attr: {cx: bbox()[0]+bbox()[2], cy:bbox()[1]+bbox()[3], r:3, fill:color, stroke:color}"/>
+                </g>
                 <text stroke="none" data-bind="attr: {x:bbox()[0], y:bbox()[1]-5, fill:color}, text:username"/>
                 <!-- /ko -->
             </svg>

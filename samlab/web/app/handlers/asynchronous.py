@@ -7,7 +7,7 @@ import logging
 import arrow
 import flask
 
-import samlab.tasks.generic
+#import samlab.tasks.generic
 
 # Setup logging.
 log = logging.getLogger(__name__)
@@ -19,22 +19,22 @@ from samlab.web.app import application, socketio, require_auth, require_permissi
 from samlab.web.app.database import database, fs
 
 # Setup task queues
-generic_queue = samlab.tasks.generic.Queue()
+#generic_queue = samlab.tasks.generic.Queue()
 
 
 def log_request():
     log.info("socket.io client %s: %s", flask.request.sid, flask.request.event["message"])
 
 
-def receive_delivery(directory, label):
-    document = {
-        "created": arrow.utcnow().datetime,
-        "directory": directory,
-        "label": label,
-    }
-    did = database.deliveries.insert_one(document).inserted_id
-    log.info("Delivery received: %s %s", directory, label)
-    socketio.emit("notify", {"icon": "fa fa-truck", "message": "Delivery received: %s" % label, "type": "success", "delay": 0})
+#def receive_delivery(directory, label):
+#    document = {
+#        "created": arrow.utcnow().datetime,
+#        "directory": directory,
+#        "label": label,
+#    }
+#    did = database.deliveries.insert_one(document).inserted_id
+#    log.info("Delivery received: %s %s", directory, label)
+#    socketio.emit("notify", {"icon": "fa fa-truck", "message": "Delivery received: %s" % label, "type": "success", "delay": 0})
 
 
 ##################################################################################
@@ -53,26 +53,26 @@ def disconnect():
     log_request()
 
 
-@socketio.on("export-observations")
-@require_auth
-def export_observations(params):
-    require_permissions(["read"])
-    log_request()
-
-    sid = flask.request.sid
-    database_uri = application.config["database-uri"]
-    database_name = application.config["database-name"]
-    search = params["search"]
-
-    def implementation(*args, **kwargs):
-        task = generic_queue.export_observations(*args, **kwargs)
-        while True:
-            result = task()
-            if result is not None:
-                receive_delivery(result["directory"], "Exported %s observations" % result["count"])
-                return
-            socketio.sleep(1.0)
-    socketio.start_background_task(implementation, database_uri, database_name, search)
+#@socketio.on("export-observations")
+#@require_auth
+#def export_observations(params):
+#    require_permissions(["read"])
+#    log_request()
+#
+#    sid = flask.request.sid
+#    database_uri = application.config["database-uri"]
+#    database_name = application.config["database-name"]
+#    search = params["search"]
+#
+#    def implementation(*args, **kwargs):
+#        task = generic_queue.export_observations(*args, **kwargs)
+#        while True:
+#            result = task()
+#            if result is not None:
+#                receive_delivery(result["directory"], "Exported %s observations" % result["count"])
+#                return
+#            socketio.sleep(1.0)
+#    socketio.start_background_task(implementation, database_uri, database_name, search)
 
 
 @socketio.on("test")
