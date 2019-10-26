@@ -63,7 +63,7 @@ class Server(object):
     quiet: bool, optional
         if `True` (the default), suppresses output from the mongod process.
     """
-    def __init__(self, dbpath=None, host=None, port=None, reset=False, quiet=True):
+    def __init__(self, dbpath=None, host=None, port=None, replicaset=None, reset=False, quiet=True):
         # Choose a directory for storage.
         if dbpath is None:
             dbpath=tempfile.mkdtemp()
@@ -93,6 +93,10 @@ class Server(object):
                     sock.bind((host, 0))
                     port = sock.getsockname()[1]
 
+        # Make sure we have replicaset name.
+        if replicaset is None:
+            replicaset = "samlab"
+
         # Optionally suppress output from the server.
         if quiet:
             output = open(os.devnull, "wb")
@@ -100,18 +104,31 @@ class Server(object):
             output = None
 
         # Start the server
-        command = ["mongod", "--dbpath", dbpath, "--directoryperdb", "--replSet", "samlab", "--bind_ip", host, "--port", str(port)]
+        command = ["mongod", "--dbpath", dbpath, "--directoryperdb", "--replSet", replicaset, "--bind_ip", host, "--port", str(port)]
         log.info("Starting database server: %s", " ".join(command))
         self._mongod = subprocess.Popen(command, stdout=output, stderr=output)
 
         self._dbpath = dbpath
         self._host = host
         self._port = port
+        self._replicaset = replicaset
         self._reset = reset
 
-        # Initialize the replica set
+        # Connect the client.
         client = pymongo.MongoClient(self.uri)
-        client.admin.command("replSetInitiate", {"_id": "samlab", "members": [{"_id": 0, "host": "%s:%s" % (host, port)}]})
+
+        # Look for an existing replica set.
+        config = client.local["system.replset"].find_one({"_id": replicaset})
+        log.debug(f"replicaset config: {config}")
+
+        if config is None:
+            # Create a new config from scratch.
+            client.admin.command({"replSetInitiate": {"_id": replicaset, "members": [{"_id": 0, "host": "%s:%s" % (host, port)}]}})
+        else:
+            # Modify the config to match our host and port.
+            for member in config["members"]:
+                member["host"] = f"{host}:{port}"
+            client.admin.command({"replSetReconfig": config, "force": True})
 
     def __repr__(self):
         return "samlab.database.Server(dbpath=%r, host=%r, port=%r, reset=%r)" % (self._dbpath, self._host, self._port, self._reset)
@@ -133,7 +150,7 @@ class Server(object):
 
     @property
     def replicaset(self):
-        return "samlab"
+        return self._replicaset
 
     def stop(self):
         """Stop the running mongod instance.
