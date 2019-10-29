@@ -119,7 +119,6 @@ class Server(object):
 
         # Look for an existing replica set.
         config = client.local["system.replset"].find_one({"_id": replicaset})
-        log.debug(f"replicaset config: {config}")
 
         if config is None:
             # Create a new config from scratch.
