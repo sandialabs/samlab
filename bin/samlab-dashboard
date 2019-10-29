@@ -4,6 +4,11 @@ import argparse
 import imp
 import logging
 import os
+import threading
+import time
+import webbrowser
+
+import requests
 
 import samlab.database
 import samlab.web.app.acl
@@ -41,6 +46,7 @@ defaults = {
     "debug": getattr(config, "debug", False),
     "host": getattr(config, "host", "127.0.0.1"),
     "key": getattr(config, "key", None),
+    "no-browser": getattr(config, "no_browser", False),
     "port": getattr(config, "port", 4000),
     "server_name": getattr(config, "server_name", None),
     "server_description": getattr(config, "server_description", None),
@@ -57,6 +63,7 @@ parser.add_argument("--database-uri", help="Database connection string. Default:
 parser.add_argument("--debug", action="store_true", help="Enable server debugging.")
 parser.add_argument("--host", help="Host interface for incoming connections. Default: %(default)s")
 parser.add_argument("--key", help="TLS private key.  Default: %(default)s")
+parser.add_argument("--no-browser", action="store_true", help="Disable automatically opening a web browser at startup.")
 parser.add_argument("--port", type=int, help="Host port for incoming connections. Default: %(default)s")
 parser.add_argument("--server-description", help="Server description. Default: %(default)s")
 parser.add_argument("--server-name", help="Server name. Default: %(default)s")
@@ -83,6 +90,7 @@ application.config["database-replicaset"] = arguments.database_replicaset
 application.config["debug"] = arguments.debug
 application.config["host"] = arguments.host
 application.config["key"] = arguments.key
+application.config["no-browser"] = arguments.no_browser
 application.config["port"] = arguments.port
 application.config["server-name"] = arguments.server_name if arguments.server_name is not None else arguments.database_name
 application.config["server-description"] = arguments.server_description
@@ -106,12 +114,34 @@ import samlab.web.app.handlers.observation
 import samlab.web.app.handlers.timeseries
 import samlab.web.app.watch
 
+# Optionally open a web browser at startup.
+def open_browser(config):
+    scheme = "https" if config["certificate"] and config["key"] else "http"
+    server_name = config["host"]
+    server_port = config["port"]
+    uri = f"{scheme}://{server_name}:{server_port}"
+
+    log.info(f"Will open {uri} in default web browser.")
+
+    while True:
+        try:
+            requests.get(uri + "/ready", proxies={"http": None})
+            webbrowser.open(uri)
+            return
+        except Exception as e:
+            log.debug(e)
+            time.sleep(1.0)
+
+if not application.config["no-browser"]:
+    threading.Thread(target=open_browser, args=(application.config,), daemon=True).start()
+
 # Start the server.
 if application.config["certificate"] and application.config["key"]:
     socketio.run(application, host=application.config["host"], port=application.config["port"], ssl_context=(application.config["certificate"], application.config["key"]), debug=application.config["debug"])
 else:
     socketio.run(application, host=application.config["host"], port=application.config["port"], debug=application.config["debug"])
 
+# Stop the database server.
 if arguments.data_dir is not None:
     dbserver.stop()
 
