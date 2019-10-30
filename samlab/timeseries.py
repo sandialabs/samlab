@@ -24,6 +24,30 @@ def add_scalar(database, fs, experiment, trial, key, step, value):
     assert(isinstance(trial, str))
     assert(isinstance(key, str))
     assert(isinstance(step, numbers.Number))
+    assert(isinstance(value, numbers.Number))
+
+    document = {
+        "experiment": experiment,
+        "trial": trial,
+        "key": key,
+        "step": step,
+        "value": value,
+        "timestamp": arrow.utcnow().datetime,
+        }
+
+    document["_id"] = database.timeseries.insert_one(document).inserted_id
+
+    return document
+
+
+def add_text(database, fs, experiment, trial, key, step, value):
+    assert(isinstance(database, pymongo.database.Database))
+    assert(isinstance(fs, gridfs.GridFS))
+    assert(isinstance(experiment, str))
+    assert(isinstance(trial, str))
+    assert(isinstance(key, str))
+    assert(isinstance(step, numbers.Number))
+    assert(isinstance(value, str))
 
     document = {
         "experiment": experiment,
@@ -110,6 +134,9 @@ class Writer(object):
 
     def add_scalar(self, key, step, value):
         samlab.timeseries.add_scalar(self._database, self._fs, self._experiment, self._trial, key, step, value)
+
+    def add_text(self, key, step, value):
+        samlab.timeseries.add_text(self._database, self._fs, self._experiment, self._trial, key, step, value)
 
     def open_browser(self):
         """Open a web browser pointed to the running server."""
