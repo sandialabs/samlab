@@ -12,6 +12,8 @@
         <div class="img-overlay-wrap">
             <img data-bind="attr: {src: src}, event: {load: image_loaded}"></img>
             <svg data-bind="attr: {viewBox: viewbox}, event: {mousedown: on_mousedown, mousemove: on_mousemove, mouseup: on_mouseup}" font-size="12" stroke-width="1">
+                <line x1="0" data-bind="attr:{y1: mousey, y2: mousey, x2: metadata.size()[0], stroke: color}" opacity="0.5"/>
+                <line y1="0", data-bind="attr:{x1: mousex, x2: mousex, y2: metadata.size()[1], stroke: color}" opacity="0.5"/>
                 <!-- ko foreach: annotations -->
                 <rect fill-opacity="0.2" data-bind="attr: {x:bbox()[0], y:bbox()[1], width:bbox()[2], height:bbox()[3], fill:color, stroke:color}, click: $parent.on_click_box"/>
                 <text stroke="none" data-bind="attr: {x:bbox()[0], y:bbox()[1]-5, fill:color}, text:username"/>
