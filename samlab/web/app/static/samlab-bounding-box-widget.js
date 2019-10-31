@@ -11,8 +11,9 @@ define([
     "samlab-bounding-box-manager",
     "samlab-dashboard",
     "samlab-identity",
+    "samlab-object",
     "samlab-server",
-    ], function(debug, element_resize, jquery, ko, mapping, manager, dashboard, identity, server)
+    ], function(debug, element_resize, jquery, ko, mapping, manager, dashboard, identity, object, server)
 {
     var component_name = "samlab-bounding-box-widget";
     var log = debug(component_name);
@@ -53,6 +54,20 @@ define([
                     component.display_width(container.innerWidth());
                     component.display_height(container.innerHeight());
                 });
+
+                var change_subscription = object.changed.subscribe(function(object)
+                {
+                    log("change_subscription", object);
+                    if(component.otype() == object.otype && component.oid() == object.oid)
+                    {
+                        component.load_annotations();
+                    }
+                });
+
+                component.dispose = function()
+                {
+                    change_subscription.dispose();
+                }
 
                 component.image_loaded = function()
                 {
@@ -112,7 +127,7 @@ define([
                     }
                 });
 
-                component.load_annotations = ko.computed(function()
+                component.load_annotations = function()
                 {
                     var otype = component.otype();
                     var oid = component.oid();
@@ -123,6 +138,11 @@ define([
                     {
                         server.load_json(component, "/" + otype + "/" + oid + "/attributes");
                     }
+                };
+
+                component.update_annotations = ko.computed(function()
+                {
+                    component.load_annotations();
                 });
 
                 component.save_annotations = function()
