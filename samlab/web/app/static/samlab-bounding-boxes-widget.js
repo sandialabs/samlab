@@ -26,6 +26,7 @@ define([
 
                 var component = mapping.fromJS({
                     annotations: [],
+                    category: "object",
                     color: widget.params.color(),
                     current_annotation: null,
                     display_height: container.innerHeight(),
@@ -122,6 +123,7 @@ define([
                         component.current_annotation(mapping.fromJS({
                             bbox: [component.x1(), component.y1(), 0, 0],
                             bbox_mode: "XYWH_ABS",
+                            category: component.category(),
                             color: component.color(),
                             username: component.username(),
                             key: component.key(),

@@ -5,9 +5,10 @@
         </div>
         <hr></hr>
         <form class="form-inline mb-3" onSubmit="return false">
-            <samlab-combo-control class="mr-2" params="current: mode, items: mode_items"></samlab-combo-control>
-            <samlab-combo-control class="mr-5" params="current: color, items: color_items, disabled: mode() != 'add'"></samlab-combo-control>
-            <button type="button" class="btn btn-sm btn-danger" data-bind="click: clear">Clear All</button>
+            <samlab-combo-control class="" params="current: mode, items: mode_items"></samlab-combo-control>
+            <samlab-combo-control class="ml-2" params="current: color, items: color_items, disabled: mode() != 'add'"></samlab-combo-control>
+            <input class="form-control form-control-sm ml-2" data-bind="value: category"/>
+            <button type="button" class="btn btn-sm btn-danger ml-5" data-bind="click: clear">Clear All</button>
         </form>
         <div class="img-overlay-wrap">
             <img data-bind="attr: {src: src}, event: {load: image_loaded}"></img>
@@ -17,6 +18,7 @@
                 <!-- ko foreach: annotations -->
                 <rect fill-opacity="0.2" data-bind="attr: {x:bbox()[0], y:bbox()[1], width:bbox()[2], height:bbox()[3], fill:color, stroke:color}, click: $parent.on_click_box"/>
                 <text stroke="none" data-bind="attr: {x:bbox()[0], y:bbox()[1]-5, fill:color}, text:username"/>
+                <text stroke="none" data-bind="attr: {x:bbox()[0]+bbox()[2], y:bbox()[1]+bbox()[3]+12, fill:color}, text:category" style="text-anchor: end"/>
                 <!-- /ko -->
             </svg>
         </div>
