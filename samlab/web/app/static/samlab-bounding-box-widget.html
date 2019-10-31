@@ -1,7 +1,7 @@
 <div class="widget-content">
     <div class="container-fluid">
         <div class="grid-stack-item-handle">
-            <h1 class="h5" data-bind="text: title"></h1>
+            <h1 class="h5">Bounding Box Manager</h1>
         </div>
         <hr></hr>
         <form class="form-inline mb-3" onSubmit="return false">
@@ -13,12 +13,17 @@
         <div class="img-overlay-wrap">
             <img data-bind="attr: {src: src}, event: {load: image_loaded}"></img>
             <svg data-bind="attr: {viewBox: viewbox}, event: {mousedown: on_mousedown, mousemove: on_mousemove, mouseup: on_mouseup}" font-size="12" stroke-width="1">
+                <defs>
+                    <filter id="shadow">
+                        <feDropShadow dx="0.2" dy="0.2" stdDeviation="0.2"/>
+                    </filter>
+                </defs>
                 <line x1="0" data-bind="attr:{y1: mousey, y2: mousey, x2: metadata.size()[0], stroke: color}" opacity="0.5"/>
                 <line y1="0", data-bind="attr:{x1: mousex, x2: mousex, y2: metadata.size()[1], stroke: color}" opacity="0.5"/>
-                <!-- ko foreach: annotations -->
-                <rect fill-opacity="0.2" data-bind="attr: {x:bbox()[0], y:bbox()[1], width:bbox()[2], height:bbox()[3], fill:color, stroke:color}, click: $parent.on_click_box"/>
-                <text stroke="none" data-bind="attr: {x:bbox()[0], y:bbox()[1]-5, fill:color}, text:username"/>
-                <text stroke="none" data-bind="attr: {x:bbox()[0]+bbox()[2], y:bbox()[1]+bbox()[3]+12, fill:color}, text:category" style="text-anchor: end"/>
+                <!-- ko foreach: attributes['samlab:annotations']() -->
+                <rect fill-opacity="0.2" data-bind="attr: {x:bbox()[0], y:bbox()[1], width:bbox()[2], height:bbox()[3], fill:color(), stroke:color()}, click: $parent.on_click_box"/>
+                <text style="filter:url(#shadow)" stroke="none" data-bind="attr: {x:bbox()[0], y:bbox()[1]-5, fill:color()}, text:category()"/>
+                <text style="filter:url(#shadow); text-anchor: end" stroke="none" data-bind="attr: {x:bbox()[0]+bbox()[2], y:bbox()[1]+bbox()[3]+12, fill:color()}, text:username()"/>
                 <!-- /ko -->
             </svg>
         </div>

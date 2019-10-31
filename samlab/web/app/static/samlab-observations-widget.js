@@ -9,6 +9,7 @@ define([
     "lodash",
     "URI",
     "samlab-attribute-manager",
+    "samlab-bounding-box-manager",
     "samlab-content",
     "samlab-dashboard",
     "samlab-dialog",
@@ -22,7 +23,7 @@ define([
     "samlab-uuidv4",
     "samlab-attributes-control",
     "samlab-content-list-control",
-    ], function(debug, ko, mapping, lodash, URI, attribute_manager, content, dashboard, dialog, notify, object, observation, permissions, server, socket, tag_manager, uuidv4)
+    ], function(debug, ko, mapping, lodash, URI, attribute_manager, bounding_box_manager, content, dashboard, dialog, notify, object, observation, permissions, server, socket, tag_manager, uuidv4)
 {
     var log = debug("samlab-observations-widget");
 
@@ -281,6 +282,7 @@ define([
                     });
 
                     attribute_manager.manage("observations", oid);
+                    bounding_box_manager.manage("observations", oid, "image");
                     tag_manager.manage("observations", oid);
 
                     component.ready();
@@ -354,6 +356,7 @@ define([
                     if(active_widget != widget)
                         return;
                     attribute_manager.manage("observations", component.observation.id);
+                    bounding_box_manager.manage("observations", component.observation.id, "image");
                     tag_manager.manage("observations", component.observation.id);
                 });
 
@@ -402,6 +405,7 @@ define([
                     observation_deleted_subscription.dispose();
 
                     attribute_manager.release("observations", component.observation.id);
+                    bounding_box_manager.release("observations", component.observation.id, "image");
                     tag_manager.release("observations", component.observation.id);
                 }
 

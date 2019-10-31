@@ -35,7 +35,7 @@ define([
 
                 component.bounding_boxes = function(item)
                 {
-                    dashboard.add_widget("samlab-bounding-boxes-widget", {otype: component.otype, oid: component.oid, key: item.key});
+                    dashboard.add_widget("samlab-bounding-box-widget", {otype: component.otype, oid: component.oid, key: item.key});
                 }
 
                 component.show_content = function(item)

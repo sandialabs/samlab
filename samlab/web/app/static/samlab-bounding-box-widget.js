@@ -8,12 +8,13 @@ define([
     "jquery",
     "knockout",
     "knockout.mapping",
+    "samlab-bounding-box-manager",
     "samlab-dashboard",
     "samlab-identity",
     "samlab-server",
-    ], function(debug, element_resize, jquery, ko, mapping, dashboard, identity, server)
+    ], function(debug, element_resize, jquery, ko, mapping, manager, dashboard, identity, server)
 {
-    var component_name = "samlab-bounding-boxes-widget";
+    var component_name = "samlab-bounding-box-widget";
     var log = debug(component_name);
 
     ko.components.register(component_name,
@@ -25,26 +26,27 @@ define([
                 var container = jquery(component_info.element.querySelector(".img-overlay-wrap"));
 
                 var component = mapping.fromJS({
-                    annotations: [],
+                    attributes: {'samlab:annotations': []},
                     category: "object",
                     color: widget.params.color(),
                     current_annotation: null,
                     display_height: container.innerHeight(),
                     display_width: container.innerWidth(),
-                    key: widget.params.key(),
+                    key: widget.params.key() || manager.key,
                     metadata: {size: [0, 0]},
                     mode: "add",
                     mousex: 0,
                     mousey: 0,
-                    oid: widget.params.oid(),
-                    otype: widget.params.otype(),
-                    title: "Bounding Boxes Editor",
+                    oid: widget.params.oid() || manager.oid,
+                    otype: widget.params.otype() || manager.otype,
                     username: identity.username,
                     x1: null,
                     x2: null,
                     y1: null,
                     y2: null,
                 });
+
+                log("component", component);
 
                 element_resize(container[0], function()
                 {
@@ -75,11 +77,22 @@ define([
                     {key: "cyan", label: "<span style='color: cyan' class='fa fa-square fa-fw'></span>"},
                     {key: "blue", label: "<span style='color: blue' class='fa fa-square fa-fw'></span>"},
                     {key: "purple", label: "<span style='color: purple' class='fa fa-square fa-fw'></span>"},
+                    {key: "black", label: "<span style='color: black' class='fa fa-square fa-fw'></span>"},
+                    {key: "white", label: "<span style='color: black' class='fa fa-square-o fa-fw'></span>"},
                 ];
 
-                component.src = ko.pureComputed(function()
+                component.src = ko.computed(function()
                 {
-                    return "/" + component.otype() + "/" + component.oid() + "/content/" + component.key() + "/data";
+                    var otype = component.otype();
+                    var oid = component.oid();
+                    var key = component.key();
+
+                    if(otype != null && oid != null && key != null)
+                    {
+                        return "/" + otype + "/" + oid + "/content/" + key + "/data";
+                    }
+
+                    return "";
                 });
 
                 component.viewbox = ko.pureComputed(function()
@@ -87,9 +100,40 @@ define([
                     return "0 0 " + component.metadata.size()[0] + " " + component.metadata.size()[1];
                 });
 
+                component.load_metadata = ko.computed(function()
+                {
+                    var otype = component.otype();
+                    var oid = component.oid();
+                    var key = component.key();
+
+                    if(otype != null && oid != null && key != null)
+                    {
+                        server.load_json(component, "/" + otype + "/" + oid + "/content/" + key + "/image/metadata");
+                    }
+                });
+
+                component.load_annotations = ko.computed(function()
+                {
+                    var otype = component.otype();
+                    var oid = component.oid();
+
+                    component.attributes["samlab:annotations"]([]);
+
+                    if(otype != null && oid != null)
+                    {
+                        server.load_json(component, "/" + otype + "/" + oid + "/attributes");
+                    }
+                });
+
+                component.save_annotations = function()
+                {
+                    var payload = {"samlab:annotations": mapping.toJS(component.attributes["samlab:annotations"]())};
+                    server.put_json("/" + component.otype() + "/" + component.oid() + "/attributes", payload);
+                }
+
                 component.clear = function()
                 {
-                    component.annotations([]);
+                    component.attributes["samlab:annotations"]([]);
                     component.save_annotations();
                 }
 
@@ -97,7 +141,7 @@ define([
                 {
                     if(component.mode() == "delete")
                     {
-                        component.annotations.remove(item);
+                        component.attributes["samlab:annotations"].remove(item);
                         component.save_annotations();
                         event.stopPropagation();
                     }
@@ -128,7 +172,7 @@ define([
                             username: component.username(),
                             key: component.key(),
                         }));
-                        component.annotations.push(component.current_annotation());
+                        component.attributes["samlab:annotations"].push(component.current_annotation());
                         event.stopPropagation();
                     }
                 }
@@ -163,30 +207,6 @@ define([
                         component.save_annotations();
                     }
                 }
-
-                component.load_annotations = ko.computed(function()
-                {
-                    server.get_json("/" + component.otype() + "/" + component.oid() + "/attributes",
-                    {
-                        success: function(attributes)
-                        {
-                            attributes = mapping.fromJS(attributes);
-                            log("load_annotations", attributes);
-                            if("samlab:annotations" in attributes.attributes)
-                            {
-                                component.annotations(attributes.attributes["samlab:annotations"]());
-                            }
-                        },
-                    });
-                });
-
-                component.save_annotations = function()
-                {
-                    var payload = {"samlab:annotations": mapping.toJS(component.annotations())};
-                    server.put_json("/" + component.otype() + "/" + component.oid() + "/attributes", payload);
-                }
-
-                server.load_json(component, "/" + component.otype() + "/" + component.oid() + "/content/" + component.key() + "/image/metadata");
 
                 return component;
             },

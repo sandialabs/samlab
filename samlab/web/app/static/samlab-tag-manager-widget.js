@@ -2,7 +2,12 @@
 // (NTESS).  Under the terms of Contract DE-NA0003525 with NTESS, the U.S.
 // Government retains certain rights in this software.
 
-define(["knockout", "knockout.mapping", "samlab-tag-manager", "samlab-dashboard"], function(ko, mapping, manager, dashboard)
+define([
+    "knockout",
+    "knockout.mapping",
+    "samlab-tag-manager",
+    "samlab-dashboard",
+    ], function(ko, mapping, manager, dashboard)
 {
     var component_name = "samlab-tag-manager-widget";
 

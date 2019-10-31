@@ -65,6 +65,7 @@ define(
                     { label: "About", icon: "fa-certificate", component: "samlab-markup-viewer-widget", params: {uri: "/static/samlab-about.html"}},
                     { label: "Acknowledgements", icon: "fa-certificate", component: "samlab-markup-viewer-widget", params: {uri: "/static/samlab-acknowledgements.html"}},
                     { label: "Attribute Manager", icon: "fa-pencil", component: "samlab-attribute-manager-widget"},
+                    { label: "Bounding Box Manager", icon: "fa-square-o", component: "samlab-bounding-box-widget"},
                     { label: "Deliveries", icon: "fa-truck", component: "samlab-deliveries-widget"},
                     { label: "Favorites", icon: "fa-heart", component: "samlab-favorites-widget"},
                     { label: "Tag Manager", icon: "fa-tag", component: "samlab-tag-manager-widget"},
