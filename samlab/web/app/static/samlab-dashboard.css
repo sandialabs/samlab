@@ -97,3 +97,13 @@
   transform: rotate(15deg);
 }
 */
+
+.undecorated-link
+{
+    text-decoration: none;
+}
+
+.undecorated-link:hover
+{
+    text-decoration: none;
+}
