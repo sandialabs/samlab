@@ -6,8 +6,8 @@ define([
     "knockout",
     "knockout.mapping",
     "samlab-dashboard",
-    "samlab-experiment",
-    ], function(ko, mapping, dashboard, experiment)
+    "samlab-experiment-manager",
+    ], function(ko, mapping, dashboard, experiment_manager)
 {
     var component_name = "samlab-experiments-widget";
     ko.components.register(component_name,
@@ -19,7 +19,7 @@ define([
                 var component = mapping.fromJS({
                 });
 
-                component.experiments = experiment.experiments.map(function(experiment)
+                component.experiments = experiment_manager.experiments.map(function(experiment)
                 {
                     return { label: experiment.name, id: experiment.id};
                 });

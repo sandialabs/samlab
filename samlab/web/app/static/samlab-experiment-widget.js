@@ -8,13 +8,13 @@ define([
     "samlab-attribute-manager",
     "samlab-dashboard",
     "samlab-dialog",
-    "samlab-object",
+    "samlab-object-manager",
     "samlab-server",
     "samlab-tag-manager",
-    "samlab-experiment",
-    "samlab-attributes-control",
+    "samlab-experiment-manager",
+    "samlab-attribute-control",
     "samlab-content-list-control",
-    ], function(ko, mapping, attribute_manager, dashboard, dialog, object, server, tag_manager, experiment)
+    ], function(ko, mapping, attribute_manager, dashboard, dialog, object, server, tag_manager, experiment_manager)
 {
     var component_name = "samlab-experiment-widget";
     ko.components.register(component_name,
@@ -89,12 +89,12 @@ define([
 
                 component.manage_attributes = function()
                 {
-                    dashboard.add_widget("samlab-attribute-manager-widget");
+                    dashboard.add_widget("samlab-attribute-widget");
                 }
 
                 component.manage_tags = function()
                 {
-                    dashboard.add_widget("samlab-tag-manager-widget");
+                    dashboard.add_widget("samlab-tag-widget");
                 }
 
                 component.delete_experiment = function()
@@ -106,7 +106,7 @@ define([
                         callback: function(button)
                         {
                             if(button.label == "Delete")
-                                experiment.delete(component.experiment.id());
+                                experiment_manager.delete(component.experiment.id());
                         },
                         message: "This will delete the experiment and its artifacts, and close any related dashboard widgets.",
                         title: "Delete Trial?",

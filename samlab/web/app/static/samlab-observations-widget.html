@@ -30,8 +30,8 @@
                 <button type="button" class="btn btn-sm btn-outline-secondary dropdown-toggle" data-toggle="dropdown" data-boundary="window">Operations</button>
                 <div class="dropdown-menu">
                     <a class="dropdown-item" data-bind="click: $component.view_observation"><span class="fa fa-eye fa-fw"></span>&nbsp;View Observation</a>
-                    <a class="dropdown-item" data-bind="click: $component.manage_attributes"><span class="fa fa-pencil fa-fw"></span>&nbsp;Manage Attributes</a>
-                    <a class="dropdown-item" data-bind="click: $component.manage_tags"><span class="fa fa-tags fa-fw"></span>&nbsp;Manage Tags</a>
+                    <a class="dropdown-item" data-bind="click: $component.manage_attributes"><span class="fa fa-pencil fa-fw"></span>&nbsp;Edit Attributes</a>
+                    <a class="dropdown-item" data-bind="click: $component.manage_tags"><span class="fa fa-tags fa-fw"></span>&nbsp;Edit Tags</a>
                     <div class="dropdown-divider"></div>
                     <a class="dropdown-item" data-bind="click: $component.export_observations"><span class="fa fa-download fa-fw"></span>&nbsp;Export Observations</a>
                     <div class="dropdown-divider"></div>
@@ -53,7 +53,7 @@
         <dl class="row mt-3" data-bind="if: !deleted()">
             <dt class="col-md-3">Attributes:</dt>
             <dd class="col-md-9">
-                <samlab-attributes-control params="otype:'observations', oid: observation.id"></samlab-attributes-control>
+                <samlab-attribute-control params="otype:'observations', oid: observation.id"></samlab-attribute-control>
             </dd>
 
             <dt class="col-md-3">Tags:</dt>

@@ -6,11 +6,11 @@ define([
     "debug",
     "knockout",
     "knockout.mapping",
-    "samlab-content",
+    "samlab-content-manager",
     "samlab-dashboard",
     "samlab-dialog",
-    "samlab-object",
-    ], function(debug, ko, mapping, content, dashboard, dialog, object)
+    "samlab-object-manager",
+    ], function(debug, ko, mapping, content_manager, dashboard, dialog, object)
 {
     var component_name = "samlab-content-list-control";
     var log = debug(component_name);
@@ -30,7 +30,7 @@ define([
 
                 component.is_image = function(item)
                 {
-                    return content.is_image(item["content-type"]);;
+                    return content_manager.is_image(item["content-type"]);;
                 }
 
                 component.bounding_boxes = function(item)
@@ -40,7 +40,7 @@ define([
 
                 component.show_content = function(item)
                 {
-                    content.show(component.otype, component.oid, item.key, item["content-type"]);
+                    content_manager.show(component.otype, component.oid, item.key, item["content-type"]);
                 }
 
                 component.download_content = function(item)

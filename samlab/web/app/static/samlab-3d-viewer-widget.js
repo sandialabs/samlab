@@ -8,7 +8,7 @@ define([
     "knockout",
     "knockout.mapping",
     "samlab-dashboard",
-    "samlab-object",
+    "samlab-object-manager",
     "three",
     "OrbitControls",
     "OBJLoader",

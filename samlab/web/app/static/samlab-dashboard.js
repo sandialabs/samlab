@@ -11,12 +11,11 @@ define(
         "lodash",
         "mousetrap",
         "samlab-dom",
-        "samlab-favorite",
+        "samlab-favorite-manager",
         "samlab-notify",
-        "samlab-object",
+        "samlab-object-manager",
         "samlab-permissions",
         "samlab-server",
-        "samlab-timeseries",
         "text!samlab-dashboard.html",
         "URI",
         "css!jquery.gridster.css",
@@ -26,7 +25,7 @@ define(
         "samlab-dropdown-body",
         "samlab-favorite-control",
         "samlab-gridster-binding",
-    ], function(debug, jquery, ko, mapping, lodash, mousetrap, dom, favorite, notify, object, permissions, server, timeseries, template, URI)
+    ], function(debug, jquery, ko, mapping, lodash, mousetrap, dom, favorite_manager, notify, object, permissions, server, template, URI)
 {
     var log = debug("samlab-dashboard");
 
@@ -64,11 +63,11 @@ define(
                 [
                     { label: "About", icon: "fa-certificate", component: "samlab-markup-viewer-widget", params: {uri: "/static/samlab-about.html"}},
                     { label: "Acknowledgements", icon: "fa-certificate", component: "samlab-markup-viewer-widget", params: {uri: "/static/samlab-acknowledgements.html"}},
-                    { label: "Attribute Manager", icon: "fa-pencil", component: "samlab-attribute-manager-widget"},
-                    { label: "Bounding Box Manager", icon: "fa-square-o", component: "samlab-bounding-box-widget"},
+                    { label: "Edit Attributes", icon: "fa-pencil", component: "samlab-attribute-widget"},
+                    { label: "Edit Bounding Boxes", icon: "fa-square-o", component: "samlab-bounding-box-widget"},
+                    { label: "Edit Tags", icon: "fa-tag", component: "samlab-tag-widget"},
                     { label: "Deliveries", icon: "fa-truck", component: "samlab-deliveries-widget"},
                     { label: "Favorites", icon: "fa-heart", component: "samlab-favorites-widget"},
-                    { label: "Tag Manager", icon: "fa-tag", component: "samlab-tag-manager-widget"},
                 ],
             },
             {
@@ -93,7 +92,7 @@ define(
 
     state.favorite_groups = ko.computed(function()
     {
-        var grouped = lodash.groupBy(favorite.favorites(), function(favorite)
+        var grouped = lodash.groupBy(favorite_manager.favorites(), function(favorite)
         {
             return object.label(favorite.otype(), {capitalize: true});
         });

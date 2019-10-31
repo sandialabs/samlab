@@ -7,9 +7,9 @@ define([
     "knockout.mapping",
     "samlab-tag-manager",
     "samlab-dashboard",
-    ], function(ko, mapping, manager, dashboard)
+    ], function(ko, mapping, tag_manager, dashboard)
 {
-    var component_name = "samlab-tag-manager-widget";
+    var component_name = "samlab-tag-widget";
 
     ko.components.register(component_name,
     {
@@ -19,19 +19,18 @@ define([
             {
                 var component = mapping.fromJS({
                     new_tag: null,
-                    title: "Tag Manager",
                 });
 
                 component.disabled = ko.pureComputed(function()
                 {
-                    return manager.otype() == null || manager.oid() == null;
+                    return tag_manager.otype() == null || tag_manager.oid() == null;
                 });
 
                 component.tags = ko.pureComputed(function()
                 {
                     var result = [];
 
-                    var tags = manager.tags();
+                    var tags = tag_manager.tags();
                     var count = 0;
                     for(var index = 0; index != tags.length; ++index)
                     {
@@ -65,7 +64,7 @@ define([
                                 keys: tag.shortcut,
                                 callback: function()
                                 {
-                                    manager.toggle_tag(tag.tag);
+                                    tag_manager.toggle_tag(tag.tag);
                                 },
                             });
                         }
@@ -75,12 +74,12 @@ define([
 
                 component.toggle_tag = function(item)
                 {
-                    manager.toggle_tag(ko.utils.unwrapObservable(item.tag));
+                    tag_manager.toggle_tag(ko.utils.unwrapObservable(item.tag));
                 }
 
                 component.add_tag = function()
                 {
-                    manager.add_tag(component.new_tag());
+                    tag_manager.add_tag(component.new_tag());
                 }
 
                 return component;

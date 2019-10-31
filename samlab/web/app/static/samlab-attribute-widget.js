@@ -7,9 +7,9 @@ define([
     "knockout.mapping",
     "samlab-attribute-manager",
     "samlab-dashboard",
-    ], function(ko, mapping, manager, dashboard)
+    ], function(ko, mapping, attribute_manager, dashboard)
 {
-    var component_name = "samlab-attribute-manager-widget";
+    var component_name = "samlab-attribute-widget";
 
     ko.components.register(component_name,
     {
@@ -19,16 +19,15 @@ define([
             {
                 var component = mapping.fromJS({
                     key: null,
-                    title: "Attribute Manager",
                     value: null,
                 });
 
                 component.disabled = ko.pureComputed(function()
                 {
-                    return manager.otype() == null || manager.oid() == null;
+                    return attribute_manager.otype() == null || attribute_manager.oid() == null;
                 });
 
-                component.keys = manager.keys;
+                component.keys = attribute_manager.keys;
 
                 component.set_attribute = function()
                 {
@@ -44,7 +43,7 @@ define([
                     var attributes = {};
                     attributes[key] = value;
 
-                    manager.set_attributes(attributes);
+                    attribute_manager.set_attributes(attributes);
                 }
 
                 component.set_attribute_key = function(key)

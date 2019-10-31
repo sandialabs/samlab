@@ -5,9 +5,9 @@
 define([
     "knockout",
     "knockout.mapping",
-    "samlab-deliveries",
+    "samlab-delivery-manager",
     "samlab-dialog",
-    ], function(ko, mapping, deliveries, dialog)
+    ], function(ko, mapping, delivery_manager, dialog)
 {
     var component_name = "samlab-deliveries-widget";
     ko.components.register(component_name,
@@ -19,7 +19,7 @@ define([
                 var component = mapping.fromJS({
                 });
 
-                component.deliveries = deliveries.deliveries;
+                component.deliveries = delivery_manager.deliveries;
 
                 component.delete_delivery = function(delivery)
                 {
@@ -30,7 +30,7 @@ define([
                         callback: function(button)
                         {
                             if(button.label == "Delete")
-                                deliveries.delete_delivery(delivery._id());
+                                delivery_manager.delete_delivery(delivery._id());
                         },
                         message: "This will delete the delivery and all its content.",
                         title: "Delete Delivery?",

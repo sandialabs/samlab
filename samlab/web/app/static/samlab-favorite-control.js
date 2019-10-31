@@ -6,8 +6,8 @@ define([
     "knockout",
     "knockout.mapping",
     "samlab-dialog",
-    "samlab-favorite",
-    ], function(ko, mapping, dialog, favorite)
+    "samlab-favorite-manager",
+    ], function(ko, mapping, dialog, favorite_manager)
 {
     var component_name = "samlab-favorite-control";
     ko.components.register(component_name,
@@ -19,14 +19,14 @@ define([
                 var component = mapping.fromJS({
                     otype: params.otype,
                     oid: params.oid,
-                    state: favorite.get(params.otype, params.oid),
+                    state: favorite_manager.get(params.otype, params.oid),
                 });
 
                 component.update_state = ko.computed(function()
                 {
                     var otype = component.otype();
                     var oid = component.oid();
-                    component.state(favorite.get(component.otype, component.oid));
+                    component.state(favorite_manager.get(component.otype, component.oid));
                 });
 
                 component.icon = ko.pureComputed(function()
@@ -38,7 +38,7 @@ define([
                 {
                     if(component.state())
                     {
-                        favorite.delete(component.otype, component.oid);
+                        favorite_manager.delete(component.otype, component.oid);
                     }
                     else
                     {
@@ -49,7 +49,7 @@ define([
                             {
                                 if(button.label == "Favorite")
                                 {
-                                    favorite.create(component.otype, component.oid, name || component.oid);
+                                    favorite_manager.create(component.otype, component.oid, name || component.oid);
                                 }
                             },
                             message: "A link to this object will be saved to the Favorites dropdown menu.",

@@ -6,17 +6,15 @@ define([
     "knockout",
     "knockout.mapping",
     "samlab-attribute-manager",
-    "samlab-content",
     "samlab-dashboard",
     "samlab-dialog",
-    "samlab-artifact",
-    "samlab-object",
+    "samlab-artifact-manager",
+    "samlab-object-manager",
     "samlab-permissions",
     "samlab-server",
     "samlab-tag-manager",
-    "samlab-artifacts-control",
     "samlab-content-list-control",
-    ], function(ko, mapping, attribute_manager, content, dashboard, dialog, artifact, object, permissions, server, tag_manager)
+    ], function(ko, mapping, attribute_manager, dashboard, dialog, artifact_manager, object, permissions, server, tag_manager)
 {
     var component_name= "samlab-artifact-widget";
     ko.components.register(component_name,
@@ -90,12 +88,12 @@ define([
 
                 component.manage_attributes = function()
                 {
-                    dashboard.add_widget("samlab-attribute-manager-widget");
+                    dashboard.add_widget("samlab-attribute-widget");
                 }
 
                 component.manage_tags = function()
                 {
-                    dashboard.add_widget("samlab-tag-manager-widget");
+                    dashboard.add_widget("samlab-tag-widget");
                 }
 
                 component.delete_artifact = function()
@@ -107,7 +105,7 @@ define([
                         callback: function(button)
                         {
                             if(button.label == "Delete")
-                                artifact.delete(component.artifact.id());
+                                artifact_manager.delete(component.artifact.id());
                         },
                         message: "This will delete the artifact and its data, and close any related dashboard widgets.",
                         title: "Delete Model?",

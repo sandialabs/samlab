@@ -6,17 +6,16 @@ define([
     "knockout",
     "knockout.mapping",
     "samlab-attribute-manager",
-    "samlab-content",
     "samlab-dashboard",
     "samlab-dialog",
-    "samlab-object",
-    "samlab-observation",
+    "samlab-object-manager",
+    "samlab-observation-manager",
     "samlab-permissions",
     "samlab-server",
     "samlab-tag-manager",
-    "samlab-attributes-control",
+    "samlab-attribute-control",
     "samlab-content-list-control",
-    ], function(ko, mapping, attribute_manager, content, dashboard, dialog, object, observation, permissions, server, tag_manager)
+    ], function(ko, mapping, attribute_manager, dashboard, dialog, object, observation_manager, permissions, server, tag_manager)
 {
     var component_name = "samlab-observation-widget";
     ko.components.register(component_name,
@@ -70,12 +69,12 @@ define([
 
                 component.manage_attributes = function()
                 {
-                    dashboard.add_widget("samlab-attribute-manager-widget");
+                    dashboard.add_widget("samlab-attribute-widget");
                 }
 
                 component.manage_tags = function()
                 {
-                    dashboard.add_widget("samlab-tag-manager-widget");
+                    dashboard.add_widget("samlab-tag-widget");
                 }
 
                 component.delete_observation = function()
@@ -87,7 +86,7 @@ define([
                         callback: function(button)
                         {
                             if(button.label == "Delete")
-                                observation.delete(component.observation.id());
+                                observation_manager.delete(component.observation.id());
                         },
                         message: "This will delete the observation and its data, and close any related dashboard widgets.",
                         title: "Delete Observation?",

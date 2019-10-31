@@ -10,20 +10,19 @@ define([
     "URI",
     "samlab-attribute-manager",
     "samlab-bounding-box-manager",
-    "samlab-content",
     "samlab-dashboard",
     "samlab-dialog",
     "samlab-notify",
-    "samlab-object",
-    "samlab-observation",
+    "samlab-object-manager",
+    "samlab-observation-manager",
     "samlab-permissions",
     "samlab-server",
     "samlab-socket",
     "samlab-tag-manager",
     "samlab-uuidv4",
-    "samlab-attributes-control",
+    "samlab-attribute-control",
     "samlab-content-list-control",
-    ], function(debug, ko, mapping, lodash, URI, attribute_manager, bounding_box_manager, content, dashboard, dialog, notify, object, observation, permissions, server, socket, tag_manager, uuidv4)
+    ], function(debug, ko, mapping, lodash, URI, attribute_manager, bounding_box_manager, dashboard, dialog, notify, object, observation, permissions, server, socket, tag_manager, uuidv4)
 {
     var log = debug("samlab-observations-widget");
 
@@ -141,12 +140,12 @@ define([
 
                 component.manage_attributes = function()
                 {
-                    dashboard.add_widget("samlab-attribute-manager-widget");
+                    dashboard.add_widget("samlab-attribute-widget");
                 }
 
                 component.manage_tags = function()
                 {
-                    dashboard.add_widget("samlab-tag-manager-widget");
+                    dashboard.add_widget("samlab-tag-widget");
                 }
 
                 component.view_observation = function()

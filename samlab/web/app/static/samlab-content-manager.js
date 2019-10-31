@@ -10,7 +10,7 @@ define([
     "samlab-server",
     ], function(debug, ko, mapping, dashboard, server)
 {
-    var log = debug("samlab-content");
+    var log = debug("samlab-content-manager");
 
     var module = {};
 

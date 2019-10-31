@@ -5,7 +5,7 @@
 define([
     "knockout",
     "knockout.mapping",
-    "samlab-object",
+    "samlab-object-manager",
     "samlab-server",
     ], function(ko, mapping, object, server)
 {

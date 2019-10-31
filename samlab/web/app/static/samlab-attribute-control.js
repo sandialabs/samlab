@@ -6,12 +6,12 @@ define([
     "debug",
     "knockout",
     "knockout.mapping",
-    "samlab-object",
+    "samlab-object-manager",
     "samlab-server",
     "URI",
     ], function(debug, ko, mapping, object, server, URI)
 {
-    var component_name = "samlab-attributes-control";
+    var component_name = "samlab-attribute-control";
 
     var log = debug(component_name);
 

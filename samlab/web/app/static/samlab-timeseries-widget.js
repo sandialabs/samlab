@@ -8,8 +8,8 @@ define([
     "knockout.mapping",
     "samlab-dashboard",
     "samlab-dialog",
-    "samlab-timeseries",
-    ], function(debug, ko, mapping, dashboard, dialog, timeseries)
+    "samlab-timeseries-manager",
+    ], function(debug, ko, mapping, dashboard, dialog, timeseries_manager)
 {
     var component_name = "samlab-timeseries-widget";
 
@@ -24,17 +24,17 @@ define([
                 var component = mapping.fromJS({
                 });
 
-                component.experiments = timeseries.experiments;
-                component.keys = timeseries.keys;
+                component.experiments = timeseries_manager.experiments;
+                component.keys = timeseries_manager.keys;
 
                 component.show = function(item)
                 {
-                    timeseries.show(item);
+                    timeseries_manager.show(item);
                 };
 
                 component.hide = function(item)
                 {
-                    timeseries.hide(item);
+                    timeseries_manager.hide(item);
                 }
 
                 component.open_key = function(key)
@@ -53,7 +53,7 @@ define([
                         callback: function(button)
                         {
                             if(button.label == "Delete")
-                                timeseries.delete_samples({experiment: experiment});
+                                timeseries_manager.delete_samples({experiment: experiment});
                         },
                         message: "This will delete its data across all trials and keys.",
                         title: "Delete " + experiment + "?",
@@ -71,7 +71,7 @@ define([
                         callback: function(button)
                         {
                             if(button.label == "Delete")
-                                timeseries.delete_samples({experiment: experiment, trial: trial});
+                                timeseries_manager.delete_samples({experiment: experiment, trial: trial});
                         },
                         message: "This will delete its data across all experiments and keys.",
                         title: "Delete " + experiment + " " + trial + "?",
@@ -89,7 +89,7 @@ define([
                         callback: function(button)
                         {
                             if(button.label == "Delete")
-                                timeseries.delete_samples({key: key});
+                                timeseries_manager.delete_samples({key: key});
                         },
                         message: "This will delete its data across all experiments and trials.",
                         title: "Delete " + key + "?",

@@ -12,7 +12,7 @@ define([
     "samlab-server",
     "samlab-timeseries",
     "URI",
-    ], function(debug, element_resize, jquery, ko, mapping, dashboard, server, timeseries, URI)
+    ], function(debug, element_resize, jquery, ko, mapping, dashboard, server, timeseries_manager, URI)
 {
     var component_name = "samlab-timeseries-plot-widget";
 
@@ -67,9 +67,9 @@ define([
                         component.plot(data.plot);
                     }});
 
-                    timeseries.sample.created();
-                    timeseries.sample.updated();
-                    timeseries.sample.deleted();
+                    timeseries_manager.sample.created();
+                    timeseries_manager.sample.updated();
+                    timeseries_manager.sample.deleted();
                 }).extend({rateLimit: {timeout: 500}});
 
                 element_resize(container[0], function()
@@ -78,7 +78,7 @@ define([
                     component.height(container.innerHeight());
                 });
 
-                var on_show = timeseries.on_show.subscribe(function(params)
+                var on_show = timeseries_manager.on_show.subscribe(function(params)
                 {
                     component.exclusions.remove(function(item)
                     {
@@ -87,7 +87,7 @@ define([
                     component.version(component.version() + 1);
                 });
 
-                var on_hide = timeseries.on_hide.subscribe(function(params)
+                var on_hide = timeseries_manager.on_hide.subscribe(function(params)
                 {
                     component.exclusions.remove(function(item)
                     {

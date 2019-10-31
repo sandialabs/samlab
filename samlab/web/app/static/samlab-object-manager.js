@@ -11,7 +11,7 @@ define([
     "URI",
     ], function(debug, ko, mapping, server, socket, URI)
 {
-    var log = debug("samlab-object");
+    var log = debug("samlab-object-manager");
 
     var module = mapping.fromJS({
         changed: null,

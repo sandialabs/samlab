@@ -10,10 +10,10 @@ define([
     "knockout.mapping",
     "samlab-bounding-box-manager",
     "samlab-dashboard",
-    "samlab-identity",
-    "samlab-object",
+    "samlab-identity-manager",
+    "samlab-object-manager",
     "samlab-server",
-    ], function(debug, element_resize, jquery, ko, mapping, manager, dashboard, identity, object, server)
+    ], function(debug, element_resize, jquery, ko, mapping, bounding_box_manager, dashboard, identity_manager, object, server)
 {
     var component_name = "samlab-bounding-box-widget";
     var log = debug(component_name);
@@ -33,14 +33,14 @@ define([
                     current_annotation: null,
                     display_height: container.innerHeight(),
                     display_width: container.innerWidth(),
-                    key: widget.params.key() || manager.key,
+                    key: widget.params.key() || bounding_box_manager.key,
                     metadata: {size: [0, 0]},
                     mode: "add",
                     mousex: 0,
                     mousey: 0,
-                    oid: widget.params.oid() || manager.oid,
-                    otype: widget.params.otype() || manager.otype,
-                    username: identity.username,
+                    oid: widget.params.oid() || bounding_box_manager.oid,
+                    otype: widget.params.otype() || bounding_box_manager.otype,
+                    username: identity_manager.username,
                     x1: null,
                     x2: null,
                     y1: null,
