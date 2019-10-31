@@ -4,12 +4,14 @@
 
 define([
     "debug",
+    "element-resize-event",
+    "jquery",
     "knockout",
     "knockout.mapping",
     "samlab-dashboard",
     "samlab-identity",
     "samlab-server",
-    ], function(debug, ko, mapping, dashboard, identity, server)
+    ], function(debug, element_resize, jquery, ko, mapping, dashboard, identity, server)
 {
     var component_name = "samlab-bounding-boxes-widget";
     var log = debug(component_name);
@@ -20,18 +22,41 @@ define([
         {
             createViewModel: function(widget, component_info)
             {
+                var container = jquery(component_info.element.querySelector(".img-overlay-wrap"));
+
                 var component = mapping.fromJS({
                     annotations: [],
                     color: widget.params.color(),
                     current_annotation: null,
+                    display_height: container.innerHeight(),
+                    display_width: container.innerWidth(),
                     key: widget.params.key(),
-                    metadata: {size: []},
+                    metadata: {size: [0, 0]},
                     mode: "add",
+                    mousex: 0,
+                    mousey: 0,
                     oid: widget.params.oid(),
                     otype: widget.params.otype(),
                     title: "Bounding Boxes Editor",
                     username: identity.username,
+                    x1: null,
+                    x2: null,
+                    y1: null,
+                    y2: null,
                 });
+
+                element_resize(container[0], function()
+                {
+                    component.display_width(container.innerWidth());
+                    component.display_height(container.innerHeight());
+                });
+
+                component.image_loaded = function()
+                {
+                    log("image_loaded");
+                    component.display_width(container.innerWidth());
+                    component.display_height(container.innerHeight());
+                }
 
                 component.mode_items =
                 [
@@ -56,11 +81,6 @@ define([
                     return "/" + component.otype() + "/" + component.oid() + "/content/" + component.key() + "/data";
                 });
 
-                component.metadata.size_formatted = ko.pureComputed(function()
-                {
-                    return component.metadata.size().join(" \u00d7 ");
-                });
-
                 component.viewbox = ko.pureComputed(function()
                 {
                     return "0 0 " + component.metadata.size()[0] + " " + component.metadata.size()[1];
@@ -82,12 +102,25 @@ define([
                     }
                 }
 
-                component.on_mousedown = function(parent, event)
+                var update_mouse = function(e)
                 {
+                    component.mousex(e.offsetX / component.display_width() * component.metadata.size()[0]);
+                    component.mousey(e.offsetY / component.display_height() * component.metadata.size()[1]);
+                }
+
+                component.on_mousedown = function(item, e)
+                {
+                    update_mouse(e);
+
                     if(component.mode() == "add")
                     {
+                        component.x1(component.mousex());
+                        component.y1(component.mousey());
+                        component.x2(component.mousex());
+                        component.y2(component.mousey());
+
                         component.current_annotation(mapping.fromJS({
-                            bbox: [event.offsetX, event.offsetY, 0, 0],
+                            bbox: [component.x1(), component.y1(), 0, 0],
                             bbox_mode: "XYWH_ABS",
                             color: component.color(),
                             username: component.username(),
@@ -98,26 +131,30 @@ define([
                     }
                 }
 
-                component.on_mousemove = function()
+                component.on_mousemove = function(item, e)
                 {
+                    update_mouse(e);
+
                     if(component.current_annotation() != null)
                     {
-                        var bbox = component.current_annotation().bbox();
+                        component.x2(component.mousex());
+                        component.y2(component.mousey());
 
-                        var newx = event.offsetX;
-                        var newy = event.offsetY;
+                        var bbox = [0, 0, 0, 0];
 
-                        bbox[0] = Math.min(bbox[0], newx);
-                        bbox[1] = Math.min(bbox[1], newy);
-                        bbox[2] = Math.max(0, newx - bbox[0]);
-                        bbox[3] = Math.max(0, newy - bbox[1]);
+                        bbox[0] = Math.min(component.x1(), component.x2());
+                        bbox[1] = Math.min(component.y1(), component.y2());
+                        bbox[2] = Math.abs(component.x1() - component.x2());
+                        bbox[3] = Math.abs(component.y1() - component.y2());
 
                         component.current_annotation().bbox(bbox);
                     }
                 }
 
-                component.on_mouseup = function()
+                component.on_mouseup = function(item, e)
                 {
+                    update_mouse(e);
+
                     if(component.current_annotation() != null)
                     {
                         component.current_annotation(null);
@@ -147,11 +184,7 @@ define([
                     server.put_json("/" + component.otype() + "/" + component.oid() + "/attributes", payload);
                 }
 
-                //component.load_annotations();
-
                 server.load_json(component, "/" + component.otype() + "/" + component.oid() + "/content/" + component.key() + "/image/metadata");
-
-                log("component", component);
 
                 return component;
             },
