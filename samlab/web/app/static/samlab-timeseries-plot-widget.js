@@ -10,7 +10,7 @@ define([
     "knockout.mapping",
     "samlab-dashboard",
     "samlab-server",
-    "samlab-timeseries",
+    "samlab-timeseries-manager",
     "URI",
     ], function(debug, element_resize, jquery, ko, mapping, dashboard, server, timeseries_manager, URI)
 {
