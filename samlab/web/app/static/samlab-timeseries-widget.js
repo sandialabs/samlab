@@ -26,6 +26,17 @@ define([
 
                 component.experiments = timeseries_manager.experiments;
                 component.keys = timeseries_manager.keys;
+                component.timeseries = timeseries_manager.timeseries;
+
+                component.icon = function(timeseries)
+                {
+                    var content_type = timeseries["content-type"]();
+                    if(content_type == "application/x-scalar")
+                        return "fa fa-fw fa-line-chart";
+                    if(content_type == "text/plain")
+                        return "fa fa-fw fa-file-text-o";
+                    return "";
+                }
 
                 component.show = function(item)
                 {
@@ -35,6 +46,18 @@ define([
                 component.hide = function(item)
                 {
                     timeseries_manager.hide(item);
+                }
+
+                component.open_timeseries = function(timeseries)
+                {
+                    var key = timeseries.key();
+                    var content_type = timeseries["content-type"]();
+
+                    if(content_type == "application/x-scalar")
+                        dashboard.add_widget("samlab-timeseries-plot-widget", {key: key});
+                    if(content_type == "text/plain")
+                        dashboard.add_widget("samlab-timeseries-text-widget", {key: key});
+                    return "";
                 }
 
                 component.open_key = function(key)

@@ -17,58 +17,47 @@ import samlab.database
 log = logging.getLogger(__name__)
 
 
-def add_scalar(database, fs, experiment, trial, key, step, value):
+def _add_sample(database, fs, experiment, trial, key, content_type, step, value):
     assert(isinstance(database, pymongo.database.Database))
     assert(isinstance(fs, gridfs.GridFS))
     assert(isinstance(experiment, str))
     assert(isinstance(trial, str))
     assert(isinstance(key, str))
+    assert(isinstance(content_type, str))
     assert(isinstance(step, numbers.Number))
-    assert(isinstance(value, numbers.Number))
 
     document = {
+        "content-type": content_type,
         "experiment": experiment,
-        "trial": trial,
         "key": key,
         "step": step,
-        "value": value,
         "timestamp": arrow.utcnow().datetime,
+        "trial": trial,
+        "value": value,
         }
 
     document["_id"] = database.timeseries.insert_one(document).inserted_id
 
     return document
+
+
+def add_scalar(database, fs, experiment, trial, key, step, value):
+    assert(isinstance(value, numbers.Number))
+    return _add_sample(database, fs, experiment, trial, key, "application/x-scalar", step, value)
 
 
 def add_text(database, fs, experiment, trial, key, step, value):
-    assert(isinstance(database, pymongo.database.Database))
-    assert(isinstance(fs, gridfs.GridFS))
-    assert(isinstance(experiment, str))
-    assert(isinstance(trial, str))
-    assert(isinstance(key, str))
-    assert(isinstance(step, numbers.Number))
     assert(isinstance(value, str))
-
-    document = {
-        "experiment": experiment,
-        "trial": trial,
-        "key": key,
-        "step": step,
-        "value": value,
-        "timestamp": arrow.utcnow().datetime,
-        }
-
-    document["_id"] = database.timeseries.insert_one(document).inserted_id
-
-    return document
+    return _add_sample(database, fs, experiment, trial, key, "text/plain", step, value)
 
 
-def delete(database, fs, experiment=None, trial=None, key=None):
+def delete(database, fs, experiment=None, trial=None, key=None, content_type=None):
     assert(isinstance(database, pymongo.database.Database))
     assert(isinstance(fs, gridfs.GridFS))
     assert(isinstance(experiment, (str, type(None))))
     assert(isinstance(trial, (str, type(None))))
     assert(isinstance(key, (str, type(None))))
+    assert(isinstance(content_type, (str, type(None))))
 
     document = {}
     if experiment is not None:
@@ -77,6 +66,8 @@ def delete(database, fs, experiment=None, trial=None, key=None):
         document["trial"] = trial
     if key is not None:
         document["key"] = key
+    if content_type is not None:
+        document["content-type"] = content_type
 
     database.timeseries.delete_many(document)
 

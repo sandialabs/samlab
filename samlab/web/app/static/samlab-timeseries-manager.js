@@ -16,6 +16,7 @@ define([
     var module = mapping.fromJS({
         experiments: [],
         keys: [],
+        timeseries: [],
         on_show: null,
         on_hide: null,
         sample: {
@@ -47,7 +48,7 @@ define([
         module.sample.deleted(object);
     });
 
-    // Load timeseries keys at startup and anytime there are changes, but limit the rate.
+    // Load timeseries metadata at startup and anytime there are changes, but limit the rate.
     var load_metadata = ko.computed(function()
     {
         server.load_json(module, "/timeseries/metadata");

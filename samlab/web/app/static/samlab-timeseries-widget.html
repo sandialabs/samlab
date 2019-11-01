@@ -44,5 +44,16 @@
                 </tr>
             </tbody>
         </table>
+
+        <table class="table">
+            <tbody data-bind="foreach: timeseries">
+                <tr>
+                    <td><span data-bind="text:experiment"></span></td>
+                    <td><span data-bind="text:trial, style:{color: color}"></span></td>
+                    <td><span data-bind="text:key"></span></td>
+                    <td><button type="button" class="btn btn-light btn-sm px-1 py-0" data-bind="click: $component.open_timeseries"><span data-bind="attr: {class: $parent.icon($data)}"></span></button></td>
+                </tr>
+            </tbody>
+        </table>
     </div>
 </div>

@@ -55,6 +55,13 @@ def get_timeseries_metadata():
 
     result["keys"] = database.timeseries.distinct("key")
 
+    timeseries = []
+    for item in database.timeseries.aggregate([{"$group": {"_id": {"experiment": "$experiment", "trial": "$trial", "key": "$key", "content-type": "$content-type"}}}]):
+        item = item["_id"]
+        item["color"] = toyplot.color.to_css(_get_color(item["experiment"], item["trial"]))
+        timeseries.append(item)
+    result["timeseries"] = timeseries
+
     return flask.jsonify(result)
 
 
