@@ -28,8 +28,9 @@ define([
 
                 var component = mapping.fromJS(
                 {
-                    exclusions: widget.params.exclusions,
+                    exclude: widget.params.exclude,
                     height: container.innerHeight(),
+                    include: widget.params.include,
                     plot: null,
 					smoothing: widget.params.smoothing,
                     timeseries:
@@ -54,15 +55,16 @@ define([
                 var load_plot = ko.computed(function()
                 {
                     var data = {
-                        exclusions: component.exclusions(),
+                        exclude: component.exclude(),
                         height: component.height(),
+                        include: component.include(),
                         key: component.timeseries.key(),
                         smoothing: component.smoothing(),
                         width: component.width(),
                         yscale: component.yscale(),
                     }
 
-                    server.post_json("/timeseries/plots/auto", data, {success: function(data)
+                    server.post_json("/timeseries/visualization/plot", data, {success: function(data)
                     {
                         component.plot(data.plot);
                     }});
@@ -78,31 +80,6 @@ define([
                     component.height(container.innerHeight());
                 });
 
-                var on_show = timeseries_manager.on_show.subscribe(function(params)
-                {
-                    component.exclusions.remove(function(item)
-                    {
-                        return item.experiment == params.experiment && item.trial == params.trial;
-                    });
-                    component.version(component.version() + 1);
-                });
-
-                var on_hide = timeseries_manager.on_hide.subscribe(function(params)
-                {
-                    component.exclusions.remove(function(item)
-                    {
-                        return item.experiment == params.experiment && item.trial == params.trial;
-                    });
-                    component.exclusions.push(params);
-                    component.version(component.version() + 1);
-                });
-
-                component.dispose = function()
-                {
-                    on_show.dispose();
-                    on_hide.dispose();
-                }
-
                 return component;
             }
         },
@@ -111,7 +88,7 @@ define([
 
     var module =
     {
-        widget: { width: 4, height: 8, params: {key: "", yscale: "linear", smoothing: 0.5, exclusions: [], version: 0}},
+        widget: { width: 4, height: 8, params: {key: "", yscale: "linear", smoothing: 0.5, exclude: [], include: []}},
     };
 
     return module;

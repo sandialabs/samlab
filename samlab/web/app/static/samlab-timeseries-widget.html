@@ -12,21 +12,20 @@
             </thead>
             <tbody data-bind="foreach: experiments">
                 <tr>
-                    <td>
-                        <a href="#" class="text-secondary" data-bind="click: function() {$component.show({experiment: experiment()})}"><span class="fa fa-eye fa-fw"></span></a>
-                        <a href="#" class="text-secondary" data-bind="click: function() {$component.hide({experiment: experiment()})}"><span class="fa fa-eye-slash fa-fw"></a></button>
-                    </td>
+                    <td></td>
                     <td><span data-bind="text:experiment"></span></td>
-                    <td><button type="button" class="btn btn-light btn-sm px-1 py-0" data-bind="click: function() { $component.delete_experiment($data.experiment())}"><span class="fa fa-trash fa-fw text-danger"></span></button></td>
+                    <td><button type="button" class="btn btn-light btn-sm px-1 py-0" data-bind="click: $component.delete_experiment"><span class="fa fa-trash fa-fw text-danger"></span></button></td>
                 </tr>
                 <!-- ko foreach: trials -->
                 <tr>
                     <td>
-                        <a href="#" class="text-secondary" data-bind="click: function() {$component.show({experiment: $parent.experiment(), trial: trial()})}"><span class="fa fa-eye fa-fw"></span></a>
-                        <a href="#" class="text-secondary" data-bind="click: function() {$component.hide({experiment: $parent.experiment(), trial: trial()})}"><span class="fa fa-eye-slash fa-fw"></span></a>
+                        <form class="form-inline">
+                            <!-- <input class="form-check-input position-static" type="radio"> -->
+                            <input class="form-check-input position-static" type="checkbox" data-bind="checked: $component.trial_checked($parent, $data)">
+                        </form>
                     </td>
                     <td><span class="ml-3" data-bind="text:trial, style: {color:color}"></span></td>
-                    <td><button type="button" class="btn btn-light btn-sm px-1 py-0" data-bind="click: function() { $component.delete_trial($parent.experiment(), trial())}"><span class="small fa fa-trash fa-fw text-danger"></span></button></td>
+                    <td><button type="button" class="btn btn-light btn-sm px-1 py-0" data-bind="click: function() { $component.delete_trial($parent, $data)}"><span class="small fa fa-trash fa-fw text-danger"></span></button></td>
                 </tr>
                 <!-- /ko -->
             </tbody>
@@ -38,20 +37,13 @@
             </thead>
             <tbody data-bind="foreach: keys">
                 <tr>
-                    <td></td>
-                    <td><a href="#" data-bind="click: $component.open_key"><span data-bind="text:$data"></span></a></td>
-                    <td><button type="button" class="btn btn-light btn-sm px-1 py-0" data-bind="click: $component.delete_key"><span class="fa fa-trash fa-fw text-danger"></span></button></td>
-                </tr>
-            </tbody>
-        </table>
-
-        <table class="table">
-            <tbody data-bind="foreach: timeseries">
-                <tr>
-                    <td><span data-bind="text:experiment"></span></td>
-                    <td><span data-bind="text:trial, style:{color: color}"></span></td>
+                    <td>
+                    <!-- ko foreach: $data['content-types']() -->
+                    <button type="button" class="btn btn-light btn-sm px-1 py-0" data-bind="click: function() { $component.open_key($parent, $data)}"><span data-bind="attr: {class: $component.icon($data)}"></span></button>
+                    <!-- /ko -->
+                    </td>
                     <td><span data-bind="text:key"></span></td>
-                    <td><button type="button" class="btn btn-light btn-sm px-1 py-0" data-bind="click: $component.open_timeseries"><span data-bind="attr: {class: $parent.icon($data)}"></span></button></td>
+                    <td><button type="button" class="btn btn-light btn-sm px-1 py-0" data-bind="click: $component.delete_key"><span class="fa fa-trash fa-fw text-danger"></span></button></td>
                 </tr>
             </tbody>
         </table>

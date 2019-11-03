@@ -6,6 +6,7 @@ import collections
 import hashlib
 import logging
 import re
+import xml.etree.ElementTree as xml
 
 import flask
 import numpy
@@ -53,89 +54,12 @@ def get_timeseries_metadata():
                 } for trial in sorted(experiment_trials[experiment])],
             })
 
-    result["keys"] = database.timeseries.distinct("key")
-
-    timeseries = []
+    keys = collections.defaultdict(set)
     for item in database.timeseries.aggregate([{"$group": {"_id": {"experiment": "$experiment", "trial": "$trial", "key": "$key", "content-type": "$content-type"}}}]):
         item = item["_id"]
-        item["color"] = toyplot.color.to_css(_get_color(item["experiment"], item["trial"]))
-        timeseries.append(item)
-    result["timeseries"] = timeseries
+        keys[item["key"]].add(item["content-type"])
 
-    return flask.jsonify(result)
-
-
-@application.route("/timeseries/plots/auto", methods=["POST"])
-@require_auth
-def post_timeseries_plots_auto():
-    require_permissions(["read"])
-
-    exclusions = flask.request.json.get("exclusions", [])
-    height = int(float(flask.request.json.get("height", 500)))
-    key = flask.request.json.get("key")
-    smoothing = float(flask.request.json.get("smoothing", "0"))
-    width = int(float(flask.request.json.get("width", 500)))
-    yscale = flask.request.json.get("yscale", "linear")
-
-    canvas = toyplot.Canvas(width=width, height=height)
-    axes = canvas.cartesian(xlabel="Step", yscale=yscale)
-
-    steps = collections.defaultdict(list)
-    values = collections.defaultdict(list)
-    timestamps = collections.defaultdict(list)
-
-    experiments = set()
-    trials = set()
-    for exclusion in exclusions:
-        if "experiment" in exclusion and "trial" in exclusion:
-            trials.add((exclusion["experiment"], exclusion["trial"]))
-        elif "experiment" in exclusion:
-            experiments.add(exclusion["experiment"])
-
-    query = {"key": key, "experiment": {"$nin": list(experiments)}}
-
-    for sample in database.timeseries.find(query):
-        experiment = sample.get("experiment")
-        trial = sample.get("trial")
-        if (experiment, trial) in trials:
-            continue
-        step = sample["step"]
-        value = sample["value"]
-        timestamp = sample["timestamp"]
-        steps[(experiment, trial)].append(step)
-        values[(experiment, trial)].append(value)
-        timestamps[(experiment, trial)].append(timestamp)
-
-    for item in steps:
-        steps[item] = numpy.array(steps[item])
-        values[item] = numpy.array(values[item])
-        timestamps[item] = numpy.array(timestamps[item])
-
-    for index, item in enumerate(steps):
-        experiment, trial = item
-        color = _get_color(experiment, trial)
-
-        # Display smoothed data.
-        if smoothing:
-            smoothed = []
-            last = values[item][0]
-            for value in values[item]:
-                smoothed_val = last * smoothing + (1 - smoothing) * value
-                smoothed.append(smoothed_val)
-                last = smoothed_val
-
-            title = "{} / {}".format(experiment, trial)
-            axes.plot(steps[item], values[item], color=color, opacity=0.25, style={"stroke-width":1}, title=title)
-
-            title = "{} / {} (smoothed)".format(experiment, trial)
-            axes.plot(steps[item], smoothed, color=color, opacity=1, style={"stroke-width":2}, title=title)
-        # Just display the data
-        else:
-            title = "{} / {}".format(experiment, trial)
-            axes.plot(steps[item], values[item], color=color, opacity=1, style={"stroke-width":2}, title=title)
-
-    result = {}
-    result["plot"] = toyplot.html.tostring(canvas)
+    result["keys"] = [{"key": key, "content-types": content_types} for key, content_types in keys.items()]
 
     return flask.jsonify(result)
 
@@ -152,5 +76,111 @@ def delete_timeseries_samples():
     samlab.timeseries.delete(database, fs, experiment=experiment, trial=trial, key=key)
 
     return flask.jsonify()
+
+
+def _get_samples(key, include_content_types, include, exclude):
+    # Use-cases
+    #
+    # * Include content-type(s)
+    # * Exclude experiment(s)
+    # * Exclude trial(s)
+
+    exclude_experiments = set()
+    exclude_trials = set()
+
+    for item in exclude:
+        if "experiment" in item and "trial" not in item:
+            exclude_experiments.add(item["experiment"])
+
+    for item in exclude:
+        if "experiment" in item and "trial" in item:
+            exclude_trials.add((item["experiment"], item["trial"]))
+
+    query = {
+        "key": key,
+        "experiment": {"$nin": list(exclude_experiments)},
+        "content-type": {"$in": list(include_content_types)},
+        }
+
+    log.debug(f"query: {query} exclude_trials: {exclude_trials}")
+
+    samples = []
+    for sample in database.timeseries.find(query):
+        if (sample["experiment"], sample["trial"]) in exclude_trials:
+            continue
+        samples.append(sample)
+    return samples
+
+
+@application.route("/timeseries/visualization/plot", methods=["POST"])
+@require_auth
+def post_timeseries_visualization_plot():
+    require_permissions(["read"])
+
+    exclude = flask.request.json.get("exclude", [])
+    height = int(float(flask.request.json.get("height", 500)))
+    include = flask.request.json.get("include", [])
+    key = flask.request.json.get("key")
+    smoothing = float(flask.request.json.get("smoothing", "0"))
+    width = int(float(flask.request.json.get("width", 500)))
+    yscale = flask.request.json.get("yscale", "linear")
+
+    steps = collections.defaultdict(list)
+    values = collections.defaultdict(list)
+    timestamps = collections.defaultdict(list)
+
+    for sample in _get_samples(key, ["application/x-scalar"], include, exclude):
+        series = (sample["experiment"], sample["trial"])
+        steps[series].append(sample["step"])
+        values[series].append(sample["value"])
+        timestamps[series].append(sample["timestamp"])
+
+    for series in steps.keys():
+        steps[series] = numpy.array(steps[series])
+        values[series] = numpy.array(values[series])
+        timestamps[series] = numpy.array(timestamps[series])
+
+    # Create the plot.
+    canvas = toyplot.Canvas(width=width, height=height)
+    axes = canvas.cartesian(xlabel="Step", yscale=yscale)
+
+    for index, series in enumerate(steps.keys()):
+        experiment, trial = series
+        color = _get_color(experiment, trial)
+
+        # Display smoothed data.
+        if smoothing:
+            smoothed = []
+            last = values[series][0]
+            for value in values[series]:
+                smoothed_val = last * smoothing + (1 - smoothing) * value
+                smoothed.append(smoothed_val)
+                last = smoothed_val
+
+            title = "{} / {}".format(experiment, trial)
+            axes.plot(steps[series], values[series], color=color, opacity=0.25, style={"stroke-width":1}, title=title)
+
+            title = "{} / {} (smoothed)".format(experiment, trial)
+            axes.plot(steps[series], smoothed, color=color, opacity=1, style={"stroke-width":2}, title=title)
+        # Just display the data
+        else:
+            title = "{} / {}".format(experiment, trial)
+            axes.plot(steps[series], values[series], color=color, opacity=1, style={"stroke-width":2}, title=title)
+
+    return flask.jsonify({"plot": toyplot.html.tostring(canvas)})
+
+@application.route("/timeseries/visualization/text", methods=["POST"])
+@require_auth
+def post_timeseries_visualization_text():
+    require_permissions(["read"])
+
+    exclude = flask.request.json.get("exclude", [])
+    include = flask.request.json.get("include", [])
+    key = flask.request.json.get("key")
+
+    samples = _get_samples(key, ["text/plain"], include, exclude)
+    for sample in samples:
+        sample["color"] = toyplot.color.to_css(_get_color(sample["experiment"], sample["trial"]))
+    return flask.jsonify({"samples": samples})
 
 

@@ -5,10 +5,13 @@
         </div>
         <hr></hr>
         <!-- ko foreach: samples -->
-        <div>
-            <p data-bind="text:experiment"></p>
-            <p data-bind="text:trial"></p>
-            <p data-bind="text:value"></p>
+        <div class="card mb-2">
+            <div class="card-header">
+                <span data-bind="text:experiment"></span> / <span data-bind="style: {color:color}, text:trial"></span>
+            </div>
+            <div class="card-body">
+                <pre class="card-text" data-bind="text:value"></pre>
+            </div>
         </div>
         <!-- /ko -->
     </div>

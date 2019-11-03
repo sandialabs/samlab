@@ -22,15 +22,12 @@ define([
             createViewModel: function(widget, component_info)
             {
                 var component = mapping.fromJS({
+                    experiments: timeseries_manager.experiments,
+                    keys: timeseries_manager.keys,
                 });
 
-                component.experiments = timeseries_manager.experiments;
-                component.keys = timeseries_manager.keys;
-                component.timeseries = timeseries_manager.timeseries;
-
-                component.icon = function(timeseries)
+                component.icon = function(content_type)
                 {
-                    var content_type = timeseries["content-type"]();
                     if(content_type == "application/x-scalar")
                         return "fa fa-fw fa-line-chart";
                     if(content_type == "text/plain")
@@ -38,37 +35,23 @@ define([
                     return "";
                 }
 
-                component.show = function(item)
+                component.trial_checked = function(experiment_item, trial_item)
                 {
-                    timeseries_manager.show(item);
-                };
-
-                component.hide = function(item)
-                {
-                    timeseries_manager.hide(item);
+                    log("trial_checked", experiment_item, trial_item);
                 }
 
-                component.open_timeseries = function(timeseries)
+                component.open_key = function(item, content_type)
                 {
-                    var key = timeseries.key();
-                    var content_type = timeseries["content-type"]();
+                    var key = item.key();
 
                     if(content_type == "application/x-scalar")
                         dashboard.add_widget("samlab-timeseries-plot-widget", {key: key});
                     if(content_type == "text/plain")
                         dashboard.add_widget("samlab-timeseries-text-widget", {key: key});
-                    return "";
-                }
-
-                component.open_key = function(key)
-                {
-                    dashboard.add_widget("samlab-timeseries-plot-widget", {key: key});
                 };
 
-                component.delete_experiment = function(experiment)
+                component.delete_experiment = function(experiment_item)
                 {
-                    log(experiment);
-
                     dialog.dialog(
                     {
                         alert: "This operation is immediate and cannot be undone.",
@@ -76,17 +59,15 @@ define([
                         callback: function(button)
                         {
                             if(button.label == "Delete")
-                                timeseries_manager.delete_samples({experiment: experiment});
+                                timeseries_manager.delete_samples({experiment: experiment_item.experiment});
                         },
-                        message: "This will delete its data across all trials and keys.",
-                        title: "Delete " + experiment + "?",
+                        message: "This will delete all its data including all trials and keys.",
+                        title: "Delete " + experiment_item.experiment() + "?",
                     });
                 }
 
-                component.delete_trial = function(experiment, trial)
+                component.delete_trial = function(experiment_item, trial_item)
                 {
-                    log(experiment, trial);
-
                     dialog.dialog(
                     {
                         alert: "This operation is immediate and cannot be undone.",
@@ -94,16 +75,16 @@ define([
                         callback: function(button)
                         {
                             if(button.label == "Delete")
-                                timeseries_manager.delete_samples({experiment: experiment, trial: trial});
+                                timeseries_manager.delete_samples({experiment: experiment_item.experiment, trial: trial_item.trial});
                         },
-                        message: "This will delete its data across all experiments and keys.",
-                        title: "Delete " + experiment + " " + trial + "?",
+                        message: "This will delete all its data including all keys.",
+                        title: "Delete trial <span style='color:" + trial_item.color() + "'>" + trial_item.trial() + "</span>?",
                     });
                 }
 
-                component.delete_key = function(key)
+                component.delete_key = function(item)
                 {
-                    log(key);
+                    var key = item.key();
 
                     dialog.dialog(
                     {

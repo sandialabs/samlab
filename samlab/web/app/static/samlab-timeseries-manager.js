@@ -16,9 +16,7 @@ define([
     var module = mapping.fromJS({
         experiments: [],
         keys: [],
-        timeseries: [],
-        on_show: null,
-        on_hide: null,
+        exclude: [],
         sample: {
             created: null,
             updated: null,
@@ -29,9 +27,6 @@ define([
     module.sample.created.extend({notify: "always"});
     module.sample.updated.extend({notify: "always"});
     module.sample.deleted.extend({notify: "always", rateLimit: {timeout: 500, method: "notifyWhenChangesStop"}});
-
-    module.on_show.extend({notify: "always"});
-    module.on_hide.extend({notify: "always"});
 
     socket.on("timeseries-sample-created", function(object)
     {
@@ -64,24 +59,14 @@ define([
         var uri = URI("/timeseries/samples");
 
         if(params.experiment)
-            uri.addQuery("experiment", params.experiment);
+            uri.addQuery("experiment", ko.unwrap(params.experiment));
         if(params.trial)
-            uri.addQuery("trial", params.trial);
+            uri.addQuery("trial", ko.unwrap(params.trial));
         if(params.key)
-            uri.addQuery("key", params.key);
+            uri.addQuery("key", ko.unwrap(params.key));
 
         server.delete(uri);
     };
-
-    module.show = function(params)
-    {
-        module.on_show(params);
-    }
-
-    module.hide = function(params)
-    {
-        module.on_hide(params);
-    }
 
     return module;
 });

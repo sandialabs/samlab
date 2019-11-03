@@ -27,60 +27,33 @@ define([
 
                 var component = mapping.fromJS(
                 {
-                    exclusions: widget.params.exclusions,
+                    exclude: widget.params.exclude,
+                    include: widget.params.include,
                     samples: [],
                     timeseries:
                     {
                         key: widget.params.key,
                     },
-                    version: widget.params.version,
                 });
 
                 // Load the plot at startup and anytime there are changes, but limit the rate.
                 var load_data = ko.computed(function()
                 {
                     var data = {
-                        exclusions: component.exclusions(),
+                        exclude: component.exclude(),
+                        include: component.include(),
                         key: component.timeseries.key(),
-                        'content-type': "text/plain",
                     }
 
-                    server.post_json("/timeseries/samples", data, {success: function(data)
+                    server.post_json("/timeseries/visualization/text", data, {success: function(data)
                     {
-                        mapping.fromJS(container, data);
+                        mapping.fromJS(data, component);
                     }});
 
                     timeseries_manager.sample.created();
                     timeseries_manager.sample.updated();
                     timeseries_manager.sample.deleted();
                 }).extend({rateLimit: {timeout: 500}});
-
-/*
-                var on_show = timeseries_manager.on_show.subscribe(function(params)
-                {
-                    component.exclusions.remove(function(item)
-                    {
-                        return item.experiment == params.experiment && item.trial == params.trial;
-                    });
-                    component.version(component.version() + 1);
-                });
-
-                var on_hide = timeseries_manager.on_hide.subscribe(function(params)
-                {
-                    component.exclusions.remove(function(item)
-                    {
-                        return item.experiment == params.experiment && item.trial == params.trial;
-                    });
-                    component.exclusions.push(params);
-                    component.version(component.version() + 1);
-                });
-
-                component.dispose = function()
-                {
-                    on_show.dispose();
-                    on_hide.dispose();
-                }
-*/
 
                 return component;
             }
@@ -90,7 +63,7 @@ define([
 
     var module =
     {
-        widget: { width: 4, height: 8, params: {key: "", yscale: "linear", smoothing: 0.5, exclusions: [], version: 0}},
+        widget: { width: 4, height: 8, params: {key: "", yscale: "linear", smoothing: 0.5, include: [], exclude: []}},
     };
 
     return module;
