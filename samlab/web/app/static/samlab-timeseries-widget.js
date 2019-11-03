@@ -22,9 +22,10 @@ define([
             createViewModel: function(widget, component_info)
             {
                 var component = mapping.fromJS({
-                    experiments: timeseries_manager.experiments,
-                    keys: timeseries_manager.keys,
                 });
+
+                component.experiments = timeseries_manager.experiments;
+                component.keys = timeseries_manager.keys;
 
                 component.icon = function(content_type)
                 {
@@ -35,9 +36,9 @@ define([
                     return "";
                 }
 
-                component.trial_checked = function(experiment_item, trial_item)
+                component.toggle_trial = function(experiment_item, trial_item)
                 {
-                    log("trial_checked", experiment_item, trial_item);
+                    log("toggle_trial", experiment_item, trial_item);
                 }
 
                 component.open_key = function(item, content_type)

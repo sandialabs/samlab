@@ -16,7 +16,6 @@ define([
     var module = mapping.fromJS({
         experiments: [],
         keys: [],
-        exclude: [],
         sample: {
             created: null,
             updated: null,
@@ -26,7 +25,7 @@ define([
 
     module.sample.created.extend({notify: "always"});
     module.sample.updated.extend({notify: "always"});
-    module.sample.deleted.extend({notify: "always", rateLimit: {timeout: 500, method: "notifyWhenChangesStop"}});
+    module.sample.deleted.extend({notify: "always"});
 
     socket.on("timeseries-sample-created", function(object)
     {
@@ -46,13 +45,15 @@ define([
     // Load timeseries metadata at startup and anytime there are changes, but limit the rate.
     var load_metadata = ko.computed(function()
     {
-        server.load_json(module, "/timeseries/metadata");
-
-        // Register the observables we want to track
+        // Register the observables we want to track.
         module.sample.created();
         module.sample.updated();
         module.sample.deleted();
-    }).extend({notify: "always", rateLimit: {timeout: 500, method: "notifyWhenChangesStop"}});
+
+        // Load the new metadata.
+        server.load_json(module, "/timeseries/metadata");
+
+    }).extend({notify: "always", rateLimit: {timeout: 500}});
 
     module.delete_samples = function(params)
     {

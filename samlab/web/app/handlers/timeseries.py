@@ -59,7 +59,7 @@ def get_timeseries_metadata():
         item = item["_id"]
         keys[item["key"]].add(item["content-type"])
 
-    result["keys"] = [{"key": key, "content-types": content_types} for key, content_types in keys.items()]
+    result["keys"] = [{"key": key, "content-types": content_types} for key, content_types in sorted(keys.items())]
 
     return flask.jsonify(result)
 
