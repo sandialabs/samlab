@@ -28,9 +28,7 @@ define([
 
                 var component = mapping.fromJS(
                 {
-                    exclude: widget.params.exclude,
                     height: container.innerHeight(),
-                    include: widget.params.include,
                     plot: null,
 					smoothing: widget.params.smoothing,
                     timeseries:
@@ -41,6 +39,8 @@ define([
                     width: container.innerWidth(),
 					yscale: widget.params.yscale,
                 });
+
+                component.exclude = timeseries_manager.exclude;
 
                 component.height.extend({rateLimit: {timeout: 100, method: "notifyWhenChangesStop"}});
                 component.width.extend({rateLimit: {timeout: 100, method: "notifyWhenChangesStop"}});
@@ -55,9 +55,8 @@ define([
                 var load_plot = ko.computed(function()
                 {
                     var data = {
-                        exclude: component.exclude(),
+                        exclude: mapping.toJS(component.exclude()),
                         height: component.height(),
-                        include: component.include(),
                         key: component.timeseries.key(),
                         smoothing: component.smoothing(),
                         width: component.width(),
@@ -88,7 +87,7 @@ define([
 
     var module =
     {
-        widget: { width: 4, height: 8, params: {key: "", yscale: "linear", smoothing: 0.5, exclude: [], include: []}},
+        widget: { width: 4, height: 8, params: {key: "", yscale: "linear", smoothing: 0.5}},
     };
 
     return module;

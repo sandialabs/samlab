@@ -16,6 +16,7 @@ define([
     var module = mapping.fromJS({
         experiments: [],
         keys: [],
+        exclude: [],
         sample: {
             created: null,
             updated: null,
@@ -68,6 +69,11 @@ define([
 
         server.delete(uri);
     };
+
+    module.exclude.subscribe(function()
+    {
+        log("global timeseries exclude changed:", mapping.toJS(module.exclude()));
+    });
 
     return module;
 });

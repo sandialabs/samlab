@@ -27,8 +27,6 @@ define([
 
                 var component = mapping.fromJS(
                 {
-                    exclude: widget.params.exclude,
-                    include: widget.params.include,
                     samples: [],
                     timeseries:
                     {
@@ -36,12 +34,13 @@ define([
                     },
                 });
 
+                component.exclude = timeseries_manager.exclude;
+
                 // Load the plot at startup and anytime there are changes, but limit the rate.
                 var load_data = ko.computed(function()
                 {
                     var data = {
-                        exclude: component.exclude(),
-                        include: component.include(),
+                        exclude: mapping.toJS(component.exclude()),
                         key: component.timeseries.key(),
                     }
 
@@ -63,7 +62,7 @@ define([
 
     var module =
     {
-        widget: { width: 4, height: 8, params: {key: "", yscale: "linear", smoothing: 0.5, include: [], exclude: []}},
+        widget: { width: 4, height: 8, params: {key: "", yscale: "linear", smoothing: 0.5}},
     };
 
     return module;
