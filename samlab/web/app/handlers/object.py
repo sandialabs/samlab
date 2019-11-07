@@ -449,8 +449,6 @@ def put_otype_oid_tags(otype, oid):
             tags.add(tag)
     tags = list(tags)
 
-    log.debug(flask.request.authorization)
-
     update = {"$set": _add_modified({"tags": tags})}
     database[otype].update_one({"_id": oid}, update)
 
