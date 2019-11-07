@@ -7,7 +7,7 @@
         <form class="form-inline mb-3" onSubmit="return false">
             <samlab-combo-control class="" params="current: mode, items: mode_items"></samlab-combo-control>
             <samlab-combo-control class="ml-2" params="current: color, items: color_items, disabled: mode() != 'add'"></samlab-combo-control>
-            <input class="form-control form-control-sm ml-2" data-bind="value: category"/>
+            <input class="form-control form-control-sm ml-2" data-bind="value: category" placeholder="Category"/>
             <button type="button" class="btn btn-sm btn-danger ml-5" data-bind="click: clear">Clear All</button>
         </form>
         <div class="img-overlay-wrap">

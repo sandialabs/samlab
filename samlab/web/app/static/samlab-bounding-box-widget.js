@@ -10,10 +10,11 @@ define([
     "knockout.mapping",
     "samlab-bounding-box-manager",
     "samlab-dashboard",
+    "samlab-dialog",
     "samlab-identity-manager",
     "samlab-object-manager",
     "samlab-server",
-    ], function(debug, element_resize, jquery, ko, mapping, bounding_box_manager, dashboard, identity_manager, object, server)
+    ], function(debug, element_resize, jquery, ko, mapping, bounding_box_manager, dashboard, dialog, identity_manager, object, server)
 {
     var component_name = "samlab-bounding-box-widget";
     var log = debug(component_name);
@@ -28,8 +29,8 @@ define([
 
                 var component = mapping.fromJS({
                     attributes: {'samlab:annotations': []},
-                    category: "object",
-                    color: widget.params.color(),
+                    category: widget.params.category,
+                    color: widget.params.color,
                     current_annotation: null,
                     display_height: container.innerHeight(),
                     display_width: container.innerWidth(),
@@ -179,6 +180,18 @@ define([
 
                     if(component.mode() == "add")
                     {
+                        if(!component.category())
+                        {
+                            dialog.dialog(
+                            {
+                                buttons: [{label: "Close", class_name: "btn-secondary"}],
+                                message: "<span class=''>You must specify a category first.</span><br/><span class='text-muted small'>Ensure that you use consistent spelling and case for categories, and that you coordinate with your team members on category names.</span>",
+                                title: "Add Bounding Box",
+                            });
+
+                            return;
+                        }
+
                         component.x1(component.mousex());
                         component.y1(component.mousey());
                         component.x2(component.mousex());
@@ -236,7 +249,7 @@ define([
 
     var module =
     {
-        widget: { params: {otype: null, oid: null, key: null, color: "yellow"}},
+        widget: { params: {otype: null, oid: null, key: null, category: "", color: "yellow"}},
     };
 
     return module;
