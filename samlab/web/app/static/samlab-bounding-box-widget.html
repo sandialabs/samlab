@@ -22,8 +22,8 @@
                 <line y1="0", data-bind="attr:{x1: mousex, x2: mousex, y2: metadata.size()[1], stroke: color}" opacity="0.5"/>
                 <!-- ko foreach: attributes['samlab:annotations']() -->
                 <rect fill-opacity="0.2" data-bind="attr: {x:bbox()[0], y:bbox()[1], width:bbox()[2], height:bbox()[3], fill:color(), stroke:color()}, click: $parent.on_click_box"/>
-                <text style="filter:url(#shadow)" stroke="none" data-bind="attr: {x:bbox()[0], y:bbox()[1]-5, fill:color()}, text:category()"/>
-                <text style="filter:url(#shadow); text-anchor: end" stroke="none" data-bind="attr: {x:bbox()[0]+bbox()[2], y:bbox()[1]+bbox()[3]+12, fill:color()}, text:username()"/>
+                <text style="pointer-events: none; filter:url(#shadow)" stroke="none" data-bind="attr: {x:bbox()[0], y:bbox()[1]-5, fill:color()}, text:category()"/>
+                <text style="pointer-events: none; filter:url(#shadow); text-anchor: end" stroke="none" data-bind="attr: {x:bbox()[0]+bbox()[2], y:bbox()[1]+bbox()[3]+12, fill:color()}, text:username()"/>
                 <!-- /ko -->
             </svg>
         </div>
