@@ -19,6 +19,7 @@ import samlab.web.app.credentials
 logging.basicConfig(level=logging.DEBUG)
 logging.getLogger("engineio").setLevel(logging.ERROR)
 logging.getLogger("matplotlib").setLevel(logging.INFO)
+logging.getLogger("watchdog").setLevel(logging.INFO)
 log = logging.getLogger()
 
 # Parse command-line arguments.
