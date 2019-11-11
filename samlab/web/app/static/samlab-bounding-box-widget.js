@@ -48,8 +48,6 @@ define([
                     y2: null,
                 });
 
-                log("component", component);
-
                 element_resize(container[0], function()
                 {
                     component.display_width(container.innerWidth());
@@ -58,7 +56,6 @@ define([
 
                 var change_subscription = object.changed.subscribe(function(object)
                 {
-                    log("change_subscription", object);
                     if(component.otype() == object.otype && component.oid() == object.oid)
                     {
                         component.load_annotations();
@@ -72,7 +69,6 @@ define([
 
                 component.image_loaded = function()
                 {
-                    log("image_loaded");
                     component.display_width(container.innerWidth());
                     component.display_height(container.innerHeight());
                 }
@@ -83,6 +79,11 @@ define([
                     //{key: "edit", label: "<span class='text-dark fa fa-pencil fa-fw'/>&nbsp;Edit"},
                     {key: "delete", label: "<span class='text-danger fa fa-trash fa-fw'/>&nbsp;Delete"},
                 ];
+
+                component.delete_mode = ko.computed(function()
+                {
+                    return component.mode() == "delete";
+                });
 
                 component.color_items =
                 [
