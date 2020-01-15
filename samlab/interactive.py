@@ -44,8 +44,8 @@ class Stop(object):
         return self._triggered
 
 
-def progress(iterable, description, units, leave=True):
+def progress(iterable, description, unit, leave=True):
     """Wrap an iterable to produce progress output."""
-    return tqdm.tqdm(iterable, leave=leave, desc=description, unit=units)
+    return tqdm.tqdm(iterable, leave=leave, desc=description, unit=unit)
 
 
