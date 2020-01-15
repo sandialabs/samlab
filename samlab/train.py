@@ -28,8 +28,44 @@ def k_fold(dataset, n=5, k=2, validation=0.2, count=None):
             results.append((training_indices, validation_indices, test_indices))
 
             if count is not None and len(results) >= count:
-                break
+                return results
 
     return results
 
 
+class EarlyStop:
+    """Stop training if a loss doesn't improve within N iterations.
+
+    Parameters
+    ----------
+    patience: integer, optional
+    """
+    def __init__(self, patience=10, delta=0):
+        self._patience = patience
+        self._delta = delta
+
+        self._loss = None
+        self._count = 0
+        self._total = 0
+        self._triggered = False
+
+    def __call__(self, loss):
+        self._total += 1
+
+        if self._loss is None:
+            self._loss = loss
+            self._count = 0
+        elif loss < self._loss - self._delta:
+            self._loss = loss
+            self._count = 0
+        else:
+            self._count += 1
+            if self._count >= self._patience:
+                self._triggered = True
+                log.info(f"Early stop after {self._total} iterations.")
+                log.info(f"Loss did not decrease beyond {self._loss} in {self._patience} iterations.")
+        return self._triggered
+
+    @property
+    def triggered(self):
+        return self._triggered
