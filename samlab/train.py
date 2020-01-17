@@ -33,6 +33,27 @@ def k_fold(dataset, n=5, k=2, validation=0.2, count=None):
     return results
 
 
+class TrackImprovements:
+    """Keeps track of whether a loss value has improved.
+    """
+    def __init__(self, delta=0):
+        self._delta = delta
+        self._loss = None
+
+    def __call__(self, loss):
+        if self._loss is None:
+            self._loss = loss
+            return True
+        if loss < self._loss - self._delta:
+            self._loss = loss
+            return True
+        return False
+
+    @property
+    def loss(self):
+        return self._loss
+
+
 class EarlyStop:
     """Stop training if a loss doesn't improve within N iterations.
 
@@ -42,28 +63,26 @@ class EarlyStop:
     """
     def __init__(self, patience=10, delta=0):
         self._patience = patience
-        self._delta = delta
+        self._improved = TrackImprovements(delta=delta)
 
-        self._loss = None
         self._count = 0
         self._total = 0
         self._triggered = False
 
     def __call__(self, loss):
+        if self._triggered:
+            return self._triggered
+
         self._total += 1
 
-        if self._loss is None:
-            self._loss = loss
-            self._count = 0
-        elif loss < self._loss - self._delta:
-            self._loss = loss
+        if self._improved(loss):
             self._count = 0
         else:
             self._count += 1
             if self._count >= self._patience:
                 self._triggered = True
                 log.info(f"Early stop after {self._total} iterations.")
-                log.info(f"Loss did not decrease beyond {self._loss} in {self._patience} iterations.")
+                log.info(f"Loss did not decrease beyond {self._improved.loss} in {self._patience} iterations.")
         return self._triggered
 
     @property
