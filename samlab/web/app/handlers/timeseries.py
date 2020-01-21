@@ -57,7 +57,10 @@ def get_timeseries_metadata():
     keys = collections.defaultdict(set)
     for item in database.timeseries.aggregate([{"$group": {"_id": {"experiment": "$experiment", "trial": "$trial", "key": "$key", "content-type": "$content-type"}}}]):
         item = item["_id"]
-        keys[item["key"]].add(item["content-type"])
+        try:
+            keys[item["key"]].add(item["content-type"])
+        except Exception as e:
+            log.error(e)
 
     result["keys"] = [{"key": key, "content-types": content_types} for key, content_types in sorted(keys.items())]
 
@@ -102,7 +105,7 @@ def _get_samples(key, include_content_types, include, exclude):
         "content-type": {"$in": list(include_content_types)},
         }
 
-    log.debug(f"query: {query} exclude_trials: {exclude_trials}")
+    #log.debug(f"query: {query} exclude_trials: {exclude_trials}")
 
     samples = []
     for sample in database.timeseries.find(query):
