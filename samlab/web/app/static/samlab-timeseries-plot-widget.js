@@ -58,6 +58,7 @@ define([
                         exclude: mapping.toJS(component.exclude()),
                         height: component.height(),
                         key: component.timeseries.key(),
+                        max_samples: 1000,
                         smoothing: component.smoothing(),
                         width: component.width(),
                         yscale: component.yscale(),

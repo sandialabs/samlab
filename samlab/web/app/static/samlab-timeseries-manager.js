@@ -54,7 +54,7 @@ define([
         // Load the new metadata.
         server.load_json(module, "/timeseries/metadata");
 
-    }).extend({notify: "always", rateLimit: {timeout: 500}});
+    }).extend({notify: "always", rateLimit: {timeout: 10000}});
 
     module.delete_samples = function(params)
     {

@@ -124,6 +124,7 @@ def post_timeseries_visualization_plot():
     height = int(float(flask.request.json.get("height", 500)))
     include = flask.request.json.get("include", [])
     key = flask.request.json.get("key")
+    max_samples = int(float(flask.request.json.get("max_samples", 1000)))
     smoothing = float(flask.request.json.get("smoothing", "0"))
     width = int(float(flask.request.json.get("width", 500)))
     yscale = flask.request.json.get("yscale", "linear")
@@ -132,7 +133,13 @@ def post_timeseries_visualization_plot():
     values = collections.defaultdict(list)
     timestamps = collections.defaultdict(list)
 
-    for sample in _get_samples(key, ["application/x-scalar"], include, exclude):
+    samples = _get_samples(key, ["application/x-scalar"], include, exclude)
+    if len(samples) > max_samples:
+        numpy.random.seed(1234)
+        samples = numpy.random.choice(samples, size=max_samples, replace=False)
+        samples = sorted(samples, key=lambda sample: sample["timestamp"])
+
+    for sample in samples:
         series = (sample["experiment"], sample["trial"])
         steps[series].append(sample["step"])
         values[series].append(sample["value"])
