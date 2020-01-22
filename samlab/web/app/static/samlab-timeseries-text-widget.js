@@ -49,11 +49,16 @@ define([
                         key: component.timeseries.key(),
                     }
 
-                    server.post_json("/timeseries/visualization/text", data, {success: function(data)
-                    {
-                        component.loading(false);
-                        mapping.fromJS(data, component);
-                    }});
+                    server.post_json("/timeseries/visualization/text", data, {
+                        success: function(data)
+                        {
+                            mapping.fromJS(data, component);
+                        },
+                        finished: function()
+                        {
+                            component.loading(false);
+                        },
+                    });
 
                     timeseries_manager.sample.created();
                     timeseries_manager.sample.updated();

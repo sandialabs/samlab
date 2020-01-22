@@ -69,11 +69,16 @@ define([
                         yscale: component.yscale(),
                     }
 
-                    server.post_json("/timeseries/visualization/plot", data, {success: function(data)
-                    {
-                        component.loading(false);
-                        component.plot(data.plot);
-                    }});
+                    server.post_json("/timeseries/visualization/plot", data, {
+                        success: function(data)
+                        {
+                            component.plot(data.plot);
+                        },
+                        finished: function()
+                        {
+                            component.loading(false);
+                        },
+                    });
 
                     timeseries_manager.sample.created();
                     timeseries_manager.sample.updated();

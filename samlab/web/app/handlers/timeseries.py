@@ -3,6 +3,7 @@
 # Government retains certain rights in this software.
 
 import collections
+import functools
 import hashlib
 import logging
 import re
@@ -115,6 +116,29 @@ def _get_samples(key, include_content_types, include, exclude):
     return samples
 
 
+class Reservoir(object):
+    def __init__(self, size, seed=1234):
+        self._storage = []
+        self._size = size
+        self._count = 0
+        self._generator = numpy.random.RandomState(seed=seed)
+
+    def __len__(self):
+        return self._storage.__len__()
+
+    def __getitem__(self, key):
+        return self._storage.__getitem__(key)
+
+    def append(self, item):
+        self._count += 1
+        if len(self._storage) < self._size:
+            self._storage.append(item)
+        else:
+            index = self._generator.choice(self._count)
+            if index < self._size:
+                self._storage[index] = item
+
+
 @application.route("/timeseries/visualization/plot", methods=["POST"])
 @require_auth
 def post_timeseries_visualization_plot():
@@ -129,24 +153,19 @@ def post_timeseries_visualization_plot():
     width = int(float(flask.request.json.get("width", 500)))
     yscale = flask.request.json.get("yscale", "linear")
 
-    steps = collections.defaultdict(list)
-    values = collections.defaultdict(list)
-    timestamps = collections.defaultdict(list)
+    sample_reservoir = functools.partial(Reservoir, size=max_samples, seed=1234)
+
+    steps = collections.defaultdict(sample_reservoir)
+    values = collections.defaultdict(sample_reservoir)
+    timestamps = collections.defaultdict(sample_reservoir)
 
     generator = numpy.random.RandomState(seed=1234)
     samples = _get_samples(key, ["application/x-scalar"], include, exclude)
-    for count, sample in enumerate(samples):
+    for sample in samples:
         series = (sample["experiment"], sample["trial"])
-        if count < max_samples:
-            steps[series].append(sample["step"])
-            values[series].append(sample["value"])
-            timestamps[series].append(sample["timestamp"])
-        else:
-            index = generator.choice(count+1)
-            if index < max_samples:
-                steps[series][index] = sample["step"]
-                values[series][index] = sample["value"]
-                timestamps[series][index] = sample["timestamp"]
+        steps[series].append(sample["step"])
+        values[series].append(sample["value"])
+        timestamps[series].append(sample["timestamp"])
 
     for series in steps.keys():
         sort_order = numpy.argsort(steps[series])
