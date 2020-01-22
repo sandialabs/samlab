@@ -29,6 +29,7 @@ define([
                 var component = mapping.fromJS(
                 {
                     height: container.innerHeight(),
+                    loading: false,
                     plot: null,
 					smoothing: widget.params.smoothing,
                     timeseries:
@@ -54,6 +55,10 @@ define([
                 // Load the plot at startup and anytime there are changes, but limit the rate.
                 var load_plot = ko.computed(function()
                 {
+                    if(component.loading())
+                        return;
+
+                    component.loading(true);
                     var data = {
                         exclude: mapping.toJS(component.exclude()),
                         height: component.height(),
@@ -66,13 +71,14 @@ define([
 
                     server.post_json("/timeseries/visualization/plot", data, {success: function(data)
                     {
+                        component.loading(false);
                         component.plot(data.plot);
                     }});
 
                     timeseries_manager.sample.created();
                     timeseries_manager.sample.updated();
                     timeseries_manager.sample.deleted();
-                }).extend({rateLimit: {timeout: 500}});
+                }).extend({rateLimit: {timeout: 5000}});
 
                 element_resize(container[0], function()
                 {

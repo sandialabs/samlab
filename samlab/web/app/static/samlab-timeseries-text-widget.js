@@ -27,6 +27,7 @@ define([
 
                 var component = mapping.fromJS(
                 {
+                    loading: false,
                     samples: [],
                     timeseries:
                     {
@@ -39,6 +40,10 @@ define([
                 // Load the plot at startup and anytime there are changes, but limit the rate.
                 var load_data = ko.computed(function()
                 {
+                    if(component.loading())
+                        return;
+
+                    component.loading(true);
                     var data = {
                         exclude: mapping.toJS(component.exclude()),
                         key: component.timeseries.key(),
@@ -46,13 +51,14 @@ define([
 
                     server.post_json("/timeseries/visualization/text", data, {success: function(data)
                     {
+                        component.loading(false);
                         mapping.fromJS(data, component);
                     }});
 
                     timeseries_manager.sample.created();
                     timeseries_manager.sample.updated();
                     timeseries_manager.sample.deleted();
-                }).extend({rateLimit: {timeout: 500}});
+                }).extend({rateLimit: {timeout: 5000}});
 
                 return component;
             }
