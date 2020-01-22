@@ -133,22 +133,26 @@ def post_timeseries_visualization_plot():
     values = collections.defaultdict(list)
     timestamps = collections.defaultdict(list)
 
+    generator = numpy.random.RandomState(seed=1234)
     samples = _get_samples(key, ["application/x-scalar"], include, exclude)
-    if len(samples) > max_samples:
-        numpy.random.seed(1234)
-        samples = numpy.random.choice(samples, size=max_samples, replace=False)
-        samples = sorted(samples, key=lambda sample: sample["timestamp"])
-
-    for sample in samples:
+    for count, sample in enumerate(samples):
         series = (sample["experiment"], sample["trial"])
-        steps[series].append(sample["step"])
-        values[series].append(sample["value"])
-        timestamps[series].append(sample["timestamp"])
+        if count < max_samples:
+            steps[series].append(sample["step"])
+            values[series].append(sample["value"])
+            timestamps[series].append(sample["timestamp"])
+        else:
+            index = generator.choice(count+1)
+            if index < max_samples:
+                steps[series][index] = sample["step"]
+                values[series][index] = sample["value"]
+                timestamps[series][index] = sample["timestamp"]
 
     for series in steps.keys():
-        steps[series] = numpy.array(steps[series])
-        values[series] = numpy.array(values[series])
-        timestamps[series] = numpy.array(timestamps[series])
+        sort_order = numpy.argsort(steps[series])
+        steps[series] = numpy.array(steps[series])[sort_order]
+        values[series] = numpy.array(values[series])[sort_order]
+        timestamps[series] = numpy.array(timestamps[series])[sort_order]
 
     # Create the plot.
     canvas = toyplot.Canvas(width=width, height=height)
