@@ -7,6 +7,7 @@
 import logging
 import os
 import signal
+import time
 
 import numpy
 import tqdm.auto as tqdm
@@ -28,11 +29,20 @@ class Stop(object):
     def __init__(self):
         self._pid = os.getpid()
         self._triggered = False
+        self._trigger_time = None
         signal.signal(signal.SIGINT, self._handler)
 
     def trigger(self):
         """Programmatically trigger an interruption."""
-        if not self._triggered:
+        if self._triggered:
+            now = time.time()
+            if self._trigger_time and now - self._trigger_time < 5.0:
+                log.info("Interrupt.")
+                raise KeyboardInterrupt()
+            else:
+                log.info("Already received signal to stop.  Trigger again within 5 seconds to interrupt process.")
+                self._trigger_time = now
+        else:
             self._triggered = True
             # Don't log the message in child processes
             if self._pid == os.getpid():
