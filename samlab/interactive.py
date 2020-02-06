@@ -11,11 +11,14 @@ import signal
 import numpy
 import tqdm.auto as tqdm
 
+import samlab
+
+
 log = logging.getLogger(__name__)
 
 
 class Stop(object):
-    """Handle interrupts gracefully so training can be interrupted.
+    """Handle interrupts so training can be interrupted gracefully.
 
     Create an instance of :class:`samlab.interactive.Stop` and check its
     `triggered` property periodically during training.  If `triggered`
@@ -46,6 +49,7 @@ class Stop(object):
 
 def progress(iterable, description, unit, leave=True):
     """Wrap an iterable to produce progress output."""
+    samlab.deprecated("samlab.interactive.progress() is deprecated, use the tqdm library directly instead.")
     return tqdm.tqdm(iterable, leave=leave, desc=description, unit=unit)
 
 
