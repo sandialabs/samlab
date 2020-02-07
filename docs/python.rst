@@ -25,6 +25,7 @@ visualizations.
     python/samlab.favorite.rst
     python/samlab.interactive.rst
     python/samlab.mime.rst
+    python/samlab.notebook.rst
     python/samlab.object.rst
     python/samlab.observation.rst
     python/samlab.search.rst
