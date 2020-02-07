@@ -16,7 +16,7 @@ def gallery(images, row_height="auto"):
     content = []
     content.append("<div style='display: flex; flex-flow: row wrap; text-align: center;'>")
     for image in images:
-        content.append(f"<figure style='margin: 5px'><image title='{image}' src='{image}' style='height: {row_height}'/></figure>")
+        content.append(f"<a href='{image}' target='_blank'><figure style='margin: 5px'><image title='{image}' src='{image}' style='height: {row_height}'/></figure></a>")
     content.append("</div>")
 
     return IPython.display.HTML("".join(content))
