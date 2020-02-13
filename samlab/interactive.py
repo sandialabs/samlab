@@ -26,27 +26,29 @@ class Stop(object):
     is `True` then the user has interrupted the process, either with
     CTRL-C or the Jupyter `Interrupt Kernel` button.
     """
-    def __init__(self):
+    def __init__(self, timeout=5.0):
         self._pid = os.getpid()
         self._triggered = False
         self._trigger_time = None
+        self._timeout = timeout
         signal.signal(signal.SIGINT, self._handler)
+
+    def _log(self, message):
+        # Don't repeat log messages in child processes.
+        if self._pid != os.getpid():
+            return
+        log.info(message)
 
     def trigger(self):
         """Programmatically trigger an interruption."""
-        if self._triggered:
-            now = time.time()
-            if self._trigger_time and now - self._trigger_time < 5.0:
-                log.info("Interrupt.")
-                raise KeyboardInterrupt()
-            else:
-                log.info("Already received signal to stop.  Trigger again within 5 seconds to interrupt process.")
-                self._trigger_time = now
+        now = time.time()
+        if self._triggered and now - self._trigger_time < self._timeout:
+            self._log("Interrupting.")
+            raise KeyboardInterrupt()
         else:
             self._triggered = True
-            # Don't log the message in child processes
-            if self._pid == os.getpid():
-                log.info("Received signal to stop.")
+            self._trigger_time = now
+            self._log(f"Received signal to stop. Trigger again within {self._timeout} seconds to interrupt process.")
 
     def _handler(self, signal, frame):
         self.trigger()
