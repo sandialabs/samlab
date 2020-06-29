@@ -59,9 +59,3 @@ class Stop(object):
         return self._triggered
 
 
-def progress(iterable, description, unit, leave=True):
-    """Wrap an iterable to produce progress output."""
-    samlab.deprecated("samlab.interactive.progress() is deprecated, use the tqdm library directly instead.")
-    return tqdm.tqdm(iterable, leave=leave, desc=description, unit=unit)
-
-
