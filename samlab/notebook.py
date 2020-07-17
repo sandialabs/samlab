@@ -12,11 +12,20 @@ import IPython.display
 log = logging.getLogger(__name__)
 
 
-def gallery(images, row_height="auto"):
+def gallery(paths, captions=None, row_height="auto"):
+    if captions is None:
+        captions = [None] * len(paths)
+
     content = []
     content.append("<div style='display: flex; flex-flow: row wrap; text-align: center;'>")
-    for image in images:
-        content.append(f"<a href='{image}' target='_blank'><figure style='margin: 5px'><image title='{image}' src='{image}' style='height: {row_height}'/></figure></a>")
+    for path, caption in zip(paths, captions):
+        content.append(f"<a href='{path}' target='_blank'>")
+        content.append(f"<figure style='margin: 5px'>")
+        content.append(f"<image title='{path}' src='{path}' style='height: {row_height}'/>")
+        if caption:
+            content.append(f"<figcaption>{caption}</figcaption>")
+        content.append(f"</figure>")
+        content.append(f"</a>")
     content.append("</div>")
 
     return IPython.display.HTML("".join(content))
