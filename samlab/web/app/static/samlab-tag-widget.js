@@ -31,21 +31,19 @@ define([
                     var result = [];
 
                     var tags = tag_manager.tags();
-                    var count = 0;
                     for(var index = 0; index != tags.length; ++index)
                     {
                         var tag = tags[index];
-                        if(tag.indexOf("dataset:") == 0)
+                        var shortcut = null;
+                        if(index < 10)
                         {
-                            result.push({tag: tag, shortcut: null});
+                            shortcut = "" + ((index+1) % 10)
                         }
-                        else
+                        if(10 <= index && index < 36)
                         {
-                            var shortcut = null;
-                            if(count < 10)
-                                shortcut = "" + ((++count) % 10)
-                            result.push({tag: tag, shortcut: shortcut});
+                            shortcut = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"[index - 10];
                         }
+                        result.push({tag: tag, shortcut: shortcut});
                     }
 
                     return result;
