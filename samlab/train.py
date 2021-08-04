@@ -11,6 +11,13 @@ import numpy
 log = logging.getLogger(__name__)
 
 
+def random_split(dataset, split=0.1):
+    """Return indices that randomly partition a dataset into two sets."""
+    indices = numpy.random.choice(len(dataset), size=len(dataset), replace=False)
+    boundary = int(len(indices) * split)
+    return indices[boundary:], indices[:boundary]
+
+
 def k_fold(dataset, n=5, k=2, validation=0.2, count=None):
     """Return sets of indices partitioning a dataset for K-fold cross validation."""
     assert(k > 1)
