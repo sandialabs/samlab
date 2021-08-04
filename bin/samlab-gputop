@@ -24,7 +24,7 @@ with terminal.fullscreen():
             print(terminal.clear())
             print(u"{t.bold_bright_white}{host}{t.normal}  {t.white}{timestamp}{t.normal}".format(
                 host=socket.gethostname(),
-                timestamp=arrow.utcnow().to(arguments.timezone).format("ddd MMM DD, YYYY hh:mm:ss"),
+                timestamp=arrow.utcnow().to(arguments.timezone).format("ddd MMM DD, YYYY HH:mm:ss"),
                 t=terminal,
                 ))
             for line in results.strip().split("\n"):
