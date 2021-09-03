@@ -30,3 +30,24 @@ def gallery(paths, captions=None, row_height="auto"):
 
     return IPython.display.HTML("".join(content))
 
+
+class Progress(object):
+    """Display a graphical progress bar while iterating over a sequence."""
+    def __init__(self, desc=None, unit=None):
+        import tqdm.notebook
+        self._progress = tqdm.notebook.tqdm(desc=desc, unit=unit)
+
+    def __call__(self, iterable, desc=None, unit=None):
+        self._progress.reset(total=len(iterable))
+        if desc is not None:
+            self._progress.set_description(desc, refresh=False)
+        if unit is not None:
+            self._progress.unit = unit
+        self._progress.refresh()
+
+        for item in iterable:
+            yield item
+
+            self._progress.update(1)
+            self._progress.refresh()
+
