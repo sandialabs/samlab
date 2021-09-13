@@ -59,3 +59,23 @@ class Stop(object):
         return self._triggered
 
 
+class Progress(object):
+    """Display a graphical progress bar while iterating over a sequence."""
+    def __init__(self, desc=None, unit=None):
+        import tqdm
+        self._progress = tqdm.tqdm(desc=desc, unit=unit)
+
+    def __call__(self, iterable, desc=None, unit=None):
+        self._progress.reset(total=len(iterable))
+        if desc is not None:
+            self._progress.set_description(desc, refresh=False)
+        if unit is not None:
+            self._progress.unit = unit
+        self._progress.refresh()
+
+        for item in iterable:
+            yield item
+
+            self._progress.update(1)
+            self._progress.refresh()
+
