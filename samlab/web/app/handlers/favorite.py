@@ -5,7 +5,7 @@
 import collections
 import logging
 
-import bson
+#import bson
 import flask
 
 import samlab.favorite

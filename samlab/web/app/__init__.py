@@ -7,7 +7,7 @@ import os
 import uuid
 
 import arrow
-import bson
+#import bson
 import flask
 import flask_socketio
 import numpy
@@ -27,8 +27,8 @@ class JSONEncoder(flask.json.JSONEncoder):
             return o.tolist()
         if isinstance(o, numpy.integer):
             return int(o)
-        if isinstance(o, bson.objectid.ObjectId):
-            return str(o)
+#        if isinstance(o, bson.objectid.ObjectId):
+#            return str(o)
         return flask.json.JSONEncoder.default(self, o)
 
 # Setup the web server.

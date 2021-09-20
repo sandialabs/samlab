@@ -14,7 +14,7 @@ import os
 import tempfile
 
 import numpy
-import pymongo
+#import pymongo
 
 
 log = logging.getLogger(__name__)

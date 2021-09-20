@@ -27,7 +27,7 @@ setup(
 #        "huey",
         "ldap3",
         "nose",
-        "pymongo>=3.6",
+#        "pymongo>=3.6",
         "pyparsing",
 #        "redis",
         "requests",

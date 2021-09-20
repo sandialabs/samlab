@@ -10,7 +10,7 @@ import logging
 import os
 import tempfile
 
-import gridfs
+#import gridfs
 import numpy
 import PIL.Image
 

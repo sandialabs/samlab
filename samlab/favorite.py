@@ -4,7 +4,7 @@
 
 """Functionality for working with :ref:`favorites`."""
 
-import pymongo
+#import pymongo
 
 
 def create(database, otype, oid, name):

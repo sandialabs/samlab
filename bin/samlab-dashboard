@@ -10,7 +10,6 @@ import webbrowser
 
 import requests
 
-import samlab.database
 import samlab.web.app.acl
 import samlab.web.app.auth
 import samlab.web.app.credentials
@@ -41,9 +40,6 @@ if arguments.config:
 defaults = {
     "certificate": getattr(config, "certificate", None),
     "data_dir": getattr(config, "data_dir", None),
-    "database_name": getattr(config, "database_name", "samlab"),
-    "database_uri": getattr(config, "database_uri", "mongodb://localhost:27017"),
-    "database_replicaset": getattr(config, "database_replicaset", "samlab"),
     "debug": getattr(config, "debug", False),
     "host": getattr(config, "host", "127.0.0.1"),
     "key": getattr(config, "key", None),
@@ -58,9 +54,6 @@ parser = argparse.ArgumentParser(description="Web interface for managing observa
 parser.set_defaults(**defaults)
 parser.add_argument("--certificate", help="TLS certificate.  Default: %(default)s")
 parser.add_argument("--data-dir", default=None, help="If specified, store data in the given directory.")
-parser.add_argument("--database-name", help="Database containing experiments to be analyzed. Default: %(default)s")
-parser.add_argument("--database-replicaset", help="Database replica set name. Default: %(default)s")
-parser.add_argument("--database-uri", help="Database connection string. Default: %(default)s")
 parser.add_argument("--debug", action="store_true", help="Enable server debugging.")
 parser.add_argument("--host", help="Host interface for incoming connections. Default: %(default)s")
 parser.add_argument("--key", help="TLS private key.  Default: %(default)s")
@@ -71,12 +64,6 @@ parser.add_argument("--server-name", help="Server name. Default: %(default)s")
 parser.add_argument("--session-timeout", type=float, help="Session timeout in seconds. Default: %(default)s")
 arguments = parser.parse_args(remaining_argv)
 
-# If data-dir was specified, run the database server.
-if arguments.data_dir is not None:
-    dbserver = samlab.database.Server(arguments.data_dir)
-    arguments.database_uri = dbserver.uri
-    arguments.database_replicaset = dbserver.replicaset
-
 # Setup the web server.
 from samlab.web.app import application, socketio
 
@@ -85,15 +72,12 @@ application.config["acl"] = config.acl if hasattr(config, "acl") else samlab.web
 application.config["authenticate"] = config.authentication if hasattr(config, "authentication") else samlab.web.app.auth.none()
 application.config["certificate"] = arguments.certificate
 application.config["check-credentials"] = config.credential_check if hasattr(config, "credential_check") else samlab.web.app.credentials.pass_empty()
-application.config["database-name"] = arguments.database_name
-application.config["database-uri"] = arguments.database_uri
-application.config["database-replicaset"] = arguments.database_replicaset
 application.config["debug"] = arguments.debug
 application.config["host"] = arguments.host
 application.config["key"] = arguments.key
 application.config["no-browser"] = arguments.no_browser
 application.config["port"] = arguments.port
-application.config["server-name"] = arguments.server_name if arguments.server_name is not None else arguments.database_name
+application.config["server-name"] = arguments.server_name
 application.config["server-description"] = arguments.server_description
 application.config["session-timeout"] = arguments.session_timeout
 application.config["layout"] = config.layout if hasattr(config, "layout") else [{"component":"samlab-timeseries-widget"}]
@@ -104,16 +88,10 @@ for key, value in sorted(application.config.items()):
 
 # Load request handlers (note: must happen *after* all configuration).
 import samlab.web.app.handlers
-import samlab.web.app.handlers.artifact
 import samlab.web.app.handlers.asynchronous
 import samlab.web.app.handlers.delivery
-import samlab.web.app.handlers.experiment
 import samlab.web.app.handlers.favorite
 import samlab.web.app.handlers.layout
-import samlab.web.app.handlers.object
-import samlab.web.app.handlers.observation
-import samlab.web.app.handlers.timeseries
-import samlab.web.app.watch
 
 # Optionally open a web browser at startup.
 def open_browser(config):
@@ -141,8 +119,4 @@ if application.config["certificate"] and application.config["key"]:
     socketio.run(application, host=application.config["host"], port=application.config["port"], ssl_context=(application.config["certificate"], application.config["key"]), debug=application.config["debug"])
 else:
     socketio.run(application, host=application.config["host"], port=application.config["port"], debug=application.config["debug"])
-
-# Stop the database server.
-if arguments.data_dir is not None:
-    dbserver.stop()
 
