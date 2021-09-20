@@ -15,9 +15,6 @@ log = logging.getLogger(__name__)
 # Get the web server.
 from samlab.web.app import application, socketio, require_auth, require_permissions
 
-# Get the database.
-from samlab.web.app.database import database, fs
-
 # Setup task queues
 #generic_queue = samlab.tasks.generic.Queue()
 

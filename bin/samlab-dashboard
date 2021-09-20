@@ -22,76 +22,84 @@ logging.getLogger("watchdog").setLevel(logging.INFO)
 log = logging.getLogger()
 
 # Parse command-line arguments.
-config_parser = argparse.ArgumentParser(add_help=False)
-config_parser.add_argument("--config", default="", help="Configuration file. Default: %(default)s")
-arguments, remaining_argv = config_parser.parse_known_args()
+#config_parser = argparse.ArgumentParser(add_help=False)
+#config_parser.add_argument("--config", default="", help="Configuration file. Default: %(default)s")
+#arguments, remaining_argv = config_parser.parse_known_args()
+#
+#config = {}
+#if arguments.config:
+#    try:
+#        module_directory, module_name = os.path.split(arguments.config)
+#        module_fp, module_pathname, module_description = imp.find_module(module_name[:-3], [module_directory])
+#        config = imp.load_module(module_name[:-3], module_fp, module_pathname, module_description)
+#        module_fp.close()
+#    except Exception as e:
+#        log.error("Error loading configuration file %s: %s", arguments.config, e)
+#        exit(1)
+#
+#defaults = {
+#    "certificate": getattr(config, "certificate", None),
+#    "data_dir": getattr(config, "data_dir", os.getcwd()),
+#    "debug": getattr(config, "debug", False),
+#    "host": getattr(config, "host", "127.0.0.1"),
+#    "key": getattr(config, "key", None),
+#    "no_browser": getattr(config, "no_browser", False),
+#    "port": getattr(config, "port", 4000),
+#    "server_name": getattr(config, "server_name", None),
+#    "server_description": getattr(config, "server_description", None),
+#    "session_timeout": getattr(config, "session_timeout", 15 * 60),
+#}
 
-config = {}
-if arguments.config:
-    try:
-        module_directory, module_name = os.path.split(arguments.config)
-        module_fp, module_pathname, module_description = imp.find_module(module_name[:-3], [module_directory])
-        config = imp.load_module(module_name[:-3], module_fp, module_pathname, module_description)
-        module_fp.close()
-    except Exception as e:
-        log.error("Error loading configuration file %s: %s", arguments.config, e)
-        exit(1)
-
-defaults = {
-    "certificate": getattr(config, "certificate", None),
-    "data_dir": getattr(config, "data_dir", None),
-    "debug": getattr(config, "debug", False),
-    "host": getattr(config, "host", "127.0.0.1"),
-    "key": getattr(config, "key", None),
-    "no_browser": getattr(config, "no_browser", False),
-    "port": getattr(config, "port", 4000),
-    "server_name": getattr(config, "server_name", None),
-    "server_description": getattr(config, "server_description", None),
-    "session_timeout": getattr(config, "session_timeout", 15 * 60),
-}
-
-parser = argparse.ArgumentParser(description="Web interface for managing observations, experiments, and artifacts.", parents=[config_parser])
-parser.set_defaults(**defaults)
+#parser = argparse.ArgumentParser(description="Web interface for managing observations, experiments, and artifacts.", parents=[config_parser])
+parser = argparse.ArgumentParser(description="Dashboard for managing and monitoring experiments.")
 parser.add_argument("--certificate", help="TLS certificate.  Default: %(default)s")
-parser.add_argument("--data-dir", default=None, help="If specified, store data in the given directory.")
+parser.add_argument("--data-dir", default=os.getcwd(), help="Data directory. Default: %(default)s")
 parser.add_argument("--debug", action="store_true", help="Enable server debugging.")
-parser.add_argument("--host", help="Host interface for incoming connections. Default: %(default)s")
+parser.add_argument("--host", default="127.0.0.1", help="Host interface for incoming connections. Default: %(default)s")
 parser.add_argument("--key", help="TLS private key.  Default: %(default)s")
 parser.add_argument("--no-browser", action="store_true", help="Disable automatically opening a web browser at startup.")
-parser.add_argument("--port", type=int, help="Host port for incoming connections. Default: %(default)s")
+parser.add_argument("--port", type=int, default=4000, help="Host port for incoming connections. Default: %(default)s")
 parser.add_argument("--server-description", help="Server description. Default: %(default)s")
-parser.add_argument("--server-name", help="Server name. Default: %(default)s")
-parser.add_argument("--session-timeout", type=float, help="Session timeout in seconds. Default: %(default)s")
-arguments = parser.parse_args(remaining_argv)
+parser.add_argument("--server-name", default="samlab", help="Server name. Default: %(default)s")
+parser.add_argument("--session-timeout", type=float, default=15 * 60, help="Session timeout in seconds. Default: %(default)s")
+#parser.set_defaults(**defaults)
+#arguments = parser.parse_args(remaining_argv)
+arguments = parser.parse_args()
 
 # Setup the web server.
 from samlab.web.app import application, socketio
 
 # Configure the web server.
-application.config["acl"] = config.acl if hasattr(config, "acl") else samlab.web.app.acl.permit_all()
-application.config["authenticate"] = config.authentication if hasattr(config, "authentication") else samlab.web.app.auth.none()
+application.config["acl"] = samlab.web.app.acl.permit_all()
+application.config["authenticate"] = samlab.web.app.auth.none()
 application.config["certificate"] = arguments.certificate
-application.config["check-credentials"] = config.credential_check if hasattr(config, "credential_check") else samlab.web.app.credentials.pass_empty()
+application.config["check-credentials"] = samlab.web.app.credentials.pass_empty()
 application.config["debug"] = arguments.debug
 application.config["host"] = arguments.host
 application.config["key"] = arguments.key
+application.config["layout"] = [{"component":"samlab-timeseries-widget"}]
 application.config["no-browser"] = arguments.no_browser
 application.config["port"] = arguments.port
-application.config["server-name"] = arguments.server_name
 application.config["server-description"] = arguments.server_description
+application.config["server-name"] = arguments.server_name
 application.config["session-timeout"] = arguments.session_timeout
-application.config["layout"] = config.layout if hasattr(config, "layout") else [{"component":"samlab-timeseries-widget"}]
 
 for key, value in sorted(application.config.items()):
     if key not in ["SECRET_KEY"]:
         log.info("Configuration: %s: %s", key, value)
 
-# Load request handlers (note: must happen *after* all configuration).
+# Setup services (note: must happen *after* all configuration).
+import samlab.dashboard.service.favorites
+import samlab.dashboard.service.layouts
 import samlab.web.app.handlers
 import samlab.web.app.handlers.asynchronous
 import samlab.web.app.handlers.delivery
-import samlab.dashboard.service.favorites
-import samlab.web.app.handlers.layout
+
+# Setup default mappings.
+import samlab.dashboard.mapper.favorites
+import samlab.dashboard.mapper.layouts
+
+samlab.dashboard.service.set_mapping("layout", samlab.dashboard.mapper.layouts.JSONDiskLayouts(storage=os.path.join(arguments.data_dir, "layouts.json")))
 
 # Optionally open a web browser at startup.
 def open_browser(config):

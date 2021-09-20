@@ -16,11 +16,7 @@ import samlab.mime
 # Setup logging.
 log = logging.getLogger(__name__)
 
-# Get the web server.
 from samlab.web.app import application, require_auth, require_permissions
-
-# Get the database.
-from samlab.web.app.database import database, fs
 
 @application.route("/deliveries")
 @require_auth
