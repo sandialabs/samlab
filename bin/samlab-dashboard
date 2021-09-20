@@ -90,7 +90,7 @@ for key, value in sorted(application.config.items()):
 import samlab.web.app.handlers
 import samlab.web.app.handlers.asynchronous
 import samlab.web.app.handlers.delivery
-import samlab.web.app.handlers.favorite
+import samlab.dashboard.service.favorites
 import samlab.web.app.handlers.layout
 
 # Optionally open a web browser at startup.

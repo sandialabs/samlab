@@ -4,9 +4,6 @@
 
 """Functionality for working with :ref:`favorites`."""
 
-#import pymongo
-
-
 def create(database, otype, oid, name):
     """Mark an object as a favorite.
 
