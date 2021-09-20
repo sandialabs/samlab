@@ -13,8 +13,8 @@ from samlab.dashboard.service import require_mapper
 @require_auth
 def get_favorites():
     require_permissions(["read"])
-    favorites = list(require_mapper("favorites").get())
-    return flask.jsonify(favorites=favorites)
+    favorites = require_mapper("favorites").get()
+    return flask.jsonify(favorites=list(favorites))
 
 
 @application.route("/favorites/<allow(layouts):otype>/<oid>", methods=["PUT", "DELETE"])

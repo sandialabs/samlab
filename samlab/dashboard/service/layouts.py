@@ -17,14 +17,14 @@ def get_post_layouts():
 
     elif flask.request.method == "POST":
         require_permissions(["read"]) # We don't require write permissions to save a layout, by design.
-        lid = require_mapper("layout").store(content=flask.request.json["layout"])
+        lid = require_mapper("layouts").store(content=flask.request.json["layout"])
         return flask.jsonify(lid=lid)
 
 
 @application.route("/layouts/<lid>")
 @require_auth
 def get_layouts_lid(lid):
-    layout = require_mapper("layout").get(lid=lid)
+    layout = require_mapper("layouts").get(lid=lid)
     if layout is None:
         flask.abort(404)
     return flask.jsonify(layout=layout)

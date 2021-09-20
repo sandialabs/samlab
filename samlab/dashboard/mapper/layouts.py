@@ -22,6 +22,12 @@ class JSONDiskLayouts(object):
                 log.error(f"Uncaught exception: {e}")
 
 
+    def _save(self):
+        with open(self._storage, "w") as stream:
+            json.dump(self._layouts, stream)
+
+
+
     def get(self, *, lid):
         if lid in self._layouts:
             return self._layouts[lid]
@@ -36,7 +42,6 @@ class JSONDiskLayouts(object):
 
         if lid not in self._layouts:
             self._layouts[lid] = content
-            with open(self._storage, "w") as stream:
-                json.dump(self._layouts, stream)
+            self._save()
 
         return lid

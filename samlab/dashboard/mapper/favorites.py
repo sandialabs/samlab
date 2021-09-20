@@ -4,40 +4,76 @@
 
 """Functionality for working with :ref:`favorites`."""
 
-def create(database, otype, oid, name):
-    """Mark an object as a favorite.
+import json
+import logging
+import os
 
-    Parameters
-    ----------
-    database: database object returned by :func:`samlab.database.connect`, required
-    otype: str, required
-        Object type.  One of "observations", "experiments", "artifacts", or "layouts".
-    oid: str, required.
-        ID of the object to be favorited.
-    name: str, required.
-        Human-readable label for the favorite.
-    """
-    assert(isinstance(database, pymongo.database.Database))
-    assert(isinstance(otype, str))
-    assert(isinstance(oid, str))
-    assert(isinstance(name, str))
-
-    database.favorites.update_many({"otype": otype, "oid": oid}, {"$set": {"otype": otype, "oid": oid, "name": name}}, upsert=True)
+log = logging.getLogger(__name__)
 
 
-def delete(database, otype, oid):
-    """Un-favorite an object.
+class JSONDiskFavorites(object):
+    def __init__(self, storage):
+        self._storage = storage
+        self._favorites = {}
+        if os.path.exists(storage):
+            try:
+                with open(self._storage, "r") as stream:
+                    self._favorites = dict(json.load(stream))
+            except Exception as e:
+                log.error(f"Uncaught exception: {e}")
 
-    Parameters
-    ----------
-    database: database object returned by :func:`samlab.database.connect`, required
-    otype: str, required
-        Object type.  One of "observations", "experiments", "artifacts", or "layouts".
-    oid: str, required.
-        ID of the object to be un-favorited.
-    """
-    assert(isinstance(database, pymongo.database.Database))
-    assert(isinstance(otype, str))
-    assert(isinstance(oid, str))
 
-    database.favorites.delete_many({"otype": otype, "oid": oid})
+    def _save(self):
+        with open(self._storage, "w") as stream:
+            json.dump(self._favorites, stream)
+
+
+
+    def create(self, otype, oid, name):
+        """Mark an object as a favorite.
+
+        Parameters
+        ----------
+        otype: str, required
+            Object type.  One of "layouts".
+        oid: str, required.
+            ID of the object to be favorited.
+        name: str, required.
+            Human-readable label for the favorite.
+        """
+        log.debug(f"Create favorite: {otype} {oid} {name}.")
+
+        assert(isinstance(otype, str))
+        assert(isinstance(oid, str))
+        assert(isinstance(name, str))
+        if otype not in self._favorites:
+            self._favorites[otype] = {}
+        self._favorites[otype][oid] = name
+        self._save()
+
+
+    def delete(self, otype, oid):
+        """Un-favorite an object.
+
+        Parameters
+        ----------
+        otype: str, required
+            Object type.  One of "layouts".
+        oid: str, required.
+            ID of the object to be un-favorited.
+        """
+        log.debug(f"Delete favorite: {otype} {oid}.")
+
+        assert(isinstance(otype, str))
+        assert(isinstance(oid, str))
+        if otype in self._favorites:
+            if oid in self._favorites[otype]:
+                del self._favorites[otype][oid]
+                self._save()
+
+
+    def get(self):
+        for otype, oids in self._favorites.items():
+            for oid, name in oids.items():
+                yield {"otype": otype, "oid": oid, "name": name}
+

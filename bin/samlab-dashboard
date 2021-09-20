@@ -15,7 +15,6 @@ import samlab.web.app.auth
 import samlab.web.app.credentials
 
 # Setup logging.
-logging.basicConfig(level=logging.DEBUG)
 logging.getLogger("engineio").setLevel(logging.ERROR)
 logging.getLogger("matplotlib").setLevel(logging.INFO)
 logging.getLogger("watchdog").setLevel(logging.INFO)
@@ -66,6 +65,8 @@ parser.add_argument("--session-timeout", type=float, default=15 * 60, help="Sess
 #arguments = parser.parse_args(remaining_argv)
 arguments = parser.parse_args()
 
+logging.basicConfig(level=logging.DEBUG if arguments.debug else logging.INFO)
+
 # Setup the web server.
 from samlab.web.app import application, socketio
 
@@ -99,7 +100,8 @@ import samlab.web.app.handlers.delivery
 import samlab.dashboard.mapper.favorites
 import samlab.dashboard.mapper.layouts
 
-samlab.dashboard.service.set_mapping("layout", samlab.dashboard.mapper.layouts.JSONDiskLayouts(storage=os.path.join(arguments.data_dir, "layouts.json")))
+samlab.dashboard.service.set_mapping("favorites", samlab.dashboard.mapper.favorites.JSONDiskFavorites(storage=os.path.join(arguments.data_dir, "favorites.json")))
+samlab.dashboard.service.set_mapping("layouts", samlab.dashboard.mapper.layouts.JSONDiskLayouts(storage=os.path.join(arguments.data_dir, "layouts.json")))
 
 # Optionally open a web browser at startup.
 def open_browser(config):

@@ -9,4 +9,5 @@ logfile.txt
 features/db
 build
 dist
+favorites.json
 layouts.json
