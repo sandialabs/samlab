@@ -4,6 +4,7 @@
 
 """Functionality for working with :ref:`favorites`."""
 
+import abc
 import json
 import logging
 import os
@@ -11,7 +12,21 @@ import os
 log = logging.getLogger(__name__)
 
 
-class JSONDiskFavorites(object):
+class Favorites(abc.ABC):
+    def contains(self, otype, oid):
+        raise NotImplementedError()
+
+    def create(self, otype, oid, name):
+        raise NotImplementedError()
+
+    def delete(self, otype, oid):
+        raise NotImplementedError()
+
+    def get(self):
+        raise NotImplementedError()
+
+
+class JSONDiskFavorites(Favorites):
     def __init__(self, storage):
         self._storage = storage
         self._favorites = {}

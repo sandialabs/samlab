@@ -2,6 +2,7 @@
 # (NTESS).  Under the terms of Contract DE-NA0003525 with NTESS, the U.S.
 # Government retains certain rights in this software.
 
+import abc
 import hashlib
 import json
 import logging
@@ -10,7 +11,15 @@ import os
 log = logging.getLogger(__name__)
 
 
-class JSONDiskLayouts(object):
+class Layouts(abc.ABC):
+    def get(self, *, lid):
+        raise NotImplementedError()
+
+    def put(self, *, content):
+        raise NotImplementedError()
+
+
+class JSONDiskLayouts(Layouts):
     def __init__(self, storage):
         self._storage = storage
         self._layouts = {}
@@ -34,7 +43,7 @@ class JSONDiskLayouts(object):
         return None
 
 
-    def store(self, *, content):
+    def put(self, *, content):
         if not isinstance(content, list):
             raise ValueError(f"Layout content must be a list, received {type(content)}.")
 
