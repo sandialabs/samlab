@@ -5,24 +5,20 @@
 define([
     "knockout",
     "knockout.mapping",
-    "samlab-object-manager",
+//    "samlab-object-manager",
     "samlab-server",
-    ], function(ko, mapping, object, server)
+    ], function(ko, mapping, /*object, */server)
 {
     var module = mapping.fromJS({
-        experiments: [],
+        datasets: [],
     });
 
-    function load_experiments()
+    function load_datasets()
     {
-        server.load_json(module, "/experiments?sort=created");
+        server.load_json(module, "/datasets");
     }
 
-    module.delete = function(id)
-    {
-        server.load_json(module, "/experiments/" + id, "DELETE");
-    };
-
+/*
     object.changed.subscribe(function(object)
     {
         if(object.otype == "experiments")
@@ -46,8 +42,9 @@ define([
             load_experiments();
         }
     });
+*/
 
-    load_experiments();
+    load_datasets();
 
     return module;
 });

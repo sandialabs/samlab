@@ -6,10 +6,10 @@ define([
     "knockout",
     "knockout.mapping",
     "samlab-dashboard",
-    "samlab-experiment-manager",
-    ], function(ko, mapping, dashboard, experiment_manager)
+    "samlab-dataset-manager",
+    ], function(ko, mapping, dashboard, dataset_manager)
 {
-    var component_name = "samlab-experiments-widget";
+    var component_name = "samlab-datasets-widget";
     ko.components.register(component_name,
     {
         viewModel:
@@ -19,14 +19,14 @@ define([
                 var component = mapping.fromJS({
                 });
 
-                component.experiments = experiment_manager.experiments.map(function(experiment)
+                component.datasets = dataset_manager.datasets.map(function(dataset)
                 {
-                    return { label: experiment.name, id: experiment.id};
+                    return { label: dataset, id: dataset};
                 });
 
-                component.open_experiment = function(item)
+                component.open_dataset = function(item)
                 {
-                    dashboard.add_widget("samlab-experiment-widget", {id: item.id});
+                    //dashboard.add_widget("samlab-dataset-widget", {id: item.id});
                 };
 
                 return component;

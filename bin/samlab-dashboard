@@ -78,7 +78,7 @@ application.config["check-credentials"] = samlab.web.app.credentials.pass_empty(
 application.config["debug"] = arguments.debug
 application.config["host"] = arguments.host
 application.config["key"] = arguments.key
-application.config["layout"] = [{"component":"samlab-timeseries-widget"}]
+application.config["layout"] = [{"component":"samlab-datasets-widget"}]
 application.config["no-browser"] = arguments.no_browser
 application.config["port"] = arguments.port
 application.config["server-description"] = arguments.server_description
@@ -90,7 +90,9 @@ for key, value in sorted(application.config.items()):
         log.info("Configuration: %s: %s", key, value)
 
 # Setup services (note: must happen *after* all configuration).
+import samlab.dashboard.service.datasets
 import samlab.dashboard.service.favorites
+import samlab.dashboard.service.images
 import samlab.dashboard.service.layouts
 import samlab.web.app.handlers
 import samlab.web.app.handlers.asynchronous
@@ -102,6 +104,8 @@ import samlab.dashboard.mapper.layouts
 
 samlab.dashboard.service.set_mapping("favorites", samlab.dashboard.mapper.favorites.JSONDiskFavorites(storage=os.path.join(arguments.data_dir, "favorites.json")))
 samlab.dashboard.service.set_mapping("layouts", samlab.dashboard.mapper.layouts.JSONDiskLayouts(storage=os.path.join(arguments.data_dir, "layouts.json")))
+samlab.dashboard.service.set_mapping(("images", "test"), None)
+samlab.dashboard.service.set_mapping(("images", "testB"), None)
 
 # Optionally open a web browser at startup.
 def open_browser(config):

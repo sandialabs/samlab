@@ -4,6 +4,20 @@
 
 _mappings = {}
 
+
+def datasets(*, service=None):
+    results = set()
+    for key in _mappings:
+        if isinstance(key, str):
+            continue
+        else:
+            mapping_service, mapping_dataset = key
+            if service is not None and service != mapping_service:
+                continue
+            results.add(mapping_dataset)
+    return results
+
+
 def require_mapper(key):
     if isinstance(key, str):
         if key not in _mappings:

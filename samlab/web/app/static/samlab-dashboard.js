@@ -52,8 +52,8 @@ define(
                 label: "Lists",
                 children:
                 [
+                    { label: "Datasets", icon: "fa-address-card", component: "samlab-datasets-widget"},
                     { label: "Observations", icon: "fa-list", component: "samlab-observations-widget", params: {}},
-                    { label: "Experiments", icon: "fa-address-card", component: "samlab-experiments-widget"},
                     { label: "Timeseries", icon: "fa-line-chart", component: "samlab-timeseries-widget"},
                 ],
             },
