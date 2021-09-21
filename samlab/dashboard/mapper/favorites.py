@@ -28,6 +28,9 @@ class JSONDiskFavorites(object):
             json.dump(self._favorites, stream)
 
 
+    def contains(self, otype, oid):
+        return otype in self._favorites and oid in self._favorites[otype]
+
 
     def create(self, otype, oid, name):
         """Mark an object as a favorite.

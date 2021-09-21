@@ -4,8 +4,7 @@
 
 import flask
 
-# Get the web server.
-from samlab.web.app import application, require_auth, require_permissions
+from samlab.web.app import application, require_auth, require_permissions, socketio
 from samlab.dashboard.service import require_mapper
 
 
@@ -13,8 +12,8 @@ from samlab.dashboard.service import require_mapper
 @require_auth
 def get_favorites():
     require_permissions(["read"])
-    favorites = require_mapper("favorites").get()
-    return flask.jsonify(favorites=list(favorites))
+    favorites = require_mapper("favorites")
+    return flask.jsonify(favorites=list(favorites.get()))
 
 
 @application.route("/favorites/<allow(layouts):otype>/<oid>", methods=["PUT", "DELETE"])
@@ -23,11 +22,18 @@ def put_delete_favorites_otype_oid(otype, oid):
     if flask.request.method == "PUT":
         require_permissions(["write"])
         name = flask.request.json["name"]
-        require_mapper("favorites").create(otype, oid, name)
+        favorites = require_mapper("favorites")
+        if favorites.contains(otype, oid):
+            favorites.create(otype, oid, name)
+            socketio.emit("object-changed", {"otype": "favorites", "oid": oid})
+        else:
+            favorites.create(otype, oid, name)
+            socketio.emit("object-created", {"otype": "favorites", "oid": oid})
         return flask.jsonify()
 
     elif flask.request.method == "DELETE":
         require_permissions(["delete"])
         require_mapper("favorites").delete(otype, oid)
+        socketio.emit("object-deleted", {"otype": "favorites", "oid": oid})
         return flask.jsonify()
 
