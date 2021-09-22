@@ -81,8 +81,8 @@ import samlab.dashboard.mapper.favorites
 import samlab.dashboard.mapper.layouts
 
 mappings = [
-    ("favorites", samlab.dashboard.mapper.favorites.JSONDiskFavorites(storage=os.path.join(arguments.data_dir, "favorites.json"))),
-    ("layouts", samlab.dashboard.mapper.layouts.JSONDiskLayouts(storage=os.path.join(arguments.data_dir, "layouts.json"))),
+    ("favorites", samlab.dashboard.mapper.favorites.JSONDiskFavorites(storage=os.path.expanduser("~/.samlab/favorites.json"))),
+    ("layouts", samlab.dashboard.mapper.layouts.JSONDiskLayouts(storage=os.path.expanduser("~/.samlab/layouts.json"))),
     ] + getattr(config, "mappings", [])
 
 for key, mapping in mappings:
