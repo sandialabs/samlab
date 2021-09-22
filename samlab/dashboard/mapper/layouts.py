@@ -12,9 +12,12 @@ log = logging.getLogger(__name__)
 
 
 class Layouts(abc.ABC):
+    @abc.abstractmethod
     def get(self, *, lid):
         raise NotImplementedError()
 
+
+    @abc.abstractmethod
     def put(self, *, content):
         raise NotImplementedError()
 

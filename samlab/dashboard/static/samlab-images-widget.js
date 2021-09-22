@@ -36,6 +36,7 @@ define([
                     collection: widget.params.collection,
                     count: null,
                     index: widget.params.index,
+                    tags: [],
                 });
 
                 component.first_image = function()
@@ -47,6 +48,17 @@ define([
                 {
                     component.index(component.count() - 1);
                 }
+
+                component.load_tags = ko.computed(function()
+                {
+                    server.get_json("/image-collection/" + component.collection() + "/" + component.index() + "/tags",
+                    {
+                        success: function(data)
+                        {
+                            component.tags(data.tags);
+                        },
+                    });
+                });
 
                 component.manage_attributes = function()
                 {

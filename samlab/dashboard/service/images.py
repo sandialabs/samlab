@@ -28,3 +28,9 @@ def get_image(collection, index):
         raise RuntimeError(f"Unknown image type: {type(image)}")
 
 
+@application.route("/image-collection/<collection>/<int:index>/tags")
+@require_auth
+def get_image_tags(collection, index):
+    require_permissions(["read"])
+    image_collection = require_mapper(("image-collection", collection))
+    return flask.jsonify(tags=image_collection.tags(index))

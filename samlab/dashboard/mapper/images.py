@@ -9,10 +9,13 @@ import re
 
 
 class ImageCollection(abc.ABC):
+    @abc.abstractmethod
     def __len__(self):
         """Return the number of images in the collection."""
         raise NotImplementedError()
 
+
+    @abc.abstractmethod
     def get(self, index):
         """Return an image by index.
 
@@ -29,11 +32,17 @@ class ImageCollection(abc.ABC):
         raise NotImplementedError()
 
 
-class DirectoryImageCollection(ImageCollection):
+    @abc.abstractmethod
+    def tags(self, index):
+        raise NotImplementedError()
+
+
+class Directory(ImageCollection):
     def __init__(self, directory, pattern=".*\.(png|jpg|jpeg)"):
         self._directory = directory
         self._pattern = pattern
         self._update()
+
 
     def _update(self):
         paths = []
@@ -56,4 +65,8 @@ class DirectoryImageCollection(ImageCollection):
 
     def get(self, index):
         return self._paths[index]
+
+
+    def tags(self, index):
+        return []
 

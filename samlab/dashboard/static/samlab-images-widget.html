@@ -27,27 +27,19 @@
 
         <hr></hr>
 
+        <dl class="row mt-3">
 <!--
-        <div data-bind="if: deleted">
-            <div class="alert alert-warning mt-3" role="alert">
-                <h4 class="alert-heading">Observation <span data-bind="text:observation.id"></span> no longer exists</h4>
-                <p>It may have been deleted by you, another user, or an automated process.<br/>
-                <button type="button" class="btn btn-sm btn-warning py-0" data-bind="click: reload">Reload</button> the current observations to eliminate this message.</p>
-            </div>
-        </div>
-
-        <dl class="row mt-3" data-bind="if: !deleted()">
             <dt class="col-md-3">Attributes:</dt>
             <dd class="col-md-9">
                 <samlab-attribute-control params="otype:'observations', oid: observation.id"></samlab-attribute-control>
             </dd>
+-->
 
             <dt class="col-md-3">Tags:</dt>
-            <dd class="col-md-9" data-bind="foreach: observation.tags">
+            <dd class="col-md-9" data-bind="foreach: tags">
                 <span class="badge badge-secondary"><span class="fa fa-tag"></span>&nbsp;<span data-bind="text: $data"></span></span>
             </dd>
         </dl>
--->
 
         <div class="row">
             <div class="col-md-12">

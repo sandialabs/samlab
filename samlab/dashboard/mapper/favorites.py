@@ -13,15 +13,22 @@ log = logging.getLogger(__name__)
 
 
 class Favorites(abc.ABC):
+    @abc.abstractmethod
     def contains(self, otype, oid):
         raise NotImplementedError()
 
+
+    @abc.abstractmethod
     def create(self, otype, oid, name):
         raise NotImplementedError()
 
+
+    @abc.abstractmethod
     def delete(self, otype, oid):
         raise NotImplementedError()
 
+
+    @abc.abstractmethod
     def get(self):
         raise NotImplementedError()
 
