@@ -8,12 +8,24 @@ from samlab.web.app import application, require_auth, require_permissions, socke
 from samlab.dashboard.service import datasets, require_mapper
 
 
-@application.route("/images")
+@application.route("/images/<dataset>")
 @require_auth
-def get_images():
+def get_image_count(dataset):
     require_permissions(["read"])
-    return flask.jsonify(datasets=list(datasets(service="images")))
+    image_collection = require_mapper(("images", dataset))
+    return flask.jsonify(images=len(image_collection))
 
+
+@application.route("/images/<dataset>/<int:index>")
+@require_auth
+def get_image(dataset, index):
+    require_permissions(["read"])
+    image_collection = require_mapper(("images", dataset))
+    image = image_collection.get(index)
+    if isinstance(image, str):
+        return flask.send_file(image)
+    else:
+        raise RuntimeError(f"Unknown image type: {type(image)}")
 
 #@application.route("/favorites/<allow(layouts):otype>/<oid>", methods=["PUT", "DELETE"])
 #@require_auth
