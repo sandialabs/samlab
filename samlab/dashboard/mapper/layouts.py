@@ -33,8 +33,7 @@ class JSONDiskLayouts(Layouts):
 
     def _save(self):
         with open(self._storage, "w") as stream:
-            json.dump(self._layouts, stream)
-
+            json.dump(self._layouts, stream, indent=2, sort_keys=True)
 
 
     def get(self, *, lid):
