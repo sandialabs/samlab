@@ -80,12 +80,13 @@ import samlab.web.app.handlers.asynchronous
 import samlab.dashboard.mapper.favorites
 import samlab.dashboard.mapper.layouts
 
-mappings = [
-    ("favorites", samlab.dashboard.mapper.favorites.JSONDiskFavorites(storage=os.path.expanduser("~/.samlab/favorites.json"))),
-    ("layouts", samlab.dashboard.mapper.layouts.JSONDiskLayouts(storage=os.path.expanduser("~/.samlab/layouts.json"))),
-    ] + getattr(config, "mappings", [])
+mappings = {
+    "favorites": samlab.dashboard.mapper.favorites.JSONDiskFavorites(storage=os.path.expanduser("~/.samlab/favorites.json")),
+    "layouts": samlab.dashboard.mapper.layouts.JSONDiskLayouts(storage=os.path.expanduser("~/.samlab/layouts.json")),
+    }
+mappings.update(getattr(config, "mappings", {}))
 
-for key, mapping in mappings:
+for key, mapping in mappings.items():
     samlab.dashboard.service.set_mapping(key, mapping)
 
 # Optionally open a web browser at startup.
