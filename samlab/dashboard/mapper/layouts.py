@@ -31,6 +31,10 @@ class JSONDiskLayouts(Layouts):
                 log.error(f"Uncaught exception: {e}")
 
 
+    def __repr__(self):
+        return f"{self.__class__.__module__}.{self.__class__.__name__}(storage={self._storage!r})"
+
+
     def _save(self):
         with open(self._storage, "w") as stream:
             json.dump(self._layouts, stream, indent=2, sort_keys=True)
