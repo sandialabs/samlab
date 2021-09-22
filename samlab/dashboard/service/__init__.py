@@ -2,6 +2,10 @@
 # (NTESS).  Under the terms of Contract DE-NA0003525 with NTESS, the U.S.
 # Government retains certain rights in this software.
 
+import logging
+
+log = logging.getLogger(__name__)
+
 _mappings = {}
 
 
@@ -31,5 +35,6 @@ def require_mapper(key):
 
 
 def set_mapping(key, mapping):
+    log.info(f"Mapping {key} to {mapping}.")
     _mappings[key] = mapping
 
