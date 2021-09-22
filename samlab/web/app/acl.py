@@ -2,12 +2,6 @@
 # (NTESS).  Under the terms of Contract DE-NA0003525 with NTESS, the U.S.
 # Government retains certain rights in this software.
 
-import logging
-import traceback
-
-import flask
-
-log = logging.getLogger(__name__)
 
 def permit_all():
     """Access control list strategy that allows anyone to do anything.

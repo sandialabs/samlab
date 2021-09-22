@@ -2,16 +2,10 @@
 # (NTESS).  Under the terms of Contract DE-NA0003525 with NTESS, the U.S.
 # Government retains certain rights in this software.
 
-import logging
 import os
 
 import flask
 
-
-# Setup logging.
-log = logging.getLogger(__name__)
-
-# Get the web server.
 from samlab.web.app import application, socketio, require_auth, require_permissions
 
 ##################################################################################
@@ -23,13 +17,6 @@ def get_index():
     require_permissions(["read"])
     base_dir = os.path.dirname(os.path.realpath(__file__))
     return open(os.path.join(base_dir, "..", "static", "index.html"), "r").read()
-
-
-@application.route("/database")
-@require_auth
-def get_database():
-    require_permissions(["read"])
-    return flask.jsonify(database=application.config["database-name"])
 
 
 @application.route("/identity")
@@ -47,7 +34,6 @@ def post_notify():
     require_permissions(["read"])
 
     def delayed_emit(delay, params):
-        log.info("delayed_emit")
         socketio.sleep(delay)
         socketio.emit("notify", params)
 

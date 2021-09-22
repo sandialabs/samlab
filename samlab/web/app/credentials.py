@@ -5,8 +5,6 @@
 import logging
 import traceback
 
-import flask
-
 log = logging.getLogger(__name__)
 
 

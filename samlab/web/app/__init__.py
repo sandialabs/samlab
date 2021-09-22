@@ -7,7 +7,6 @@ import os
 import uuid
 
 import arrow
-#import bson
 import flask
 import flask_socketio
 import numpy

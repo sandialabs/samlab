@@ -3,7 +3,6 @@
 # Government retains certain rights in this software.
 
 import logging
-import traceback
 
 import flask
 
