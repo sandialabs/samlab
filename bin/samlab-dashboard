@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 import argparse
-import imp
+import json
 import logging
 import os
 import threading
@@ -51,6 +51,7 @@ log = logging.getLogger()
 
 #parser = argparse.ArgumentParser(description="Web interface for managing observations, experiments, and artifacts.", parents=[config_parser])
 parser = argparse.ArgumentParser(description="Dashboard for managing and monitoring experiments.")
+parser.add_argument("--add-widget", action="append", default=[], help="Add a widget to the default layout.")
 parser.add_argument("--certificate", help="TLS certificate.  Default: %(default)s")
 parser.add_argument("--data-dir", default=os.getcwd(), help="Data directory. Default: %(default)s")
 parser.add_argument("--debug", action="store_true", help="Enable server debugging.")
@@ -67,6 +68,16 @@ arguments = parser.parse_args()
 
 logging.basicConfig(level=logging.DEBUG if arguments.debug else logging.INFO)
 
+layout = []
+for widget in arguments.add_widget:
+    try:
+        layout.append(json.loads(widget))
+    except Exception as e:
+        log.error(e)
+        layout.append({"component": widget})
+
+print(layout)
+
 # Setup the web server.
 from samlab.web.app import application, socketio
 
@@ -78,7 +89,7 @@ application.config["check-credentials"] = samlab.web.app.credentials.pass_empty(
 application.config["debug"] = arguments.debug
 application.config["host"] = arguments.host
 application.config["key"] = arguments.key
-application.config["layout"] = [{"component":"samlab-datasets-widget"}]
+application.config["layout"] = layout
 application.config["no-browser"] = arguments.no_browser
 application.config["port"] = arguments.port
 application.config["server-description"] = arguments.server_description
