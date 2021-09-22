@@ -81,6 +81,7 @@ import samlab.web.app.handlers.delivery
 # Setup default mappings.
 import samlab.dashboard.mapper.favorites
 import samlab.dashboard.mapper.layouts
+
 mappings = [
     ("favorites", samlab.dashboard.mapper.favorites.JSONDiskFavorites(storage=os.path.join(arguments.data_dir, "favorites.json"))),
     ("layouts", samlab.dashboard.mapper.layouts.JSONDiskLayouts(storage=os.path.join(arguments.data_dir, "layouts.json"))),
