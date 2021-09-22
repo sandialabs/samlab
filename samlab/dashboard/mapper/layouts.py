@@ -36,6 +36,8 @@ class JSONDiskLayouts(Layouts):
 
 
     def _save(self):
+        if not os.path.exists(os.path.dirname(self._storage)):
+            os.makedirs(os.path.dirname(self._storage))
         with open(self._storage, "w") as stream:
             json.dump(self._layouts, stream, indent=2, sort_keys=True)
 

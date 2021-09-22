@@ -42,6 +42,8 @@ class JSONDiskFavorites(Favorites):
         return f"{self.__class__.__module__}.{self.__class__.__name__}(storage={self._storage!r})"
 
     def _save(self):
+        if not os.path.exists(os.path.dirname(self._storage)):
+            os.makedirs(os.path.dirname(self._storage))
         with open(self._storage, "w") as stream:
             json.dump(self._favorites, stream)
 
