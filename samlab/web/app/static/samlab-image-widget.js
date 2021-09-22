@@ -15,7 +15,19 @@ define([
             createViewModel: function(widget, component_info)
             {
                 var component = mapping.fromJS({
+                    collection: widget.params.collection,
+                    index: widget.params.index,
                     uri: widget.params.uri,
+                });
+
+                component.display_uri = ko.pureComputed(function()
+                {
+                    return component.uri() || "/image-collection/" + component.collection() + "/" + component.index();
+                });
+
+                component.title = ko.pureComputed(function()
+                {
+                    return component.uri() || "Collection \u201c" + component.collection() + "\u201d image " + component.index();
                 });
 
                 return component;
