@@ -35,17 +35,7 @@ define([
                 {
                     collection: widget.params.collection,
                     count: null,
-                    index: widget.params.index || 0,
-                });
-
-                component.title = ko.pureComputed(function()
-                {
-                    return "Collection \u201c" + component.collection()+ "\u201d";
-                });
-
-                component.uri = ko.pureComputed(function()
-                {
-                    return "/image-collection/" + component.collection() + "/" + component.index();
+                    index: widget.params.index,
                 });
 
                 component.first_image = function()
@@ -95,10 +85,22 @@ define([
                         success: function(data)
                         {
                             component.count(data.count);
-                            component.index(0);
+                            if(component.index() >= data.count)
+                                component.index(0);
                         },
                     });
                 }
+
+                component.title = ko.pureComputed(function()
+                {
+                    return "Collection \u201c" + component.collection()+ "\u201d";
+                });
+
+                component.uri = ko.pureComputed(function()
+                {
+                    return "/image-collection/" + component.collection() + "/" + component.index();
+                });
+
 
 /*
                 ////////////////////////////////////////////////////////
@@ -421,7 +423,7 @@ define([
 
     var module =
     {
-        widget: { width: 6, height: 12, params: {}},
+        widget: { width: 6, height: 12, params: {collection: null, index: 0}},
     };
 
     return module
