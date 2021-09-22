@@ -38,8 +38,8 @@ class ImageCollection(abc.ABC):
 
 
 class Directory(ImageCollection):
-    def __init__(self, directory, pattern=".*\.(png|jpg|jpeg)"):
-        self._directory = directory
+    def __init__(self, root, pattern=".*\.(png|jpg|jpeg)"):
+        self._root = root
         self._pattern = pattern
         self._update()
 
@@ -47,7 +47,7 @@ class Directory(ImageCollection):
     def _update(self):
         paths = []
         pattern = re.compile(self._pattern)
-        for root, dirs, files in os.walk(self._directory):
+        for root, dirs, files in os.walk(self._root):
             for filename in files:
                 if not pattern.match(filename):
                     continue
@@ -60,7 +60,7 @@ class Directory(ImageCollection):
 
 
     def __repr__(self):
-        return f"{self.__class__.__module__}.{self.__class__.__name__}(directory={self._directory!r}, pattern={self._pattern!r})"
+        return f"{self.__class__.__module__}.{self.__class__.__name__}(root={self._root!r}, pattern={self._pattern!r})"
 
 
     def get(self, index):
@@ -68,5 +68,7 @@ class Directory(ImageCollection):
 
 
     def tags(self, index):
-        return []
+        path = os.path.relpath(self._paths[index], self._root)
+        tag = os.path.dirname(path)
+        return [tag] if tag else []
 
