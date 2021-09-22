@@ -86,7 +86,7 @@ def require_auth(f):
                 del sessions[sid]
             del flask.session["sid"]
         # No existing session, so authenticate the user.
-        if application.config["check-credentials"](flask.request.authorization):
+        if application.config["credentials"](flask.request.authorization):
             # Create a new session.
             flask.session["sid"] = uuid.uuid4()
             sessions[flask.session["sid"]] = {

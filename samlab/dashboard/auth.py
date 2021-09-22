@@ -14,12 +14,21 @@ class Basic(object):
     def __init__(self, realm):
         self.realm = realm
 
+
     def __call__(self):
         log.info("Requesting basic authentication for realm: %s", self.realm)
         return flask.Response("Password required.", 401, {"WWW-Authenticate": 'Basic realm="%s"' % self.realm})
 
 
+    def __repr__(self):
+        return f"{self.__class__.__module__}.{self.__class__.__name__}(realm={self.realm!r})"
+
+
 class Null(object):
     def __call__(self):
         raise NotImplementedError("This should never be called.")
+
+
+    def __repr__(self):
+        return f"{self.__class__.__module__}.{self.__class__.__name__}()"
 

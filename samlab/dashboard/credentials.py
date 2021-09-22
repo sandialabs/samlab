@@ -8,51 +8,79 @@ import traceback
 log = logging.getLogger(__name__)
 
 
-def fail_all():
-    def implementation(authorization):
-        return False
-    return implementation
+class LDAP(object):
+    """Check credentials against an LDAP server."""
+    def __init__(self, server, user_dn, timeout=5):
+        self.server = server
+        self.user_dn = user_dn
+        self.timeout = timeout
 
-
-def pass_empty():
-    def implementation(authorization):
-        return True
-    return implementation
-
-
-def pass_all():
-    def implementation(authorization):
+    def __call__(self, authorization):
         if not authorization:
             return False
-        return True
-    return implementation
-
-
-def check_ldap(server, user_dn, timeout=5):
-    def implementation(authorization):
-        if not authorization:
-            return False
-        log.info("Checking credentials for %s with %s.", authorization.username, server)
+        log.info("Checking credentials for %s with %s.", authorization.username, self.server)
         try:
-            search_dn = user_dn.format(authorization.username)
+            search_dn = self.user_dn.format(authorization.username)
 
             import ldap3
-            ldap_server = ldap3.Server(server, use_ssl=True)
-            connection = ldap3.Connection(ldap_server, user=search_dn, password=authorization.password, receive_timeout=timeout)
+            ldap_server = ldap3.Server(self.server, use_ssl=True)
+            connection = ldap3.Connection(ldap_server, user=search_dn, password=authorization.password, receive_timeout=self.timeout)
             if not connection.bind():
                 return False
             return True
         except Exception:
             log.error("%s" % traceback.format_exc())
             return False
-    return implementation
 
 
-def exact_match(username="test", password="test"):
-    def implementation(authorization):
+    def __repr__(self):
+        return f"{self.__class__.__module__}.{self.__class__.__name__}(server={self.server!r}, user_dn={self.user_dn!r}, timeout={self.timeout!r})"
+
+
+class ExactMatch(object):
+    """Allow credentials that match the given username and password."""
+    def __init__(self, username="test", password="test"):
+        self.username = username
+        self.password = password
+
+
+    def __call__(self, authorization):
         if not authorization:
             return False
-        return authorization.username == username and authorization.password == password
-    return implementation
+        return authorization.username == self.username and authorization.password == self.password
+
+
+    def __repr__(self):
+        return f"{self.__class__.__module__}.{self.__class__.__name__}(username={self.username!r}, password={self.password!r})"
+
+
+class ForbidAll(object):
+    """Forbid all credentials."""
+    def __call__(self, authorization):
+        return False
+
+
+    def __repr__(self):
+        return f"{self.__class__.__module__}.{self.__class__.__name__}()"
+
+
+class PermitAll(object):
+    """Permit all non-empty credentials."""
+    def __call__(self, authorization):
+        return True if authorization else False
+
+
+    def __repr__(self):
+        return f"{self.__class__.__module__}.{self.__class__.__name__}()"
+
+
+class PermitAny(object):
+    """Permit any credentials, including empty."""
+    def __call__(self, authorization):
+        return True
+
+
+    def __repr__(self):
+        return f"{self.__class__.__module__}.{self.__class__.__name__}()"
 
 

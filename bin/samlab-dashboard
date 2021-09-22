@@ -54,7 +54,7 @@ from samlab.web.app import application, socketio
 application.config["acl"] = getattr(config, "acl", samlab.dashboard.acl.PermitAll())
 application.config["authenticate"] = getattr(config, "authentication", samlab.dashboard.auth.Null())
 application.config["certificate"] = arguments.certificate
-application.config["check-credentials"] = getattr(config, "check_credentials", samlab.dashboard.credentials.pass_empty())
+application.config["credentials"] = getattr(config, "credentials", samlab.dashboard.credentials.PermitAny())
 application.config["debug"] = arguments.debug
 application.config["host"] = arguments.host
 application.config["key"] = arguments.key
