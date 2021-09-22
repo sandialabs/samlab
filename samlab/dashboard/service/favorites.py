@@ -4,7 +4,7 @@
 
 import flask
 
-from samlab.web.app import application, require_auth, require_permissions, socketio
+from samlab.dashboard import application, require_auth, require_permissions, socketio
 from samlab.dashboard.service import require_mapper
 
 

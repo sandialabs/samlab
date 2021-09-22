@@ -4,7 +4,7 @@
 
 import flask
 
-from samlab.web.app import application, require_auth, require_permissions
+from samlab.dashboard import application, require_auth, require_permissions
 from samlab.dashboard.service import require_mapper
 
 

@@ -6,17 +6,15 @@ import os
 
 import flask
 
-from samlab.web.app import application, socketio, require_auth, require_permissions
+from samlab.dashboard import application, socketio, require_auth, require_permissions
 
-##################################################################################
-# General purpose endpoints
 
 @application.route("/")
 @require_auth
 def get_index():
     require_permissions(["read"])
-    base_dir = os.path.dirname(os.path.realpath(__file__))
-    return open(os.path.join(base_dir, "..", "static", "index.html"), "r").read()
+    path = os.path.abspath(os.path.join(os.path.dirname(os.path.realpath(__file__)), "..", "static", "index.html"))
+    return flask.send_file(path)
 
 
 @application.route("/identity")

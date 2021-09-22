@@ -49,7 +49,7 @@ logging.getLogger("watchdog").setLevel(logging.INFO)
 log = logging.getLogger()
 
 # Setup the web server.
-from samlab.web.app import application, socketio
+from samlab.dashboard import application, socketio
 
 application.config["acl"] = getattr(config, "acl", samlab.dashboard.acl.PermitAll())
 application.config["authenticate"] = getattr(config, "authentication", samlab.dashboard.auth.Null())
@@ -70,11 +70,12 @@ for key, value in sorted(application.config.items()):
         log.info("Configuration: %s: %s", key, value)
 
 # Setup services (note: must happen *after* all configuration).
+import samlab.dashboard.service.asynchronous
+import samlab.dashboard.service.basic
 import samlab.dashboard.service.datasets
 import samlab.dashboard.service.favorites
 import samlab.dashboard.service.images
 import samlab.dashboard.service.layouts
-import samlab.web.app.handlers.asynchronous
 
 # Setup default mappings.
 import samlab.dashboard.mapper.favorites

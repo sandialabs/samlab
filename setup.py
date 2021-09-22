@@ -37,7 +37,7 @@ setup(
     maintainer_email="tshead@sandia.gov",
     packages=find_packages(),
     package_data={
-        "samlab.web.app": [
+        "samlab.dashboard": [
             "static/*",
             "static/css/*",
             "static/fonts/*",
