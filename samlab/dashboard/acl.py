@@ -3,30 +3,30 @@
 # Government retains certain rights in this software.
 
 
-def permit_all():
+class PermitAll(object):
     """Access control list strategy that allows anyone to do anything.
     """
-    def implementation(authorization, requested):
+    def __call__(self, authorization, requested):
         return True
-    return implementation
 
 
-def forbid_all():
+class ForbidAll(object):
     """Access control list strategy that prevents anyone from doing anything."""
-    def implementation(authorization, requested):
+    def __call__(self, authorization, requested):
         return False
-    return implementation
 
 
-def explicit(**permissions):
+class Explicit(object):
     """Access control list strategy based on lists of usernames."""
-    def implementation(authorization, requested):
+    def __init__(self, **permissions):
+        self.permissions = permissions
+
+    def __call__(self, authorization, requested):
         if authorization is None:
             return False
         for permission in requested:
-            if permission not in permissions:
+            if permission not in self.permissions:
                 return False
-            if authorization.username not in permissions[permission]:
+            if authorization.username not in self.permissions[permission]:
                 return False
         return True
-    return implementation

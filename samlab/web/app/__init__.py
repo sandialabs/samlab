@@ -3,6 +3,7 @@
 # Government retains certain rights in this software.
 
 import functools
+import logging
 import os
 import uuid
 
@@ -11,6 +12,9 @@ import flask
 import flask_socketio
 import numpy
 import werkzeug.routing
+
+log = logging.getLogger(__name__)
+
 
 # Simplify converting Python sets to JSON arrays.
 class JSONEncoder(flask.json.JSONEncoder):
