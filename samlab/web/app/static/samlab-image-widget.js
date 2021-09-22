@@ -5,10 +5,7 @@
 define([
     "knockout",
     "knockout.mapping",
-    "samlab-dashboard",
-    "samlab-object-manager",
-    "samlab-server",
-    ], function(ko, mapping, dashboard, object, server)
+    ], function(ko, mapping)
 {
     var component_name = "samlab-image-widget";
     ko.components.register(component_name,
@@ -18,32 +15,19 @@ define([
             createViewModel: function(widget, component_info)
             {
                 var component = mapping.fromJS({
-                    content_type: widget.params["content-type"],
-                    label: object.label(widget.params.otype, {singular: true, capitalize: true}),
-                    metadata: {size: []},
-                    oid: widget.params.oid,
-                    otype: widget.params.otype,
-                    key: widget.params.key,
-                });
-
-                var auto_delete_subscription = dashboard.auto_delete(widget, widget.params.otype, widget.params.oid);
-
-                component.dispose = function()
-                {
-                    auto_delete_subscription.dispose();
-                }
-
-                component.uri = ko.pureComputed(function()
-                {
-                    return "/" + component.otype() + "/" + component.oid() + "/content/" + component.key() + "/data";
+                    uri: widget.params.uri,
+//                    content_type: widget.params["content-type"],
+//                    label: object.label(widget.params.otype, {singular: true, capitalize: true}),
+                    metadata: {size: [0, 0]},
+//                    oid: widget.params.oid,
+//                    otype: widget.params.otype,
+//                    key: widget.params.key,
                 });
 
                 component.metadata.size_formatted = ko.pureComputed(function()
                 {
                     return component.metadata.size().join(" \u00d7 ");
                 });
-
-                server.load_json(component, "/" + component.otype() + "/" + component.oid() + "/content/" + component.key() + "/image/metadata");
 
                 return component;
             }
