@@ -8,43 +8,23 @@ from samlab.web.app import application, require_auth, require_permissions, socke
 from samlab.dashboard.service import datasets, require_mapper
 
 
-@application.route("/images/<dataset>")
+@application.route("/image-collection/<collection>")
 @require_auth
-def get_image_count(dataset):
+def get_image_count(collection):
     require_permissions(["read"])
-    image_collection = require_mapper(("images", dataset))
-    return flask.jsonify(images=len(image_collection))
+    image_collection = require_mapper(("image-collection", collection))
+    return flask.jsonify(count=len(image_collection))
 
 
-@application.route("/images/<dataset>/<int:index>")
+@application.route("/image-collection/<collection>/<int:index>")
 @require_auth
-def get_image(dataset, index):
+def get_image(collection, index):
     require_permissions(["read"])
-    image_collection = require_mapper(("images", dataset))
+    image_collection = require_mapper(("image-collection", collection))
     image = image_collection.get(index)
     if isinstance(image, str):
         return flask.send_file(image)
     else:
         raise RuntimeError(f"Unknown image type: {type(image)}")
 
-#@application.route("/favorites/<allow(layouts):otype>/<oid>", methods=["PUT", "DELETE"])
-#@require_auth
-#def put_delete_favorites_otype_oid(otype, oid):
-#    if flask.request.method == "PUT":
-#        require_permissions(["write"])
-#        name = flask.request.json["name"]
-#        favorites = require_mapper("favorites")
-#        if favorites.contains(otype, oid):
-#            favorites.create(otype, oid, name)
-#            socketio.emit("object-changed", {"otype": "favorites", "oid": oid})
-#        else:
-#            favorites.create(otype, oid, name)
-#            socketio.emit("object-created", {"otype": "favorites", "oid": oid})
-#        return flask.jsonify()
-#
-#    elif flask.request.method == "DELETE":
-#        require_permissions(["delete"])
-#        require_mapper("favorites").delete(otype, oid)
-#        socketio.emit("object-deleted", {"otype": "favorites", "oid": oid})
-#        return flask.jsonify()
 

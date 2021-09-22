@@ -16,17 +16,6 @@ define([
             {
                 var component = mapping.fromJS({
                     uri: widget.params.uri,
-//                    content_type: widget.params["content-type"],
-//                    label: object.label(widget.params.otype, {singular: true, capitalize: true}),
-                    metadata: {size: [0, 0]},
-//                    oid: widget.params.oid,
-//                    otype: widget.params.otype,
-//                    key: widget.params.key,
-                });
-
-                component.metadata.size_formatted = ko.pureComputed(function()
-                {
-                    return component.metadata.size().join(" \u00d7 ");
                 });
 
                 return component;
