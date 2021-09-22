@@ -74,9 +74,7 @@ import samlab.dashboard.service.datasets
 import samlab.dashboard.service.favorites
 import samlab.dashboard.service.images
 import samlab.dashboard.service.layouts
-import samlab.web.app.handlers
 import samlab.web.app.handlers.asynchronous
-import samlab.web.app.handlers.delivery
 
 # Setup default mappings.
 import samlab.dashboard.mapper.favorites
