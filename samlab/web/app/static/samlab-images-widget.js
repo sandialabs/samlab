@@ -13,8 +13,6 @@ define([
     "samlab-dashboard",
     "samlab-dialog",
     "samlab-notify",
-    "samlab-object-manager",
-    "samlab-observation-manager",
     "samlab-permissions",
     "samlab-server",
     "samlab-socket",
@@ -22,7 +20,7 @@ define([
     "samlab-uuidv4",
     "samlab-attribute-control",
     "samlab-content-list-control",
-    ], function(debug, ko, mapping, lodash, URI, attribute_manager, bounding_box_manager, dashboard, dialog, notify, object, observation, permissions, server, socket, tag_manager, uuidv4)
+    ], function(debug, ko, mapping, lodash, URI, attribute_manager, bounding_box_manager, dashboard, dialog, notify, permissions, server, socket, tag_manager, uuidv4)
 {
     var log = debug("samlab-images-widget");
 
@@ -42,7 +40,7 @@ define([
 
                 component.title = ko.pureComputed(function()
                 {
-                    return "Collection \"" + component.collection() + "\" image " + component.index();
+                    return "Collection \u201c" + component.collection()+ "\u201d";
                 });
 
                 component.uri = ko.pureComputed(function()
@@ -60,10 +58,25 @@ define([
                     component.index(component.count() - 1);
                 }
 
+                component.manage_attributes = function()
+                {
+                    dashboard.add_widget("samlab-attribute-widget");
+                }
+
+                component.manage_tags = function()
+                {
+                    dashboard.add_widget("samlab-tag-widget");
+                }
+
                 component.next_image = function()
                 {
                     component.index((component.index() + 1) % component.count());
                 };
+
+                component.open_image = function()
+                {
+                    dashboard.add_widget("samlab-image-widget", {collection: component.collection(), index: component.index()});
+                }
 
                 component.previous_image = function()
                 {
@@ -166,21 +179,6 @@ define([
                 component.help = function()
                 {
                     dashboard.add_widget("samlab-markup-viewer-widget", {uri: "samlab-observations-widget-help.html"});
-                }
-
-                component.manage_attributes = function()
-                {
-                    dashboard.add_widget("samlab-attribute-widget");
-                }
-
-                component.manage_tags = function()
-                {
-                    dashboard.add_widget("samlab-tag-widget");
-                }
-
-                component.view_observation = function()
-                {
-                    dashboard.add_widget("samlab-observation-widget", {id: component.observation.id()});
                 }
 
                 ///////////////////////////////////////////////////////////////////////////////
@@ -409,13 +407,10 @@ define([
                     bounding_box_manager.release("observations", component.observation.id, "image");
                     tag_manager.release("observations", component.observation.id);
                 }
-
-                dashboard.bind({widget: widget, keys: "left", callback: component.previous_observation});
-                dashboard.bind({widget: widget, keys: "right", callback: component.next_observation});
-
-                // Start running
-                component.start_search();
 */
+
+                dashboard.bind({widget: widget, keys: "left", callback: component.previous_image});
+                dashboard.bind({widget: widget, keys: "right", callback: component.next_image});
                 component.reload();
 
                 return component;
