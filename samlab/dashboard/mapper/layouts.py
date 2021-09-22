@@ -19,7 +19,7 @@ class Layouts(abc.ABC):
         raise NotImplementedError()
 
 
-class JSONDiskLayouts(Layouts):
+class JSONFile(Layouts):
     def __init__(self, storage):
         self._storage = storage
         self._layouts = {}

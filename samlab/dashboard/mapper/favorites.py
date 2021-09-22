@@ -26,7 +26,7 @@ class Favorites(abc.ABC):
         raise NotImplementedError()
 
 
-class JSONDiskFavorites(Favorites):
+class JSONFile(Favorites):
     def __init__(self, storage):
         self._storage = storage
         self._favorites = {}
