@@ -48,7 +48,7 @@ require.config({
         "lodash": "js/lodash.min",
         "mousetrap": "js/mousetrap.min",
         "punycode": "js/punycode",
-        "socket.io": "js/socket.io",
+        "socket.io": "js/socket.io.min",
         "text": "js/text.min",
     },
     urlArgs: "bust=" + (new Date()).getTime(),
