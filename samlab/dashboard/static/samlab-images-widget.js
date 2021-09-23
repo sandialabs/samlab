@@ -87,7 +87,10 @@ define([
 
                 component.random_image = function()
                 {
-                    component.index(lodash.random(0, component.count()-1));
+                    var index = lodash.random(0, component.count() - 1);
+                    if(index == component.index())
+                        index = (index + 1) % component.count();
+                    component.index(index);
                 };
 
                 component.reload = function()
