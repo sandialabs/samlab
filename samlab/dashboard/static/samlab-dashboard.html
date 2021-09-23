@@ -38,7 +38,7 @@
         <ul data-bind="gridster: {widgets: widgets, options: gridster_options}">
             <li class="grid-item" data-bind="event: {mouseenter: $parent.mouse_enter, mouseleave: $parent.mouse_leave}">
                 <div class="grid-item-content" data-bind="component: {name: component, params: $data}"></div>
-                <button class="close grid-item-close" data-bind="click: $parent.close_widget" title="Close widget">&times;</button>
+                <button type="button" class="btn-close grid-item-close" data-bind="click: $parent.close_widget" title="Close widget"></button>
             </li>
         </ul>
     </div>

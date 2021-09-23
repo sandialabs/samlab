@@ -17,10 +17,11 @@
 
 .grid-item-close
 {
+    font-size: 0.6rem;
     opacity: 0;
     position: absolute;
-    right: 10px;
-    top: 5px;
+    right: 16px;
+    top: 16px;
 }
 
 .grid-item-hover .grid-item-close
