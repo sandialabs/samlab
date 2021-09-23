@@ -1,40 +1,38 @@
 <div>
-    <div class="dashboard-bar d-flex">
-        <h5 class="align-self-center mb-0 mr-auto text-muted"><span data-bind="text: server.name"></span>&nbsp;<small data-bind="text: server.description"></small></h5>
-        <form class="form-inline">
-            <samlab-favorite-control class="mr-2" params="otype: 'layouts', oid: lid"></samlab-favorite-control>
-            <div class="dropdown mr-2">
-                <button type="button" class="btn btn-outline-secondary dropdown-toggle" data-toggle="dropdown" data-boundary="window">Favorites</button>
-                <div class="dropdown-menu">
-                    <!-- ko if: no_favorites -->
-                    <div style="max-width: 220px">
-                        <p style="margin: 0 8px">Click the <span class="fa fa-fw fa-heart-o"></span> icon to add any observation, experiment, artifact, or dashboard layout to this list.</p>
-                    </div>
-                    <!-- /ko -->
-                    <!-- ko foreach: favorite_groups -->
-                    <h6 class="dropdown-header" data-bind="text: label"></h6>
-                    <!-- ko foreach: items -->
-                    <a class="dropdown-item" data-bind="click: $root.show_favorite"><span class="fa fa-fw"></span>&nbsp;<span data-bind="text: name"></span></a>
-                    <!-- /ko -->
-                    <!-- /ko -->
+    <div class="dashboard-bar d-flex flex-row">
+        <h5 class="text-muted align-self-center"><span data-bind="text: server.name"></span>&nbsp;<small data-bind="text: server.description"></small></h5>
+        <samlab-favorite-control class="ms-auto align-self-center" params="otype: 'layouts', oid: lid"></samlab-favorite-control>
+        <div class="dropdown ms-1 align-self-center">
+            <button type="button" class="btn btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown" data-boundary="window">Favorites</button>
+            <div class="dropdown-menu">
+                <!-- ko if: no_favorites -->
+                <div style="max-width: 220px">
+                    <p style="margin: 0 8px">Click the <span class="bi-heart"></span> icon to add any observation, experiment, artifact, or dashboard layout to this list.</p>
                 </div>
+                <!-- /ko -->
+                <!-- ko foreach: favorite_groups -->
+                <h6 class="dropdown-header" data-bind="text: label"></h6>
+                <!-- ko foreach: items -->
+                <a class="dropdown-item" data-bind="click: $root.show_favorite"><span></span>&nbsp;<span data-bind="text: name"></span></a>
+                <!-- /ko -->
+                <!-- /ko -->
             </div>
-            <div class="dropdown">
-                <button type="button" class="btn btn-outline-secondary dropdown-toggle" data-toggle="dropdown" data-boundary="window">Operations</button>
-                <div class="dropdown-menu">
-                    <h6 class="dropdown-header">Dashboard</h6>
-                    <a class="dropdown-item btn btn-secondary" data-bind="css: {active: tabs}, click: toggle_tabs"><span class="fa fa-fw fa-window-maximize"></span>&nbsp;Use tabs</a>
-                    <a class="dropdown-item" data-bind="click: default_layout"><span class="fa fa-fw fa-square"></span>&nbsp;<span>Default Layout</span></a>
-                    <a class="dropdown-item" data-bind="click: empty_layout"><span class="fa fa-fw fa-square-o"></span>&nbsp;<span>Empty Layout</span></a>
-                    <!-- ko foreach: filtered_operations -->
-                    <h6 class="dropdown-header" data-bind="text: label"></h6>
-                    <!-- ko foreach: children -->
-                    <a class="dropdown-item" data-bind="click: $root.activate_operation"><span class="fa fa-fw" data-bind="css: icon"></span>&nbsp;<span data-bind="text: label"></span></a>
-                    <!-- /ko -->
-                    <!-- /ko -->
-                </div>
+        </div>
+        <div class="dropdown ms-1 align-self-center">
+            <button type="button" class="btn btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown" data-boundary="window">Operations</button>
+            <div class="dropdown-menu">
+                <h6 class="dropdown-header">Dashboard</h6>
+                <a class="dropdown-item btn btn-secondary" data-bind="css: {active: tabs}, click: toggle_tabs"><span class="bi-window"></span>&nbsp;Use tabs</a>
+                <a class="dropdown-item" data-bind="click: default_layout"><span class="bi-square-fill"></span>&nbsp;<span>Default Layout</span></a>
+                <a class="dropdown-item" data-bind="click: empty_layout"><span class="bi-square"></span>&nbsp;<span>Empty Layout</span></a>
+                <!-- ko foreach: filtered_operations -->
+                <h6 class="dropdown-header" data-bind="text: label"></h6>
+                <!-- ko foreach: children -->
+                <a class="dropdown-item" data-bind="click: $root.activate_operation"><span data-bind="css: icon"></span>&nbsp;<span data-bind="text: label"></span></a>
+                <!-- /ko -->
+                <!-- /ko -->
             </div>
-        </form>
+        </div>
     </div>
     <div class="dashboard-grid gridster">
         <ul data-bind="gridster: {widgets: widgets, options: gridster_options}">

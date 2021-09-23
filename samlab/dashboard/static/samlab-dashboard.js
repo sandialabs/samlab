@@ -52,36 +52,35 @@ define(
                 label: "Lists",
                 children:
                 [
-                    { label: "Datasets", icon: "fa-address-card", component: "samlab-datasets-widget"},
-                    { label: "Observations", icon: "fa-list", component: "samlab-observations-widget", params: {}},
-                    { label: "Timeseries", icon: "fa-line-chart", component: "samlab-timeseries-widget"},
+                    { label: "Datasets", icon: "bi-address-card", component: "samlab-datasets-widget"},
+                    { label: "Observations", icon: "bi-list", component: "samlab-observations-widget", params: {}},
+                    { label: "Timeseries", icon: "bi-graph-up", component: "samlab-timeseries-widget"},
                 ],
             },
             {
                 label: "Miscellaneous",
                 children:
                 [
-                    { label: "About", icon: "fa-certificate", component: "samlab-markup-viewer-widget", params: {uri: "/static/samlab-about.html"}},
-                    { label: "Acknowledgements", icon: "fa-certificate", component: "samlab-markup-viewer-widget", params: {uri: "/static/samlab-acknowledgements.html"}},
-                    { label: "Edit Attributes", icon: "fa-pencil", component: "samlab-attribute-widget"},
-                    { label: "Edit Bounding Boxes", icon: "fa-square-o", component: "samlab-bounding-box-widget"},
-                    { label: "Edit Tags", icon: "fa-tag", component: "samlab-tag-widget"},
-                    { label: "Deliveries", icon: "fa-truck", component: "samlab-deliveries-widget"},
-                    { label: "Favorites", icon: "fa-heart", component: "samlab-favorites-widget"},
+                    { label: "About", icon: "bi-file-person", component: "samlab-markup-viewer-widget", params: {uri: "/static/samlab-about.html"}},
+                    { label: "Acknowledgements", icon: "bi-file-person", component: "samlab-markup-viewer-widget", params: {uri: "/static/samlab-acknowledgements.html"}},
+                    { label: "Edit Attributes", icon: "bi-pencil", component: "samlab-attribute-widget"},
+                    { label: "Edit Bounding Boxes", icon: "bi-square", component: "samlab-bounding-box-widget"},
+                    { label: "Edit Tags", icon: "bi-tag", component: "samlab-tag-widget"},
+                    { label: "Favorites", icon: "bi-heart", component: "samlab-favorites-widget"},
                 ],
             },
             {
                 label: "Development",
                 children:
                 [
-                    { label: "Dropdown Test", icon: "fa-wrench", component: "samlab-dropdown-test-widget"},
-                    { label: "Keyboard Test", icon: "fa-wrench", component: "samlab-keyboard-test-widget"},
-                    { label: "Layout Test", icon: "fa-wrench", component: "samlab-layout-test-widget"},
-                    { label: "Markup Viewer Test", icon: "fa-wrench", component: "samlab-markup-viewer-widget", params: {uri: "/static/samlab-markup-viewer-test.html"}},
-                    { label: "Notification Test", icon: "fa-wrench", component: "samlab-notify-test-widget"},
-                    { label: "Socket Test", icon: "fa-wrench", component: "samlab-socket-test-widget"},
-                    { label: "Tooltip Test", icon: "fa-wrench", component: "samlab-tooltip-test-widget"},
-                    { label: "Widget Layout Test", icon: "fa-wrench", component: "samlab-widget-layout-test-widget"},
+                    { label: "Dropdown Test", icon: "bi-wrench", component: "samlab-dropdown-test-widget"},
+                    { label: "Keyboard Test", icon: "bi-wrench", component: "samlab-keyboard-test-widget"},
+                    { label: "Layout Test", icon: "bi-wrench", component: "samlab-layout-test-widget"},
+                    { label: "Markup Viewer Test", icon: "bi-wrench", component: "samlab-markup-viewer-widget", params: {uri: "/static/samlab-markup-viewer-test.html"}},
+                    { label: "Notification Test", icon: "bi-wrench", component: "samlab-notify-test-widget"},
+                    { label: "Socket Test", icon: "bi-wrench", component: "samlab-socket-test-widget"},
+                    { label: "Tooltip Test", icon: "bi-wrench", component: "samlab-tooltip-test-widget"},
+                    { label: "Widget Layout Test", icon: "bi-wrench", component: "samlab-widget-layout-test-widget"},
                 ],
             },
         ],
@@ -398,7 +397,7 @@ define(
             },
             error: function()
             {
-                notify.local({icon: "fa fa-exclamation-triangle", type: "warning", message: "Couldn't load the dashboard layout."});
+                notify.local({icon: "fa bi-exclamation-triangle", type: "warning", message: "Couldn't load the dashboard layout."});
             }
         });
     }

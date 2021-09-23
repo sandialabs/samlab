@@ -3,24 +3,24 @@
         <div class="grid-stack-item-handle">
             <h1 class="h5" data-bind="text: title">Images</h1>
         </div>
-        <form class="form-inline" onSubmit="return false">
-            <button type="button" class="btn btn-sm btn-secondary" data-bind="click: first_image"><span class="fa fa-fast-backward"></span>&nbsp;First</button>
-            <button type="button" class="btn btn-sm btn-secondary ml-1" data-bind="click: previous_image"><span class="fa fa-step-backward"></span>&nbsp;Prev</button>
-            <button type="button" class="btn btn-sm btn-secondary ml-1" data-bind="click: random_image"><span class="fa fa-random"></span>&nbsp;Random</button>
-            <button type="button" class="btn btn-sm btn-secondary ml-1" data-bind="click: next_image">Next&nbsp;<span class="fa fa-step-forward"></span></button>
-            <button type="button" class="btn btn-sm btn-secondary ml-1" data-bind="click: last_image">Last&nbsp;<span class="fa fa-fast-forward"></span></button>
+        <form class="row row-cols-lg-auto g-3" onSubmit="return false">
+            <div class="col-12">
+                <button type="button" class="btn btn-sm btn-outline-secondary" data-bind="click: first_image"><span class="bi-skip-backward-fill"></span></button>
+                <button type="button" class="btn btn-sm btn-outline-secondary" data-bind="click: previous_image"><span class="bi-skip-start-fill"></span></button>
+                <button type="button" class="btn btn-sm btn-outline-secondary" data-bind="click: random_image"><span class="bi-shuffle"></span></button>
+                <button type="button" class="btn btn-sm btn-outline-secondary" data-bind="click: next_image"><span class="bi-skip-end-fill"></span></button>
+                <button type="button" class="btn btn-sm btn-outline-secondary" data-bind="click: last_image"><span class="bi-skip-forward-fill"></span></button>
+            </div>
 
-            <span class="ml-2">Image <span data-bind="text: index"></span></span>
+            <span>Image <span data-bind="text: index"></span></span>
 
             <!--<samlab-favorite-control params="otype: 'observations', oid: observation.id"></samlab-favorite-control>-->
-            <div class="dropdown ml-auto">
-                <button type="button" class="btn btn-sm btn-outline-secondary dropdown-toggle" data-toggle="dropdown" data-boundary="window">Operations</button>
+            <div class="dropdown ms-auto">
+                <button type="button" class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" data-boundary="window">Operations</button>
                 <div class="dropdown-menu">
-                    <a class="dropdown-item" data-bind="click: $component.open_image"><span class="fa fa-eye fa-fw"></span>&nbsp;Open Image</a>
-                    <a class="dropdown-item" data-bind="click: $component.manage_attributes"><span class="fa fa-pencil fa-fw"></span>&nbsp;Edit Attributes</a>
-                    <a class="dropdown-item" data-bind="click: $component.manage_tags"><span class="fa fa-tags fa-fw"></span>&nbsp;Edit Tags</a>
-                    <div class="dropdown-divider"></div>
-                    <a class="dropdown-item text-success" data-bind="click: $component.help"><span class="fa fa-question-circle fa-fw"></span>&nbsp;Help</a>
+                    <a class="dropdown-item" data-bind="click: $component.open_image"><span class="bi-eye-fill"></span>&nbsp;Open Image</a>
+                    <a class="dropdown-item" data-bind="click: $component.manage_attributes"><span class="bi-pencil-fill"></span>&nbsp;Edit Attributes</a>
+                    <a class="dropdown-item" data-bind="click: $component.manage_tags"><span class="bi-tags-fill"></span>&nbsp;Edit Tags</a>
                 </div>
             </div>
         </form>
@@ -37,7 +37,7 @@
 
             <dt class="col-md-3">Tags:</dt>
             <dd class="col-md-9" data-bind="foreach: tags">
-                <span class="badge badge-secondary"><span class="fa fa-tag"></span>&nbsp;<span data-bind="text: $data"></span></span>
+                <span class="badge bg-primary"><span class="bi-tag-fill"></span>&nbsp;<span data-bind="text: $data"></span></span>
             </dd>
         </dl>
 

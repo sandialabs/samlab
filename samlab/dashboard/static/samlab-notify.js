@@ -2,7 +2,7 @@
 // (NTESS).  Under the terms of Contract DE-NA0003525 with NTESS, the U.S.
 // Government retains certain rights in this software.
 
-define(["samlab-server", "samlab-socket", "bootstrap-notify"], function(server, socket)
+define(["samlab-server", "samlab-socket"/*, "bootstrap-notify"*/], function(server, socket)
 {
     var module = {};
 
