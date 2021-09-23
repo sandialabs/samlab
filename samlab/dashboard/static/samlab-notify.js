@@ -6,7 +6,7 @@ define(["samlab-server", "samlab-socket", "bootstrap"], function(server, socket,
 {
     var module = {};
 
-    module.show = function(params)
+    module.local = function(params)
     {
         var snack = document.createElement("div");
         snack.innerHTML = `<div class='toast text-white ${params.type || "bg-primary"}' role='alert'>
@@ -18,7 +18,6 @@ define(["samlab-server", "samlab-socket", "bootstrap"], function(server, socket,
             </div>
         </div>`;
         snack = snack.firstChild;
-        console.log(snack);
 
         document.querySelector("#samlab-notify-container").appendChild(snack);
         snack.addEventListener("hidden.bs.toast", function(e)
@@ -37,7 +36,7 @@ define(["samlab-server", "samlab-socket", "bootstrap"], function(server, socket,
 
     socket.on("notify", function(params)
     {
-        module.show(params);
+        module.local(params);
     });
 
     return module;

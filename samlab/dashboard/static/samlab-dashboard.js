@@ -397,7 +397,7 @@ define(
             },
             error: function()
             {
-                notify.local({icon: "fa bi-exclamation-triangle", type: "warning", message: "Couldn't load the dashboard layout."});
+                notify.local({icon: "bi-exclamation-triangle", type: "bg-danger", message: "Couldn't load the dashboard layout."});
             }
         });
     }
