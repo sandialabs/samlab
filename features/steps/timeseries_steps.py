@@ -6,8 +6,6 @@ from behave import *
 import nose.tools
 import numpy.testing
 
-import samlab.web.app.handlers.timeseries
-
 
 @given(u'a reservoir object with size {} and seed {}')
 def step_impl(context, size, seed):
