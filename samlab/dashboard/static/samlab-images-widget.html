@@ -5,11 +5,11 @@
         </div>
         <form class="row row-cols-lg-auto g-3" onSubmit="return false">
             <div class="col-12">
-                <button type="button" class="btn btn-sm btn-outline-secondary" data-bind="click: first_image"><span class="bi-skip-backward-fill"></span></button>
-                <button type="button" class="btn btn-sm btn-outline-secondary" data-bind="click: previous_image"><span class="bi-skip-start-fill"></span></button>
-                <button type="button" class="btn btn-sm btn-outline-secondary" data-bind="click: random_image"><span class="bi-shuffle"></span></button>
-                <button type="button" class="btn btn-sm btn-outline-secondary" data-bind="click: next_image"><span class="bi-skip-end-fill"></span></button>
-                <button type="button" class="btn btn-sm btn-outline-secondary" data-bind="click: last_image"><span class="bi-skip-forward-fill"></span></button>
+                <button type="button" class="btn btn-sm btn-outline-secondary" data-bind="click: first_image" title="First image"><span class="bi-skip-backward-fill"></span></button>
+                <button type="button" class="btn btn-sm btn-outline-secondary" data-bind="click: previous_image" title="Previous image"><span class="bi-skip-start-fill"></span></button>
+                <button type="button" class="btn btn-sm btn-outline-secondary" data-bind="click: random_image" title="Random image"><span class="bi-shuffle"></span></button>
+                <button type="button" class="btn btn-sm btn-outline-secondary" data-bind="click: next_image" title="Next image"><span class="bi-skip-end-fill"></span></button>
+                <button type="button" class="btn btn-sm btn-outline-secondary" data-bind="click: last_image" title="Last image"><span class="bi-skip-forward-fill"></span></button>
             </div>
 
             <span>Image <span data-bind="text: index"></span></span>
@@ -19,27 +19,34 @@
                 <button type="button" class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" data-boundary="window">Operations</button>
                 <div class="dropdown-menu">
                     <a class="dropdown-item" data-bind="click: $component.open_image"><span class="bi-card-image"></span>&nbsp;Open Image</a>
-                    <a class="dropdown-item" data-bind="click: $component.manage_attributes"><span class="bi-pencil-fill"></span>&nbsp;Edit Attributes</a>
-                    <a class="dropdown-item" data-bind="click: $component.manage_tags"><span class="bi-tags-fill"></span>&nbsp;Edit Tags</a>
                 </div>
             </div>
         </form>
 
         <hr></hr>
 
-        <dl class="row mt-3">
-<!--
-            <dt class="col-md-3">Attributes:</dt>
-            <dd class="col-md-9">
-                <samlab-attribute-control params="otype:'observations', oid: observation.id"></samlab-attribute-control>
-            </dd>
--->
-
-            <dt class="col-md-3">Tags:</dt>
-            <dd class="col-md-9" data-bind="foreach: tags">
-                <span class="badge bg-primary"><span class="bi-tag-fill"></span>&nbsp;<span data-bind="text: $data"></span></span>
-            </dd>
-        </dl>
+        <div class="accordion">
+            <div class="accordion-item">
+                <h2 class="accordion-header">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#editTags">Tags
+                        <span data-bind="foreach: tags">
+                            <span class="badge bg-primary ms-2"><span class="bi-tag-fill"></span>&nbsp;<span data-bind="text: $data"></span></span>
+                        </span>
+                    </button>
+                </h2>
+                <div id="editTags" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
+                    <div class="accordion-body">
+                        <strong>This will become the UI for assigning and editing tags.</strong>
+                        It will be populated with a list of tags from the image
+                        collection, plus tags added through the UI, plus UI to
+                        add new tags.  Clicking on a tag in the list will toggle
+                        its state for the current image.  Tags will be listed in
+                        alphabetical order, and the first 10 will have hotkeys
+                        assigned.
+                    </div>
+                </div>
+            </div>
+        </div>
 
         <div class="row">
             <div class="col-md-12">
