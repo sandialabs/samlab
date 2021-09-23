@@ -16,18 +16,18 @@ define(["knockout", "knockout.mapping", "samlab-notify"], function(ko, mapping, 
 
                 component.local = function()
                 {
-                    notify.local({icon: "bi-house", message: "Local notification.", delay: 5});
+                    notify.local({icon: "bi-house", message: "Local notification.", autohide: 5});
                 }
 
                 component.broadcast = function()
                 {
-                    notify.broadcast({icon: "bi-broadcast", message: "Broadcast notification.", delay: 5});
+                    notify.broadcast({icon: "bi-broadcast", message: "Broadcast notification.", autohide: 5});
                 }
 
                 component.delayed_broadcast = function()
                 {
-                    notify.local({icon: "bi-hourglass-top", message: "Start delayed broadcast notification.", delay: 5});
-                    notify.broadcast({icon: "bi-hourglass-bottom", message: "Finish delayed broadcast notification.", delay: 5});
+                    notify.local({icon: "bi-hourglass-top", message: "Start delayed broadcast notification.", autohide: 5});
+                    notify.broadcast({icon: "bi-hourglass-bottom", message: "Finish delayed broadcast notification.", delay: 5, autohide: 5});
                 }
 
                 return component;

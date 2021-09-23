@@ -2,12 +2,15 @@
 // (NTESS).  Under the terms of Contract DE-NA0003525 with NTESS, the U.S.
 // Government retains certain rights in this software.
 
-define(["samlab-server", "samlab-socket", "bootstrap"], function(server, socket, bootstrap)
+define(["samlab-server", "samlab-socket", "bootstrap", "debug"], function(server, socket, bootstrap, debug)
 {
     var module = {};
+    var log = debug("samlab-notify");
 
     module.local = function(params)
     {
+        log("display notification:", params);
+
         var snack = document.createElement("div");
         snack.innerHTML = `<div class='toast text-white ${params.type || "bg-primary"} animate__animated animate__fadeInRight' role='alert'>
             <div class='d-flex'>
@@ -42,12 +45,12 @@ define(["samlab-server", "samlab-socket", "bootstrap"], function(server, socket,
 
         document.querySelector("#samlab-notify-container").appendChild(snack);
         toast.show();
-        if(params.delay)
+        if(params.autohide)
         {
             setTimeout(function()
             {
                 close();
-            }, params.delay * 1000);
+            }, params.autohide * 1000);
         }
     }
 
@@ -58,6 +61,7 @@ define(["samlab-server", "samlab-socket", "bootstrap"], function(server, socket,
 
     socket.on("notify", function(params)
     {
+        log("receive notification:", params);
         module.local(params);
     });
 
