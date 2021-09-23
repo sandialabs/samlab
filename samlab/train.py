@@ -18,6 +18,16 @@ def random_split(dataset, split=0.1):
     return indices[boundary:], indices[:boundary]
 
 
+def train_validate_test_split(dataset, test=0.2, validation=0.2):
+    """Return indices that randomly partition a dataset into training, validation, and test sets."""
+    indices = numpy.random.choice(len(dataset), size=len(dataset), replace=False)
+    boundary = int(len(indices) * test)
+    remaining_indices, test_indices = indices[boundary:], indices[:boundary]
+    boundary = int(len(remaining_indices) * validation)
+    training_indices, validation_indices = remaining_indices[boundary:], remaining_indices[:boundary]
+    return training_indices, validation_indices, test_indices
+
+
 def k_fold(dataset, n=5, k=2, validation=0.2, count=None):
     """Return sets of indices partitioning a dataset for K-fold cross validation."""
     assert(k > 1)
