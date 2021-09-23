@@ -9,24 +9,46 @@ define(["samlab-server", "samlab-socket", "bootstrap"], function(server, socket,
     module.local = function(params)
     {
         var snack = document.createElement("div");
-        snack.innerHTML = `<div class='toast text-white ${params.type || "bg-primary"}' role='alert'>
+        snack.innerHTML = `<div class='toast text-white ${params.type || "bg-primary"} animate__animated animate__fadeInRight' role='alert'>
             <div class='d-flex'>
                 <div class='toast-body'>
                     <span class='me-2 ${params.icon || ""}'></span>${params.message || ""}
                 </div>
-                <button type='button' class='btn-close btn-close-white me-2 m-auto' data-bs-dismiss='toast'></button>
+                <button type='button' class='btn-close btn-close-white me-2 m-auto' data-bs-dismiss='footoast'></button>
             </div>
         </div>`;
         snack = snack.firstChild;
+        var toast = new bootstrap.Toast(snack, {"animation": false, "autohide": false});
 
-        document.querySelector("#samlab-notify-container").appendChild(snack);
+        function close()
+        {
+            snack.classList.remove("animate__fadeInRight");
+            snack.classList.add("animate__fadeOutRight");
+            snack.addEventListener("animationend", function(e)
+            {
+                toast.hide();
+            });
+        }
+
+        snack.querySelector("button").addEventListener("click", function(e)
+        {
+            close();
+        });
+
         snack.addEventListener("hidden.bs.toast", function(e)
         {
             e.target.remove();
         });
 
-        var toast = new bootstrap.Toast(snack, {"autohide": true, delay: params.delay * 1000 || 8000});
+        document.querySelector("#samlab-notify-container").appendChild(snack);
         toast.show();
+        if(params.delay)
+        {
+            setTimeout(function()
+            {
+                close();
+            }, params.delay * 1000);
+        }
     }
 
     module.broadcast = function(params)
