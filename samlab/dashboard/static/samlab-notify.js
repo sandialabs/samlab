@@ -2,24 +2,32 @@
 // (NTESS).  Under the terms of Contract DE-NA0003525 with NTESS, the U.S.
 // Government retains certain rights in this software.
 
-define(["samlab-server", "samlab-socket"/*, "bootstrap-notify"*/], function(server, socket)
+define(["samlab-server", "samlab-socket", "bootstrap"], function(server, socket, bootstrap)
 {
     var module = {};
 
-    module.local = function(params)
+    module.show = function(params)
     {
-        $.notify(
+        var snack = document.createElement("div");
+        snack.innerHTML = `<div class='toast text-white ${params.type || "bg-primary"}' role='alert'>
+            <div class='d-flex'>
+                <div class='toast-body'>
+                    <span class='me-2 ${params.icon || ""}'></span>${params.message || ""}
+                </div>
+                <button type='button' class='btn-close btn-close-white me-2 m-auto' data-bs-dismiss='toast'></button>
+            </div>
+        </div>`;
+        snack = snack.firstChild;
+        console.log(snack);
+
+        document.querySelector("#samlab-notify-container").appendChild(snack);
+        snack.addEventListener("hidden.bs.toast", function(e)
         {
-            icon: params.icon || "",
-            message: params.message || "",
-            title: params.title || "",
-        },
-        {
-            allow_dismiss: true,
-            delay: params.delay || 8000,
-            newest_on_top: true,
-            type: params.type || "primary",
+            e.target.remove();
         });
+
+        var toast = new bootstrap.Toast(snack, {"autohide": true, delay: params.delay * 1000 || 8000});
+        toast.show();
     }
 
     module.broadcast = function(params)
@@ -29,7 +37,7 @@ define(["samlab-server", "samlab-socket"/*, "bootstrap-notify"*/], function(serv
 
     socket.on("notify", function(params)
     {
-        module.local(params);
+        module.show(params);
     });
 
     return module;
