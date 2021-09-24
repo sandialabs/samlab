@@ -1,7 +1,7 @@
-samlab.web.app.handlers.common module
-=====================================
+samlab.dashboard.service module
+===============================
 
-.. automodule:: samlab.web.app.handlers.common
+.. automodule:: samlab.dashboard.service
     :members:
     :undoc-members:
     :show-inheritance:

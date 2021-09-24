@@ -1,7 +1,7 @@
-samlab.web.app.auth module
-==========================
+samlab.dashboard.auth module
+============================
 
-.. automodule:: samlab.web.app.auth
+.. automodule:: samlab.dashboard.auth
     :members:
     :undoc-members:
     :show-inheritance:

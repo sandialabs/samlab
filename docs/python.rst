@@ -16,13 +16,7 @@ visualizations.
 .. toctree::
     :maxdepth: 2
 
-    python/samlab.rst
     python/samlab.dashboard.rst
-    python/samlab.favorite.rst
-    python/samlab.interactive.rst
-    python/samlab.notebook.rst
-    python/samlab.torch.rst
-    python/samlab.train.rst
     python/samlab.dashboard.acl.rst
     python/samlab.dashboard.auth.rst
     python/samlab.dashboard.credentials.rst
@@ -30,11 +24,15 @@ visualizations.
     python/samlab.dashboard.mapper.images.rst
     python/samlab.dashboard.mapper.layouts.rst
     python/samlab.dashboard.mapper.rst
-    python/samlab.dashboard.mapper.rst
-    python/samlab.dashboard.rst
     python/samlab.dashboard.service.asynchronous.rst
     python/samlab.dashboard.service.basic.rst
+    python/samlab.dashboard.service.datasets.rst
     python/samlab.dashboard.service.favorites.rst
     python/samlab.dashboard.service.images.rst
     python/samlab.dashboard.service.layouts.rst
     python/samlab.dashboard.service.rst
+    python/samlab.interactive.rst
+    python/samlab.notebook.rst
+    python/samlab.rst
+    python/samlab.torch.rst
+    python/samlab.train.rst

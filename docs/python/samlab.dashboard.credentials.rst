@@ -1,7 +1,7 @@
-samlab.web.app.credentials module
-=================================
+samlab.dashboard.credentials module
+===================================
 
-.. automodule:: samlab.web.app.credentials
+.. automodule:: samlab.dashboard.credentials
     :members:
     :undoc-members:
     :show-inheritance:

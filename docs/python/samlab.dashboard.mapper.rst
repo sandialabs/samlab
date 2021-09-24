@@ -1,7 +1,7 @@
-samlab.web.app.database module
+samlab.dashboard.mapper module
 ==============================
 
-.. automodule:: samlab.web.app.database
+.. automodule:: samlab.dashboard.mapper
     :members:
     :undoc-members:
     :show-inheritance:

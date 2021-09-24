@@ -1,7 +1,7 @@
-samlab.dashboard.service.basic module
+samlab.dashboard.mapper.images module
 =====================================
 
-.. automodule:: samlab.dashboard.service.basic
+.. automodule:: samlab.dashboard.mapper.images
     :members:
     :undoc-members:
     :show-inheritance:

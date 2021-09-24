@@ -9,7 +9,7 @@ log = logging.getLogger(__name__)
 _mappings = {}
 
 
-def datasets(*, service=None):
+def get_datasets(*, service=None):
     results = set()
     for key in _mappings:
         if isinstance(key, str):

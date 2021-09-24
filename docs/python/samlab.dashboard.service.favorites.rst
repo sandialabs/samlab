@@ -1,7 +1,7 @@
-samlab.web.app.handlers.favorite module
-=======================================
+samlab.dashboard.service.favorites module
+=========================================
 
-.. automodule:: samlab.web.app.handlers.favorite
+.. automodule:: samlab.dashboard.service.favorites
     :members:
     :undoc-members:
     :show-inheritance:

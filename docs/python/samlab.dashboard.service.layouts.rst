@@ -1,7 +1,7 @@
-samlab.web.app.handlers.layout module
-=====================================
+samlab.dashboard.service.layouts module
+=======================================
 
-.. automodule:: samlab.web.app.handlers.layout
+.. automodule:: samlab.dashboard.service.layouts
     :members:
     :undoc-members:
     :show-inheritance:

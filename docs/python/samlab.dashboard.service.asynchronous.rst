@@ -1,7 +1,7 @@
-samlab.web.app.handlers.asynchronous module
-===========================================
+samlab.dashboard.service.asynchronous module
+============================================
 
-.. automodule:: samlab.web.app.handlers.asynchronous
+.. automodule:: samlab.dashboard.service.asynchronous
     :members:
     :undoc-members:
     :show-inheritance:

@@ -1,7 +1,7 @@
-samlab.web.app.acl module
-=========================
+samlab.dashboard.acl module
+===========================
 
-.. automodule:: samlab.web.app.acl
+.. automodule:: samlab.dashboard.acl
     :members:
     :undoc-members:
     :show-inheritance:

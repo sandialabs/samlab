@@ -14,7 +14,3 @@ some of which have parameters that can be set at creation - are created
 interactively by the user, or programmatically through the :ref:`python-api` or
 :ref:`javascript-api`.
 
-.. toctree::
-    :maxdepth: 2
-
-    javascript/samlab-3d-gallery-widget.rst

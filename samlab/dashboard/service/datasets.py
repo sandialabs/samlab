@@ -5,13 +5,13 @@
 import flask
 
 from samlab.dashboard import application, require_auth, require_permissions, socketio
-from samlab.dashboard.service import datasets
+import samlab.dashboard.service
 
 
 @application.route("/datasets")
 @require_auth
 def get_datasets():
     require_permissions(["read"])
-    return flask.jsonify(datasets=sorted(datasets()))
+    return flask.jsonify(datasets=sorted(samlab.dashboard.service.get_datasets()))
 
 
