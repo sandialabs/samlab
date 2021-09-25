@@ -1,18 +1,16 @@
 <div class="widget-content">
     <div class="container-fluid">
         <div class="grid-stack-item-handle">
-            <h1 class="h5" data-bind="text: title">Images</h1>
+            <h1 class="h5"><span data-bind="text: collection"></span> <small class="text-muted ms-auto">Image Collection</small></h1>
         </div>
-        <form class="row row-cols-lg-auto g-3" onSubmit="return false">
-            <div class="col-12">
-                <button type="button" class="btn btn-sm btn-outline-secondary" data-bind="click: first_image" title="First image"><span class="bi-skip-backward-fill"></span></button>
-                <button type="button" class="btn btn-sm btn-outline-secondary" data-bind="click: previous_image" title="Previous image"><span class="bi-skip-start-fill"></span></button>
-                <button type="button" class="btn btn-sm btn-outline-secondary" data-bind="click: random_image" title="Random image"><span class="bi-shuffle"></span></button>
-                <button type="button" class="btn btn-sm btn-outline-secondary" data-bind="click: next_image" title="Next image"><span class="bi-skip-end-fill"></span></button>
-                <button type="button" class="btn btn-sm btn-outline-secondary" data-bind="click: last_image" title="Last image"><span class="bi-skip-forward-fill"></span></button>
-            </div>
+        <div class="d-flex flex-row align-items-center">
+            <button type="button" class="btn btn-sm btn-outline-secondary" data-bind="click: first_image" title="First image"><span class="bi-skip-backward-fill"></span></button>
+            <button type="button" class="ms-1 btn btn-sm btn-outline-secondary" data-bind="click: previous_image" title="Previous image"><span class="bi-skip-start-fill"></span></button>
+            <button type="button" class="ms-1 btn btn-sm btn-outline-secondary" data-bind="click: random_image" title="Random image"><span class="bi-shuffle"></span></button>
+            <button type="button" class="ms-1 btn btn-sm btn-outline-secondary" data-bind="click: next_image" title="Next image"><span class="bi-skip-end-fill"></span></button>
+            <button type="button" class="ms-1 btn btn-sm btn-outline-secondary" data-bind="click: last_image" title="Last image"><span class="bi-skip-forward-fill"></span></button>
 
-            <span>Image <span data-bind="text: index"></span></span>
+            <span class="ms-1">Image <span data-bind="text: index"></span></span>
 
             <!--<samlab-favorite-control params="otype: 'observations', oid: observation.id"></samlab-favorite-control>-->
             <div class="dropdown ms-auto">
@@ -21,7 +19,7 @@
                     <a class="dropdown-item" data-bind="click: $component.open_image"><span class="bi-card-image"></span>&nbsp;Open Image</a>
                 </div>
             </div>
-        </form>
+        </div>
 
         <hr></hr>
 
