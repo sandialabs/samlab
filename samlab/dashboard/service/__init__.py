@@ -6,35 +6,35 @@ import logging
 
 log = logging.getLogger(__name__)
 
-_mappings = {}
+_backends = {}
 
 
 def get_datasets(*, service=None):
     results = set()
-    for key in _mappings:
+    for key in _backends:
         if isinstance(key, str):
             continue
         else:
-            mapping_service, mapping_dataset = key
-            if service is not None and service != mapping_service:
+            key_service, key_dataset = key
+            if service is not None and service != key_service:
                 continue
-            results.add(mapping_dataset)
+            results.add(key_dataset)
     return results
 
 
-def require_mapper(key):
+def require_backend(key):
     if isinstance(key, str):
-        if key not in _mappings:
-            raise RuntimeError(f"No mapper found for service {key}.")
+        if key not in _backends:
+            raise RuntimeError(f"No backend found for service {key}.")
     else:
-        if key not in _mappings:
+        if key not in _backends:
             service, dataset = key
-            raise RuntimeError(f"No mapper found for service {service} dataset {dataset}.")
+            raise RuntimeError(f"No backend found for service {service} dataset {dataset}.")
 
-    return _mappings[key]
+    return _backends[key]
 
 
-def set_mapping(key, mapping):
-    log.info(f"Mapping {key} to {mapping}.")
-    _mappings[key] = mapping
+def set_backend(key, backend):
+    log.info(f"Assigning {backend} to {key}.")
+    _backends[key] = backend
 

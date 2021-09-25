@@ -1,7 +1,7 @@
-samlab.dashboard.mapper.layouts module
+samlab.dashboard.backend.images module
 ======================================
 
-.. automodule:: samlab.dashboard.mapper.layouts
+.. automodule:: samlab.dashboard.backend.images
     :members:
     :undoc-members:
     :show-inheritance:

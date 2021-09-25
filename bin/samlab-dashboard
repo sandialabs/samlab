@@ -78,17 +78,17 @@ import samlab.dashboard.service.images
 import samlab.dashboard.service.layouts
 
 # Setup default mappings.
-import samlab.dashboard.mapper.favorites
-import samlab.dashboard.mapper.layouts
+import samlab.dashboard.backend.favorites
+import samlab.dashboard.backend.layouts
 
-mappings = {
-    "favorites": samlab.dashboard.mapper.favorites.JSONFile(storage=os.path.expanduser("~/.samlab/favorites.json")),
-    "layouts": samlab.dashboard.mapper.layouts.JSONFile(storage=os.path.expanduser("~/.samlab/layouts.json")),
+backends = {
+    "favorites": samlab.dashboard.backend.favorites.JSONFile(storage=os.path.expanduser("~/.samlab/favorites.json")),
+    "layouts": samlab.dashboard.backend.layouts.JSONFile(storage=os.path.expanduser("~/.samlab/layouts.json")),
     }
-mappings.update(getattr(config, "mappings", {}))
+backends.update(getattr(config, "backends", {}))
 
-for key, mapping in mappings.items():
-    samlab.dashboard.service.set_mapping(key, mapping)
+for key, backend in backends.items():
+    samlab.dashboard.service.set_backend(key, backend)
 
 # Optionally open a web browser at startup.
 def open_browser(config):
