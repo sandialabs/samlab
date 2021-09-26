@@ -2,32 +2,27 @@
 // (NTESS).  Under the terms of Contract DE-NA0003525 with NTESS, the U.S.
 // Government retains certain rights in this software.
 
-define(["jquery"], function(jquery)
+define(["debug"], function(debug)
 {
+    log = debug("samlab-dropdown");
+
     // Automatically reparents bootstrap dropdown menus to the document body, so
     // they can be used within grid widgets.
 
-    // Keep track of the currently-reparented menu.
+    var body = document.querySelector("body");
     var dropdown_menu = null;
 
-    // If a dropdown is about to be shown ...
-    jquery(window).on('show.bs.dropdown', function(e)
+    body.addEventListener("show.bs.dropdown", function(event)
     {
-        // And it isn't the child of a modal dialog ...
-        if(!jquery(e.target).parents(".modal").length)
+        var menu = event.target.parentElement.querySelector(".dropdown-menu");
+        var parent_modal = menu.closest(".modal");
+        if(!parent_modal)
         {
-            // Reparent the menu to the document body, and adjust its position.
-            dropdown_menu = jquery(e.target).find('.dropdown-menu');
-            jquery('body').append(dropdown_menu.detach());
-            dropdown_menu.css('display', 'block');
-            dropdown_menu.position({
-              'my': 'right top',
-              'at': 'right bottom',
-              'of': jquery(e.relatedTarget)
-            })
+            body.appendChild(menu);
         }
     });
 
+/*
     // If a dropdown is about to be hidden ...
     jquery(window).on('hide.bs.dropdown', function(e)
     {
@@ -40,4 +35,5 @@ define(["jquery"], function(jquery)
             dropdown_menu = null;
         }
     });
+*/
 });

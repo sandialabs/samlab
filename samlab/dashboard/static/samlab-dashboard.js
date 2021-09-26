@@ -22,7 +22,7 @@ define(
         "css!samlab-dashboard.css",
         "knockout-projections",
         "samlab-combo-control",
-        "samlab-dropdown-body",
+        "samlab-dropdown",
         "samlab-favorite-control",
         "samlab-gridster-binding",
     ], function(debug, jquery, ko, mapping, lodash, mousetrap, dom, favorite_manager, notify, object, permissions, server, template, URI)
