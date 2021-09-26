@@ -43,6 +43,7 @@ arguments = parser.parse_args(remaining_argv)
 
 # Setup logging.
 logging.basicConfig(level=logging.DEBUG if arguments.debug else logging.INFO)
+logging.getLogger("fsevents").setLevel(logging.INFO)
 logging.getLogger("engineio").setLevel(logging.ERROR)
 logging.getLogger("matplotlib").setLevel(logging.INFO)
 logging.getLogger("watchdog").setLevel(logging.INFO)
@@ -73,6 +74,7 @@ for key, value in sorted(application.config.items()):
 import samlab.dashboard.service.asynchronous
 import samlab.dashboard.service.basic
 import samlab.dashboard.service.datasets
+import samlab.dashboard.service.documents
 import samlab.dashboard.service.favorites
 import samlab.dashboard.service.images
 import samlab.dashboard.service.layouts
