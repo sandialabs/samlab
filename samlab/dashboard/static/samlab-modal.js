@@ -8,13 +8,22 @@ define([], function()
 
     module.create = function(template, state, params)
     {
-        require(["samlab-dom", "knockout", "jquery", "text!" + template], function(dom, ko, jquery, template)
+        require([
+            "bootstrap",
+            "knockout",
+            "samlab-dom",
+            "text!" + template,
+            ], function(bootstrap, ko, dom, template)
         {
             params = params || {};
 
-            var modal = dom.parse(template);
-            document.body.append(modal);
+            var content = dom.parse(template);
+            document.body.append(content);
+            ko.applyBindings(state, content);
 
+            var modal = new bootstrap.Modal(content);
+
+/*
             jquery(modal).on("show.bs.modal", function()
             {
                 if(params.show)
@@ -40,15 +49,14 @@ define([], function()
                     params.hidden(modal);
             });
 
-            ko.applyBindings(state, modal);
-
             if(params.draggable)
                 jquery(modal).draggable(
                 {
                     handle: ".modal-header",
                 });
+*/
 
-            jquery(modal).modal("show");
+            modal.show();
         });
     }
 
