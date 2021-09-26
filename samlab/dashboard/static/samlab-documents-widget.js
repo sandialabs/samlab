@@ -18,8 +18,6 @@ define([
     "samlab-socket",
     "samlab-tag-manager",
     "samlab-uuidv4",
-    "samlab-attribute-control",
-    "samlab-content-list-control",
     ], function(debug, ko, mapping, lodash, URI, attribute_manager, bounding_box_manager, dashboard, dialog, notify, permissions, server, socket, tag_manager, uuidv4)
 {
     var log = debug("samlab-documents-widget");

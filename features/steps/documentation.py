@@ -8,7 +8,6 @@ import subprocess
 import sys
 
 from behave import *
-import nose.tools
 
 root_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 docs_dir = os.path.join(root_dir, "docs")

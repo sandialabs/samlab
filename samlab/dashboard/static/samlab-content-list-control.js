@@ -6,11 +6,10 @@ define([
     "debug",
     "knockout",
     "knockout.mapping",
-    "samlab-content-manager",
     "samlab-dashboard",
     "samlab-dialog",
     "samlab-object-manager",
-    ], function(debug, ko, mapping, content_manager, dashboard, dialog, object)
+    ], function(debug, ko, mapping, dashboard, dialog, object)
 {
     var component_name = "samlab-content-list-control";
     var log = debug(component_name);

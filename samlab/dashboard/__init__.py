@@ -3,40 +3,36 @@
 # Government retains certain rights in this software.
 
 import functools
-import logging
 import os
 import uuid
 
 import arrow
 import flask
 import flask_socketio
-import numpy
 import werkzeug.routing
 
-log = logging.getLogger(__name__)
 
-
-# Simplify converting Python sets to JSON arrays.
-class JSONEncoder(flask.json.JSONEncoder):
-    def __init__(self, *args, **kwargs):
-        flask.json.JSONEncoder.__init__(self, *args, **kwargs)
-
-    def default(self, o):
-        if isinstance(o, bson.objectid.ObjectId):
-            return str(o)
-        if isinstance(o, set):
-            return list(o)
-        if isinstance(o, numpy.ndarray):
-            return o.tolist()
-        if isinstance(o, numpy.integer):
-            return int(o)
+## Simplify converting Python sets to JSON arrays.
+#class JSONEncoder(flask.json.JSONEncoder):
+#    def __init__(self, *args, **kwargs):
+#        flask.json.JSONEncoder.__init__(self, *args, **kwargs)
+#
+#    def default(self, o):
 #        if isinstance(o, bson.objectid.ObjectId):
 #            return str(o)
-        return flask.json.JSONEncoder.default(self, o)
+#        if isinstance(o, set):
+#            return list(o)
+#        if isinstance(o, numpy.ndarray):
+#            return o.tolist()
+#        if isinstance(o, numpy.integer):
+#            return int(o)
+##        if isinstance(o, bson.objectid.ObjectId):
+##            return str(o)
+#        return flask.json.JSONEncoder.default(self, o)
 
 # Setup the web server.
 application = flask.Flask(__name__)
-application.json_encoder = JSONEncoder
+#application.json_encoder = JSONEncoder
 application.secret_key = os.urandom(24)
 
 class AllowConverter(werkzeug.routing.BaseConverter):
