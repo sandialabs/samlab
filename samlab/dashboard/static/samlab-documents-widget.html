@@ -1,0 +1,52 @@
+<div class="widget-content">
+    <div class="container-fluid">
+        <div class="grid-stack-item-handle">
+            <h1 class="h5"><span data-bind="text: collection"></span> <small class="text-muted ms-auto">Document Collection</small></h1>
+        </div>
+        <div class="d-flex flex-row align-items-center">
+            <button type="button" class="btn btn-sm btn-outline-secondary" data-bind="click: first_document" title="First document"><span class="bi-skip-backward-fill"></span></button>
+            <button type="button" class="ms-1 btn btn-sm btn-outline-secondary" data-bind="click: previous_document" title="Previous document"><span class="bi-skip-start-fill"></span></button>
+            <button type="button" class="ms-1 btn btn-sm btn-outline-secondary" data-bind="click: random_document" title="Random document"><span class="bi-shuffle"></span></button>
+            <button type="button" class="ms-1 btn btn-sm btn-outline-secondary" data-bind="click: next_document" title="Next document"><span class="bi-skip-end-fill"></span></button>
+            <button type="button" class="ms-1 btn btn-sm btn-outline-secondary" data-bind="click: last_document" title="Last document"><span class="bi-skip-forward-fill"></span></button>
+
+            <span class="ms-1">Document <span data-bind="text: index"></span></span>
+
+            <!--<samlab-favorite-control params="otype: 'observations', oid: observation.id"></samlab-favorite-control>-->
+            <div class="dropdown ms-auto">
+                <button type="button" class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" data-boundary="window">Operations</button>
+                <div class="dropdown-menu">
+                    <a class="dropdown-item" data-bind="click: $component.open_document"><span class="bi-card-document"></span>&nbsp;Open Document</a>
+                </div>
+            </div>
+        </div>
+
+        <hr></hr>
+
+        <div data-bind="html: content">
+        </div>
+
+        <div class="accordion">
+            <div class="accordion-item">
+                <h2 class="accordion-header">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#editDocumentCollectionTags">Tags
+                        <span data-bind="foreach: tags">
+                            <span class="badge bg-primary ms-2"><span class="bi-tag-fill"></span>&nbsp;<span data-bind="text: $data"></span></span>
+                        </span>
+                    </button>
+                </h2>
+                <div id="editDocumentCollectionTags" class="accordion-collapse collapse">
+                    <div class="accordion-body">
+                        <strong>This will become the UI for assigning and editing tags.</strong>
+                        It will be populated with a list of tags from the document
+                        collection, plus tags added through the UI, plus UI to
+                        add new tags.  Clicking on a tag in the list will toggle
+                        its state for the current document.  Tags will be listed in
+                        alphabetical order, and the first 10 will have hotkeys
+                        assigned.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

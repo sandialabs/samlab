@@ -23,16 +23,24 @@
 
         <hr></hr>
 
+        <div class="row">
+            <div class="col-md-12">
+                <figure class="figure">
+                    <img class="figure-img img-fluid rounded" data-bind="attr: {src: uri}"></img>
+                </figure>
+            </div>
+        </div>
+
         <div class="accordion">
             <div class="accordion-item">
                 <h2 class="accordion-header">
-                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#editTags">Tags
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#editImageCollectionTags">Tags
                         <span data-bind="foreach: tags">
                             <span class="badge bg-primary ms-2"><span class="bi-tag-fill"></span>&nbsp;<span data-bind="text: $data"></span></span>
                         </span>
                     </button>
                 </h2>
-                <div id="editTags" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
+                <div id="editImageCollectionTags" class="accordion-collapse collapse">
                     <div class="accordion-body">
                         <strong>This will become the UI for assigning and editing tags.</strong>
                         It will be populated with a list of tags from the image
@@ -43,14 +51,6 @@
                         assigned.
                     </div>
                 </div>
-            </div>
-        </div>
-
-        <div class="row">
-            <div class="col-md-12">
-                <figure class="figure">
-                    <img class="figure-img img-fluid rounded" data-bind="attr: {src: uri}"></img>
-                </figure>
             </div>
         </div>
     </div>

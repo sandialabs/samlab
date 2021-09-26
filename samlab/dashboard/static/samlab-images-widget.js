@@ -106,11 +106,6 @@ define([
                     });
                 }
 
-                component.title = ko.pureComputed(function()
-                {
-                    return "Collection \u201c" + component.collection()+ "\u201d";
-                });
-
                 component.uri = ko.pureComputed(function()
                 {
                     return "/image-collection/" + component.collection() + "/" + component.index();
