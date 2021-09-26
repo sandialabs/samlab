@@ -76,7 +76,6 @@ define(
                     { label: "Dropdown Test", icon: "bi-wrench", component: "samlab-dropdown-test-widget"},
                     { label: "Keyboard Test", icon: "bi-wrench", component: "samlab-keyboard-test-widget"},
                     { label: "Layout Test", icon: "bi-wrench", component: "samlab-layout-test-widget"},
-                    { label: "Markup Viewer Test", icon: "bi-wrench", component: "samlab-markup-viewer-widget", params: {uri: "/static/samlab-markup-viewer-test.html"}},
                     { label: "Notification Test", icon: "bi-wrench", component: "samlab-notify-test-widget"},
                     { label: "Socket Test", icon: "bi-wrench", component: "samlab-socket-test-widget"},
                     { label: "Tooltip Test", icon: "bi-wrench", component: "samlab-tooltip-test-widget"},
