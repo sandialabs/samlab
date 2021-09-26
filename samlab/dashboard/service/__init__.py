@@ -25,16 +25,21 @@ def get_datasets(*, service=None):
 def require_backend(key):
     if isinstance(key, str):
         if key not in _backends:
-            raise RuntimeError(f"No backend found for service {key}.")
+            raise RuntimeError(f"No backend found for service: {key}.")
     else:
         if key not in _backends:
-            service, dataset = key
-            raise RuntimeError(f"No backend found for service {service} dataset {dataset}.")
+            service, name = key
+            raise RuntimeError(f"No backend found for service: {service} name {name}.")
 
     return _backends[key]
 
 
-def set_backend(key, backend):
-    log.info(f"Assigning {backend} to {key}.")
-    _backends[key] = backend
+def set_backend(service, backend):
+    name = backend.name
+    if name:
+        log.info(f"Assigning {backend} to service: {service} name: {name}.")
+        _backends[(service, name)] = backend
+    else:
+        log.info(f"Assigning {backend} to service: {service}.")
+        _backends[service] = backend
 

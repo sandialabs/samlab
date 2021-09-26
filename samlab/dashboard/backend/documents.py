@@ -4,8 +4,17 @@
 
 import abc
 import glob
+import logging
 import os
 import re
+
+import watchdog.events
+import watchdog.observers
+
+from samlab.dashboard import socketio
+from samlab.debounce import debounce
+
+log = logging.getLogger(__name__)
 
 
 class DocumentCollection(abc.ABC):
@@ -32,27 +41,26 @@ class DocumentCollection(abc.ABC):
         raise NotImplementedError()
 
 
+    @abc.abstractproperty
+    def name(self):
+        raise NotImplementedError()
+
+
     @abc.abstractmethod
     def tags(self, index):
         raise NotImplementedError()
 
 
-class Directory(DocumentCollection):
-    def __init__(self, root, pattern=".*\.(html|txt)"):
+class Directory(DocumentCollection, watchdog.events.FileSystemEventHandler):
+    def __init__(self, name, root, pattern=".*\.(html|txt)"):
+        self._name = name
         self._root = root
         self._pattern = pattern
-        self._update()
-
-
-    def _update(self):
-        paths = []
-        pattern = re.compile(self._pattern)
-        for root, dirs, files in os.walk(self._root):
-            for filename in files:
-                if not pattern.match(filename):
-                    continue
-                paths.append(os.path.abspath(os.path.join(root, filename)))
-        self._paths = paths
+        self._re_pattern = re.compile(pattern)
+        self._observer = watchdog.observers.Observer()
+        self._observer.schedule(self, self._root, recursive=True)
+        self._observer.start()
+        self.reload()
 
 
     def __len__(self):
@@ -63,8 +71,41 @@ class Directory(DocumentCollection):
         return f"{self.__class__.__module__}.{self.__class__.__name__}(root={self._root!r}, pattern={self._pattern!r})"
 
 
+    def _match(self, path):
+        return self._re_pattern.match(path)
+
+
     def get(self, index):
         return self._paths[index]
+
+
+    @property
+    def name(self):
+        return self._name
+
+
+    def on_any_event(self, event):
+        if event.is_directory:
+            return
+        if not self._match(event.src_path):
+            return
+        self.reload()
+
+
+    @debounce(0.5)
+    def reload(self):
+        log.info(f"{self.__class__.__name__}.reload")
+
+        paths = []
+        pattern = re.compile(self._pattern)
+        for root, dirs, files in os.walk(self._root):
+            for filename in files:
+                if not self._match(filename):
+                    continue
+                paths.append(os.path.abspath(os.path.join(root, filename)))
+        self._paths = sorted(paths)
+
+        socketio.emit("service-changed", {"service": "document-collection", "name": self._name})
 
 
     def tags(self, index):

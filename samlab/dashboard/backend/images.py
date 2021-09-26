@@ -32,13 +32,20 @@ class ImageCollection(abc.ABC):
         raise NotImplementedError()
 
 
+    @abc.abstractproperty
+    @property
+    def name(self):
+        raise NotImplementedError()
+
+
     @abc.abstractmethod
     def tags(self, index):
         raise NotImplementedError()
 
 
 class Directory(ImageCollection):
-    def __init__(self, root, pattern=".*\.(png|jpg|jpeg)"):
+    def __init__(self, name, root, pattern=".*\.(png|jpg|jpeg)"):
+        self._name = name
         self._root = root
         self._pattern = pattern
         self._update()
@@ -65,6 +72,11 @@ class Directory(ImageCollection):
 
     def get(self, index):
         return self._paths[index]
+
+
+    @property
+    def name(self):
+        return self._name
 
 
     def tags(self, index):

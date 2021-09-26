@@ -25,6 +25,7 @@ setup(
         "flask-socketio",
         "ldap3",
         "requests",
+        "watchdog",
     ],
     maintainer="Timothy M. Shead",
     maintainer_email="tshead@sandia.gov",

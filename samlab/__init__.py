@@ -23,3 +23,6 @@ def deprecated(message):
     warnings.warn(message, DeprecationWarning, stacklevel=3)
 
 
+from threading import Timer
+
+

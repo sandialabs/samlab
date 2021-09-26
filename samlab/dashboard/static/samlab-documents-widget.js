@@ -7,18 +7,10 @@ define([
     "knockout",
     "knockout.mapping",
     "lodash",
-    "URI",
-    "samlab-attribute-manager",
-    "samlab-bounding-box-manager",
     "samlab-dashboard",
-    "samlab-dialog",
-    "samlab-notify",
-    "samlab-permissions",
     "samlab-server",
     "samlab-socket",
-    "samlab-tag-manager",
-    "samlab-uuidv4",
-    ], function(debug, ko, mapping, lodash, URI, attribute_manager, bounding_box_manager, dashboard, dialog, notify, permissions, server, socket, tag_manager, uuidv4)
+    ], function(debug, ko, mapping, lodash, dashboard, server, socket)
 {
     var log = debug("samlab-documents-widget");
 
@@ -51,9 +43,9 @@ define([
                 component.load_content = ko.computed(function()
                 {
                     var uri = "/document-collection/" + component.collection() + "/" + component.index();
-                    require(["text!" + uri], function(content)
+                    server.get_text(uri, function(text)
                     {
-                        component.content(content);
+                        component.content(text);
                     });
                 });
 
@@ -103,16 +95,26 @@ define([
 
                 component.reload = function()
                 {
+                    log("reload");
                     server.get_json("/document-collection/" + component.collection(),
                     {
                         success: function(data)
                         {
                             component.count(data.count);
+                            component.index.valueHasMutated();
                             if(component.index() >= data.count)
                                 component.index(0);
                         },
                     });
                 }
+
+                socket.on("service-changed", function(changed)
+                {
+                    if(changed.service == "document-collection" && changed.name == component.collection())
+                    {
+                        component.reload();
+                    }
+                });
 
                 dashboard.bind({widget: widget, keys: "left", callback: component.previous_document});
                 dashboard.bind({widget: widget, keys: "right", callback: component.next_document});

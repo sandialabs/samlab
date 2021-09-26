@@ -17,6 +17,12 @@ class Layouts(abc.ABC):
         raise NotImplementedError()
 
 
+    @abc.abstractproperty
+    @property
+    def name(self):
+        raise NotImplementedError()
+
+
     @abc.abstractmethod
     def put(self, *, content):
         raise NotImplementedError()
@@ -48,6 +54,11 @@ class JSONFile(Layouts):
     def get(self, *, lid):
         if lid in self._layouts:
             return self._layouts[lid]
+        return None
+
+
+    @property
+    def name(self):
         return None
 
 

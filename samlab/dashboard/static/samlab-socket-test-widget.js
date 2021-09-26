@@ -13,18 +13,12 @@ define(["knockout", "knockout.mapping", "samlab-socket"], function(ko, mapping, 
             {
                 var component = mapping.fromJS(
                 {
-                    last_ping: null,
                     last_test: null,
                 });
 
                 component.send_test = function()
                 {
                     socket.emit("test");
-                }
-
-                component.receive_pong = function()
-                {
-                    component.last_ping(new Date().toLocaleString());
                 }
 
                 component.receive_test = function()
@@ -34,11 +28,9 @@ define(["knockout", "knockout.mapping", "samlab-socket"], function(ko, mapping, 
 
                 component.dispose = function()
                 {
-                    socket.off("pong", component.receive_pong);
                     socket.off("test", component.receive_test);
                 }
 
-                socket.on("pong", component.receive_pong);
                 socket.on("test", component.receive_test);
 
                 return component;

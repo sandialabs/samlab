@@ -33,11 +33,11 @@ define(["knockout.mapping"], function(mapping)
             request.send();
         },
 
-        load_text: function(url, callback, method)
+        get_text: function(url, callback)
         {
             var request = new XMLHttpRequest();
             request.callback = callback;
-            request.open(method || "GET", url, true);
+            request.open("GET", url, true);
             request.onload = function()
             {
                 if(request.status >= 200 && request.status < 400)

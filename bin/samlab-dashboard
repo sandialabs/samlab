@@ -78,6 +78,7 @@ import samlab.dashboard.service.documents
 import samlab.dashboard.service.favorites
 import samlab.dashboard.service.images
 import samlab.dashboard.service.layouts
+import samlab.dashboard.service.notify
 
 # Setup default mappings.
 import samlab.dashboard.backend.favorites
@@ -89,8 +90,8 @@ backends = {
     }
 backends.update(getattr(config, "backends", {}))
 
-for key, backend in backends.items():
-    samlab.dashboard.service.set_backend(key, backend)
+for service, backend in backends.items():
+    samlab.dashboard.service.set_backend(service, backend)
 
 # Optionally open a web browser at startup.
 def open_browser(config):

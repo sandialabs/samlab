@@ -26,23 +26,6 @@ def get_identity():
     return flask.jsonify(username=username)
 
 
-@application.route("/notify", methods=["POST"])
-@require_auth
-def post_notify():
-    require_permissions(["read"])
-
-    def delayed_emit(delay, params):
-        socketio.sleep(delay)
-        socketio.emit("notify", params)
-
-    if "delay" in flask.request.json:
-        socketio.start_background_task(delayed_emit, flask.request.json.pop("delay"), flask.request.json)
-        return flask.jsonify()
-
-    socketio.emit("notify", flask.request.json)
-    return flask.jsonify()
-
-
 @application.route("/permissions")
 @require_auth
 def get_permissions():

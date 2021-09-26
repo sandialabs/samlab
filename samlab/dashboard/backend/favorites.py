@@ -33,6 +33,12 @@ class Favorites(abc.ABC):
         raise NotImplementedError()
 
 
+    @abc.abstractproperty
+    @property
+    def name(self):
+        raise NotImplementedError()
+
+
 class JSONFile(Favorites):
     def __init__(self, storage):
         self._storage = storage
@@ -107,3 +113,7 @@ class JSONFile(Favorites):
             for oid, name in oids.items():
                 yield {"otype": otype, "oid": oid, "name": name}
 
+
+    @property
+    def name(self):
+        return None
