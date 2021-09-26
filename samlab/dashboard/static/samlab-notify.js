@@ -2,7 +2,13 @@
 // (NTESS).  Under the terms of Contract DE-NA0003525 with NTESS, the U.S.
 // Government retains certain rights in this software.
 
-define(["samlab-server", "samlab-socket", "bootstrap", "debug"], function(server, socket, bootstrap, debug)
+define([
+    "bootstrap",
+    "debug",
+    "samlab-dom",
+    "samlab-server",
+    "samlab-socket",
+    ], function(bootstrap, debug, dom, server, socket)
 {
     var module = {};
     var log = debug("samlab-notify");
@@ -11,16 +17,14 @@ define(["samlab-server", "samlab-socket", "bootstrap", "debug"], function(server
     {
         log("display notification:", params);
 
-        var snack = document.createElement("div");
-        snack.innerHTML = `<div class='toast text-white ${params.type || "bg-primary"} animate__animated animate__fadeInRight' role='alert'>
+        var snack = dom.parse(`<div class='toast text-white ${params.type || "bg-primary"} animate__animated animate__fadeInRight' role='alert'>
             <div class='d-flex'>
                 <div class='toast-body'>
                     <span class='me-2 ${params.icon || ""}'></span>${params.message || ""}
                 </div>
                 <button type='button' class='btn-close btn-close-white me-2 m-auto' data-bs-dismiss='footoast'></button>
             </div>
-        </div>`;
-        snack = snack.firstChild;
+        </div>`);
         var toast = new bootstrap.Toast(snack, {"animation": false, "autohide": false});
 
         function close()
