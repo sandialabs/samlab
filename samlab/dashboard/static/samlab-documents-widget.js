@@ -27,7 +27,6 @@ define([
                     content: null,
                     count: null,
                     index: widget.params.index,
-                    tags: [],
                 });
 
                 component.first_document = function()
@@ -37,60 +36,58 @@ define([
 
                 component.last_document = function()
                 {
-                    component.index(component.count() - 1);
+                    if(component.count())
+                    {
+                        component.index(component.count() - 1);
+                    }
                 }
 
                 component.load_content = ko.computed(function()
                 {
-                    var uri = "/document-collection/" + component.collection() + "/" + component.index();
-                    server.get_text(uri, function(text)
+                    if(component.count())
                     {
-                        component.content(text);
-                    });
-                });
-
-                component.load_tags = ko.computed(function()
-                {
-                    server.get_json("/document-collection/" + component.collection() + "/" + component.index() + "/tags",
-                    {
-                        success: function(data)
+                        var uri = "/document-collection/" + component.collection() + "/" + component.index();
+                        server.get_text(uri, function(text)
                         {
-                            component.tags(data.tags);
-                        },
-                    });
+                            log("Updating content.");
+                            component.content(text);
+                        });
+                    }
                 });
-
-                component.manage_attributes = function()
-                {
-                    dashboard.add_widget("samlab-attribute-widget");
-                }
-
-                component.manage_tags = function()
-                {
-                    dashboard.add_widget("samlab-tag-widget");
-                }
 
                 component.next_document = function()
                 {
-                    component.index((component.index() + 1) % component.count());
+                    if(component.count())
+                    {
+                        component.index((component.index() + 1) % component.count());
+                    }
                 };
 
                 component.open_document = function()
                 {
-                    dashboard.add_widget("samlab-document-widget", {collection: component.collection(), index: component.index()});
+                    if(component.count())
+                    {
+                        dashboard.add_widget("samlab-document-widget", {collection: component.collection(), index: component.index()});
+                    }
                 }
 
                 component.previous_document = function()
                 {
-                    component.index((component.index() + component.count() - 1) % component.count());
+                    if(component.count())
+                    {
+                        component.index((component.index() + component.count() - 1) % component.count());
+                    }
                 }
 
                 component.random_document = function()
                 {
-                    var index = lodash.random(0, component.count() - 1);
-                    if(index == component.index())
-                        index = (index + 1) % component.count();
-                    component.index(index);
+                    if(component.count())
+                    {
+                        var index = lodash.random(0, component.count() - 1);
+                        if(index == component.index())
+                            index = (index + 1) % component.count();
+                        component.index(index);
+                    }
                 };
 
                 component.reload = function()
@@ -100,10 +97,18 @@ define([
                     {
                         success: function(data)
                         {
-                            component.count(data.count);
-                            component.index.valueHasMutated();
-                            if(component.index() >= data.count)
-                                component.index(0);
+                            // This logic is a little tricky, because
+                            // we want to avoid unnecessary updates.
+                            if(data.count != component.count())
+                            {
+                                if(component.index() >= data.count)
+                                    component.index(0);
+                                component.count(data.count);
+                            }
+                            else
+                            {
+                                component.index.valueHasMutated();
+                            }
                         },
                     });
                 }
