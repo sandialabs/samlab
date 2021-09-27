@@ -52,7 +52,7 @@ class DocumentCollection(abc.ABC):
 
 
 class Directory(DocumentCollection, watchdog.events.FileSystemEventHandler):
-    def __init__(self, name, root, pattern=".*\.(html|txt)"):
+    def __init__(self, *, name, root, pattern=".*\.(html|txt)"):
         self._name = name
         self._root = root
         self._pattern = pattern
