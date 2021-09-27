@@ -21,7 +21,7 @@ setup(
     install_requires=[
         "arrow",
         "blessings",
-        "Flask",
+        "Flask>=2",
         "flask-socketio",
         "ldap3",
         "requests",
