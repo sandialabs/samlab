@@ -15,7 +15,7 @@ import werkzeug.routing
 # Setup the web server.
 application = flask.Flask(__name__)
 application.secret_key = os.urandom(24)
-socketio = flask_socketio.SocketIO(application, json=flask.json, async_mode="threading")
+socketio = flask_socketio.SocketIO(application, json=flask.json)
 
 class AllowConverter(werkzeug.routing.BaseConverter):
     def __init__(self, map, *items):
