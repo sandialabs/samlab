@@ -52,9 +52,7 @@ define(
                 label: "Lists",
                 children:
                 [
-                    { label: "Datasets", icon: "bi-address-card", component: "samlab-datasets-widget"},
-                    { label: "Observations", icon: "bi-list", component: "samlab-observations-widget", params: {}},
-                    { label: "Timeseries", icon: "bi-graph-up", component: "samlab-timeseries-widget"},
+                    { label: "Backends", icon: "bi-address-card", component: "samlab-backends-widget"},
                 ],
             },
             {

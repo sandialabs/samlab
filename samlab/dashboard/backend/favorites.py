@@ -40,7 +40,7 @@ class Favorites(abc.ABC):
 
     @property
     def service(self):
-        return "Favorites"
+        return "favorites"
 
 
 class JSONFile(Favorites):

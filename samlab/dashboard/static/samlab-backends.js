@@ -2,20 +2,15 @@
 // (NTESS).  Under the terms of Contract DE-NA0003525 with NTESS, the U.S.
 // Government retains certain rights in this software.
 
-define([
-    "knockout",
-    "knockout.mapping",
-//    "samlab-object-manager",
-    "samlab-server",
-    ], function(ko, mapping, /*object, */server)
+define(["knockout", "knockout.mapping", "samlab-server"], function(ko, mapping, server)
 {
     var module = mapping.fromJS({
-        datasets: [],
+        backends: [],
     });
 
-    function load_datasets()
+    function load_backends()
     {
-        server.load_json(module, "/datasets");
+        server.load_json(module, "/backends");
     }
 
 /*
@@ -44,7 +39,7 @@ define([
     });
 */
 
-    load_datasets();
+    load_backends();
 
     return module;
 });

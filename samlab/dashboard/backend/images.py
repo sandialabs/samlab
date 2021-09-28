@@ -40,7 +40,7 @@ class ImageCollection(abc.ABC):
 
     @property
     def service(self):
-        return "ImageCollection"
+        return "image-collection"
 
 
     @abc.abstractmethod

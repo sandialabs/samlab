@@ -73,6 +73,7 @@ for key, value in sorted(application.config.items()):
 # Setup services (note: must happen *after* all configuration).
 import samlab.dashboard.service.asynchronous
 import samlab.dashboard.service.basic
+import samlab.dashboard.service.backends
 import samlab.dashboard.service.documents
 import samlab.dashboard.service.favorites
 import samlab.dashboard.service.images

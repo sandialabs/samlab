@@ -29,7 +29,7 @@ class Layouts(abc.ABC):
 
     @property
     def service(self):
-        return "Layouts"
+        return "layouts"
 
 
 class JSONFile(Layouts):

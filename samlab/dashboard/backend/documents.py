@@ -49,7 +49,7 @@ class DocumentCollection(abc.ABC):
 
     @property
     def service(self):
-        return "DocumentCollection"
+        return "document-collection"
 
 
     @abc.abstractmethod
