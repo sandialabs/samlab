@@ -33,10 +33,14 @@ class Favorites(abc.ABC):
         raise NotImplementedError()
 
 
-    @abc.abstractproperty
     @property
     def name(self):
-        raise NotImplementedError()
+        return None
+
+
+    @property
+    def service(self):
+        return "Favorites"
 
 
 class JSONFile(Favorites):
@@ -112,8 +116,3 @@ class JSONFile(Favorites):
         for otype, oids in self._favorites.items():
             for oid, name in oids.items():
                 yield {"otype": otype, "oid": oid, "name": name}
-
-
-    @property
-    def name(self):
-        return None

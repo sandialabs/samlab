@@ -38,13 +38,18 @@ class ImageCollection(abc.ABC):
         raise NotImplementedError()
 
 
+    @property
+    def service(self):
+        return "ImageCollection"
+
+
     @abc.abstractmethod
     def tags(self, index):
         raise NotImplementedError()
 
 
 class Directory(ImageCollection):
-    def __init__(self, name, root, pattern=".*\.(png|jpg|jpeg)"):
+    def __init__(self, *, name, root, pattern=".*\.(png|jpg|jpeg)"):
         self._name = name
         self._root = root
         self._pattern = pattern

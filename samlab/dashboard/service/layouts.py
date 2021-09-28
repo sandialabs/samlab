@@ -17,7 +17,7 @@ def get_post_layouts():
 
     elif flask.request.method == "POST":
         require_permissions(["read"]) # We don't require write permissions to save a layout, by design.
-        layouts = require_backend("layouts")
+        layouts = require_backend("Layouts")
         lid = layouts.put(content=flask.request.json["layout"])
         return flask.jsonify(lid=lid)
 
@@ -25,7 +25,7 @@ def get_post_layouts():
 @application.route("/layouts/<lid>")
 @require_auth
 def get_layouts_lid(lid):
-    layouts = require_backend("layouts")
+    layouts = require_backend("Layouts")
     layout = layouts.get(lid=lid)
     if layout is None:
         flask.abort(404)

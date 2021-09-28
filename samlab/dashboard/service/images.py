@@ -5,14 +5,14 @@
 import flask
 
 from samlab.dashboard import application, require_auth, require_permissions, socketio
-from samlab.dashboard.service import datasets, require_backend
+from samlab.dashboard.service import require_backend
 
 
 @application.route("/image-collection/<collection>")
 @require_auth
 def get_image_count(collection):
     require_permissions(["read"])
-    image_collection = require_backend(("image-collection", collection))
+    image_collection = require_backend("ImageCollection", collection)
     return flask.jsonify(count=len(image_collection))
 
 
@@ -20,7 +20,7 @@ def get_image_count(collection):
 @require_auth
 def get_image(collection, index):
     require_permissions(["read"])
-    image_collection = require_backend(("image-collection", collection))
+    image_collection = require_backend("ImageCollection", collection)
     image = image_collection.get(index)
     if isinstance(image, str):
         return flask.send_file(image)
@@ -32,5 +32,5 @@ def get_image(collection, index):
 @require_auth
 def get_image_tags(collection, index):
     require_permissions(["read"])
-    image_collection = require_backend(("image-collection", collection))
+    image_collection = require_backend("ImageCollection", collection)
     return flask.jsonify(tags=image_collection.tags(index))

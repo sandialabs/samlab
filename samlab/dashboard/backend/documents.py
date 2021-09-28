@@ -42,8 +42,14 @@ class DocumentCollection(abc.ABC):
 
 
     @abc.abstractproperty
+    @property
     def name(self):
         raise NotImplementedError()
+
+
+    @property
+    def service(self):
+        return "DocumentCollection"
 
 
     @abc.abstractmethod

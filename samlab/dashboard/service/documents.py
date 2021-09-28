@@ -5,14 +5,14 @@
 import flask
 
 from samlab.dashboard import application, require_auth, require_permissions
-from samlab.dashboard.service import datasets, require_backend
+from samlab.dashboard.service import require_backend
 
 
 @application.route("/document-collection/<collection>")
 @require_auth
 def get_document_count(collection):
     require_permissions(["read"])
-    document_collection = require_backend(("document-collection", collection))
+    document_collection = require_backend("DocumentCollection", collection)
     return flask.jsonify(count=len(document_collection))
 
 
@@ -20,7 +20,7 @@ def get_document_count(collection):
 @require_auth
 def get_document(collection, index):
     require_permissions(["read"])
-    document_collection = require_backend(("document-collection", collection))
+    document_collection = require_backend("DocumentCollection", collection)
     document = document_collection.get(index)
     if isinstance(document, str):
         return flask.send_file(document)
@@ -32,5 +32,5 @@ def get_document(collection, index):
 @require_auth
 def get_document_tags(collection, index):
     require_permissions(["read"])
-    document_collection = require_backend(("document-collection", collection))
+    document_collection = require_backend("DocumentCollection", collection)
     return flask.jsonify(tags=document_collection.tags(index))

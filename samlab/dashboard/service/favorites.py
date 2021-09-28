@@ -12,7 +12,7 @@ from samlab.dashboard.service import require_backend
 @require_auth
 def get_favorites():
     require_permissions(["read"])
-    favorites = require_backend("favorites")
+    favorites = require_backend("Favorites")
     return flask.jsonify(favorites=list(favorites.get()))
 
 
@@ -22,7 +22,7 @@ def put_delete_favorites_otype_oid(otype, oid):
     if flask.request.method == "PUT":
         require_permissions(["write"])
         name = flask.request.json["name"]
-        favorites = require_backend("favorites")
+        favorites = require_backend("Favorites")
         if favorites.contains(otype, oid):
             favorites.create(otype, oid, name)
             socketio.emit("object-changed", {"otype": "favorites", "oid": oid})
@@ -33,7 +33,7 @@ def put_delete_favorites_otype_oid(otype, oid):
 
     elif flask.request.method == "DELETE":
         require_permissions(["delete"])
-        require_backend("favorites").delete(otype, oid)
+        require_backend("Favorites").delete(otype, oid)
         socketio.emit("object-deleted", {"otype": "favorites", "oid": oid})
         return flask.jsonify()
 

@@ -73,7 +73,6 @@ for key, value in sorted(application.config.items()):
 # Setup services (note: must happen *after* all configuration).
 import samlab.dashboard.service.asynchronous
 import samlab.dashboard.service.basic
-import samlab.dashboard.service.datasets
 import samlab.dashboard.service.documents
 import samlab.dashboard.service.favorites
 import samlab.dashboard.service.images
@@ -84,14 +83,13 @@ import samlab.dashboard.service.notify
 import samlab.dashboard.backend.favorites
 import samlab.dashboard.backend.layouts
 
-backends = {
-    "favorites": samlab.dashboard.backend.favorites.JSONFile(storage=os.path.expanduser("~/.samlab/favorites.json")),
-    "layouts": samlab.dashboard.backend.layouts.JSONFile(storage=os.path.expanduser("~/.samlab/layouts.json")),
-    }
-backends.update(getattr(config, "backends", {}))
+backends = [
+    samlab.dashboard.backend.favorites.JSONFile(storage=os.path.expanduser("~/.samlab/favorites.json")),
+    samlab.dashboard.backend.layouts.JSONFile(storage=os.path.expanduser("~/.samlab/layouts.json")),
+    ] + getattr(config, "backends", [])
 
-for service, backend in backends.items():
-    samlab.dashboard.service.set_backend(service, backend)
+for backend in backends:
+    samlab.dashboard.service.register_backend(backend)
 
 # Optionally open a web browser at startup.
 def open_browser(config):
