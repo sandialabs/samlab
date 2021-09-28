@@ -8,7 +8,6 @@ define([
     "knockout.mapping",
     "lodash",
     "URI",
-    "samlab-attribute-manager",
     "samlab-bounding-box-manager",
     "samlab-dashboard",
     "samlab-dialog",
@@ -18,7 +17,7 @@ define([
     "samlab-socket",
     "samlab-tag-manager",
     "samlab-uuidv4",
-    ], function(debug, ko, mapping, lodash, URI, attribute_manager, bounding_box_manager, dashboard, dialog, notify, permissions, server, socket, tag_manager, uuidv4)
+    ], function(debug, ko, mapping, lodash, URI, bounding_box_manager, dashboard, dialog, notify, permissions, server, socket, tag_manager, uuidv4)
 {
     var log = debug("samlab-images-widget");
 
@@ -57,11 +56,6 @@ define([
                         },
                     });
                 });
-
-                component.manage_attributes = function()
-                {
-                    dashboard.add_widget("samlab-attribute-widget");
-                }
 
                 component.manage_tags = function()
                 {
