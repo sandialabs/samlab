@@ -8,7 +8,7 @@ define([], function()
 
     module.dialog = function(params)
     {
-        require(["samlab-modal", "knockout", "knockout.mapping", "jquery"], function(modal, ko, mapping, jquery)
+        require(["knockout", "knockout.mapping", "samlab-modal"], function(ko, mapping, modal)
         {
             params = params || {};
 
@@ -29,14 +29,14 @@ define([], function()
             state.close = function(button)
             {
                 state.result = button;
-                jquery(dialog).modal("hide");
+                dialog.hide();
             };
 
             modal.create("samlab-dialog.html", state,
             {
-                show: function(modal)
+                show: function(m)
                 {
-                    dialog = modal;
+                    dialog = m;
                 },
                 hidden: function()
                 {

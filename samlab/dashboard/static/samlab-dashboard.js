@@ -11,7 +11,7 @@ define(
         "lodash",
         "mousetrap",
         "samlab-dom",
-        "samlab-favorite-manager",
+        "samlab-favorites",
         "samlab-notify",
         "samlab-object-manager",
         "samlab-permissions",
@@ -25,7 +25,7 @@ define(
         "samlab-dropdown",
         "samlab-favorite-control",
         "samlab-gridster-binding",
-    ], function(debug, jquery, ko, mapping, lodash, mousetrap, dom, favorite_manager, notify, object, permissions, server, template, URI)
+    ], function(debug, jquery, ko, mapping, lodash, mousetrap, dom, favorites, notify, object, permissions, server, template, URI)
 {
     var log = debug("samlab-dashboard");
 
@@ -52,7 +52,7 @@ define(
                 label: "Lists",
                 children:
                 [
-                    { label: "Backends", icon: "bi-address-card", component: "samlab-backends-widget"},
+                    { label: "Backends", icon: "bi-card-list", component: "samlab-backends-widget"},
                 ],
             },
             {
@@ -64,7 +64,7 @@ define(
                     { label: "Edit Attributes", icon: "bi-pencil", component: "samlab-attribute-widget"},
                     { label: "Edit Bounding Boxes", icon: "bi-square", component: "samlab-bounding-box-widget"},
                     { label: "Edit Tags", icon: "bi-tag", component: "samlab-tag-widget"},
-                    { label: "Favorites", icon: "bi-heart", component: "samlab-favorites-widget"},
+                    { label: "Favorites", icon: "bi-list-stars", component: "samlab-favorites-widget"},
                 ],
             },
             {
@@ -87,7 +87,7 @@ define(
 
     state.favorite_groups = ko.computed(function()
     {
-        var grouped = lodash.groupBy(favorite_manager.favorites(), function(favorite)
+        var grouped = lodash.groupBy(favorites.favorites(), function(favorite)
         {
             return object.label(favorite.otype(), {capitalize: true});
         });

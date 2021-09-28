@@ -7,9 +7,9 @@ define([
     "knockout.mapping",
     "lodash",
     "samlab-dashboard",
-    "samlab-favorite-manager",
+    "samlab-favorites",
     "samlab-object-manager",
-    ], function(ko, mapping, lodash, dashboard, favorite_manager, object)
+    ], function(ko, mapping, lodash, dashboard, favorites, object)
 {
     var component_name = "samlab-favorites-widget";
     ko.components.register(component_name,
@@ -23,7 +23,7 @@ define([
 
                 component.groups = ko.computed(function()
                 {
-                    var grouped = lodash.groupBy(favorite_manager.favorites(), function(favorite)
+                    var grouped = lodash.groupBy(favorites.favorites(), function(favorite)
                     {
                         return object.label(favorite.otype(), {capitalize: true});
                     });

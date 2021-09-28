@@ -23,32 +23,32 @@ define([], function()
 
             var modal = new bootstrap.Modal(content);
 
-/*
-            jquery(modal).on("show.bs.modal", function()
+            content.addEventListener("show.bs.modal", function()
             {
                 if(params.show)
                     params.show(modal);
             });
 
-            jquery(modal).on("shown.bs.modal", function()
+            content.addEventListener("shown.bs.modal", function()
             {
                 if(params.shown)
                     params.shown(modal);
             });
 
-            jquery(modal).on("hide.bs.modal", function()
+            content.addEventListener("hide.bs.modal", function()
             {
                 if(params.hide)
                     params.hide(modal);
             });
 
-            jquery(modal).on("hidden.bs.modal", function()
+            content.addEventListener("hidden.bs.modal", function()
             {
-                jquery(modal).remove();
+                content.remove();
                 if(params.hidden)
                     params.hidden(modal);
             });
 
+/*
             if(params.draggable)
                 jquery(modal).draggable(
                 {
