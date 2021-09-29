@@ -6,8 +6,9 @@ define([
     "debug",
     "knockout",
     "knockout.mapping",
+    "samlab-dashboard",
     "samlab-services",
-    ], function(debug, ko, mapping, services)
+    ], function(debug, ko, mapping, dashboard, services)
 {
     var component_name = "samlab-services-widget";
     var log = debug(component_name);
@@ -28,7 +29,7 @@ define([
 
                 component.view_service = function(item)
                 {
-                    services.view_service(item.service(), item.name());
+                    dashboard.view_service(item.service(), item.name());
                 };
 
                 return component;

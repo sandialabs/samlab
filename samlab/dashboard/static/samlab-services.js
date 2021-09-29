@@ -6,37 +6,14 @@ define([
     "debug",
     "knockout",
     "knockout.mapping",
-    "samlab-dashboard",
     "samlab-server",
-    ], function(debug, ko, mapping, dashboard, server)
+    ], function(debug, ko, mapping, server)
 {
     var log = debug("samlab-services");
 
     var module = mapping.fromJS({
         backends: [],
     });
-
-    module.view_service = function(service, name)
-    {
-        log("view", service, name);
-        if(service == "favorites")
-        {
-            dashboard.add_widget("samlab-favorites-widget");
-        }
-        else if(service == "document-collection")
-        {
-            dashboard.add_widget("samlab-documents-widget", {collection: name, index: 0});
-        }
-        else if(service == "image-collection")
-        {
-            dashboard.add_widget("samlab-images-widget", {collection: name, index: 0});
-        }
-        else
-        {
-            dashboard.add_widget("samlab-generic-content-widget", {service: service, name: name});
-        }
-    }
-
 
     function load_backends()
     {

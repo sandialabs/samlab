@@ -16,6 +16,7 @@ define(
         "samlab-object-manager",
         "samlab-permissions",
         "samlab-server",
+        "samlab-services",
         "text!samlab-dashboard.html",
         "URI",
         "css!jquery.gridster.css",
@@ -25,7 +26,7 @@ define(
         "samlab-dropdown",
         "samlab-favorite-control",
         "samlab-gridster-binding",
-    ], function(debug, jquery, ko, mapping, lodash, mousetrap, dom, favorites, notify, object, permissions, server, template, URI)
+    ], function(debug, jquery, ko, mapping, lodash, mousetrap, dom, favorites, notify, object, permissions, server, services, template, URI)
 {
     var log = debug("samlab-dashboard");
 
@@ -100,6 +101,16 @@ define(
 
         return result;
     });
+
+    state.backends = services.backends.map(function(backend)
+    {
+        return { service: backend.service, name: backend.name};
+    });
+
+    state.view_service = function(item)
+    {
+        module.view_service(item.service(), item.name());
+    };
 
     state.no_favorites = ko.pureComputed(function()
     {
@@ -413,6 +424,26 @@ define(
             module.add_widget("samlab-observation-widget", {id: oid});
         else if(otype == "experiments")
             module.add_widget("samlab-experiment-widget", {id: oid});
+    }
+
+    module.view_service = function(service, name)
+    {
+        if(service == "favorites")
+        {
+            module.add_widget("samlab-favorites-widget");
+        }
+        else if(service == "document-collection")
+        {
+            module.add_widget("samlab-documents-widget", {collection: name, index: 0});
+        }
+        else if(service == "image-collection")
+        {
+            module.add_widget("samlab-images-widget", {collection: name, index: 0});
+        }
+        else
+        {
+            module.add_widget("samlab-generic-content-widget", {service: service, name: name});
+        }
     }
 
     /**

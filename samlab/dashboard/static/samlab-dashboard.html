@@ -3,7 +3,7 @@
         <h5 class="text-muted align-self-center"><span data-bind="text: server.name"></span>&nbsp;<small data-bind="text: server.description"></small></h5>
         <samlab-favorite-control class="ms-auto align-self-center" params="otype: 'layouts', oid: lid"></samlab-favorite-control>
         <div class="dropdown ms-1 align-self-center">
-            <button type="button" class="btn btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown" data-boundary="window">Favorites</button>
+            <button type="button" class="btn btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown">Favorites</button>
             <div class="dropdown-menu">
                 <!-- ko if: no_favorites -->
                 <div style="max-width: 220px">
@@ -19,7 +19,17 @@
             </div>
         </div>
         <div class="dropdown ms-1 align-self-center">
-            <button type="button" class="btn btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown" data-boundary="window">Operations</button>
+            <button type="button" class="btn btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown">Services</button>
+            <div class="dropdown-menu">
+                <!-- ko foreach: backends -->
+                <a class="dropdown-item" data-bind="click: $root.view_service">
+                    <span data-bind="text: service"></span>/<span data-bind="text: name"></span>
+                </a>
+                <!-- /ko -->
+            </div>
+        </div>
+        <div class="dropdown ms-1 align-self-center">
+            <button type="button" class="btn btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown">Operations</button>
             <div class="dropdown-menu">
                 <h6 class="dropdown-header">Dashboard</h6>
                 <a class="dropdown-item btn btn-secondary" data-bind="css: {active: tabs}, click: toggle_tabs"><span class="bi-window"></span>&nbsp;Use tabs</a>
