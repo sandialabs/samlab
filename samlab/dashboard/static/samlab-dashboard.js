@@ -52,7 +52,7 @@ define(
                 label: "Lists",
                 children:
                 [
-                    { label: "Backends", icon: "bi-card-list", component: "samlab-backends-widget"},
+                    { label: "Services", icon: "bi-card-list", component: "samlab-services-widget"},
                 ],
             },
             {

@@ -6,10 +6,10 @@ define([
     "debug",
     "knockout",
     "knockout.mapping",
-    "samlab-backends",
-    ], function(debug, ko, mapping, backends)
+    "samlab-services",
+    ], function(debug, ko, mapping, services)
 {
-    var component_name = "samlab-backends-widget";
+    var component_name = "samlab-services-widget";
     var log = debug(component_name);
 
     ko.components.register(component_name,
@@ -21,14 +21,14 @@ define([
                 var component = mapping.fromJS({
                 });
 
-                component.backends = backends.backends.map(function(backend)
+                component.backends = services.backends.map(function(backend)
                 {
                     return { service: backend.service, name: backend.name};
                 });
 
-                component.open_backend = function(item)
+                component.view_service = function(item)
                 {
-                    backends.view(item.service(), item.name());
+                    services.view_service(item.service(), item.name());
                 };
 
                 return component;

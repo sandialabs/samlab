@@ -10,13 +10,13 @@ define([
     "samlab-server",
     ], function(debug, ko, mapping, dashboard, server)
 {
-    var log = debug("samlab-backends");
+    var log = debug("samlab-services");
 
     var module = mapping.fromJS({
         backends: [],
     });
 
-    module.view = function(service, name)
+    module.view_service = function(service, name)
     {
         log("view", service, name);
         if(service == "favorites")
