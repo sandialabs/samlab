@@ -72,7 +72,7 @@ def require_auth(f):
             # Handle the request
             return f(*args, **kwargs)
         # Prompt the user for their credentials.
-        return application.config["authenticate"]()
+        return application.config["authentication"]()
     return decorated
 
 

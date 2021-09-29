@@ -18,14 +18,15 @@ class LDAP(object):
     def __call__(self, authorization):
         if not authorization:
             return False
-        log.info("Checking credentials for %s with %s.", authorization.username, self.server)
         try:
             search_dn = self.user_dn.format(authorization.username)
+            log.info("Checking credentials for %s with %s.", search_dn, self.server)
 
             import ldap3
             ldap_server = ldap3.Server(self.server, use_ssl=True)
             connection = ldap3.Connection(ldap_server, user=search_dn, password=authorization.password, receive_timeout=self.timeout)
             if not connection.bind():
+                log.warning("Credential check failed.")
                 return False
             return True
         except Exception:

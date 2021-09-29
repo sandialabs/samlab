@@ -30,7 +30,7 @@ class List(object):
 
 
     def __repr__(self):
-        return f"{self.__class__.__module__}.{self.__class__.__name__}(permissions={permissions!r})"
+        return f"{self.__class__.__module__}.{self.__class__.__name__}(permissions={self.permissions!r})"
 
 
 class PermitAll(object):
