@@ -98,7 +98,6 @@ class Directory(DocumentCollection, watchdog.events.FileSystemEventHandler):
         self.reload()
 
 
-    @debounce(0.5)
     def reload(self):
         log.info(f"{self.__class__.__name__}.reload")
 
