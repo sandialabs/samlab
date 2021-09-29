@@ -114,8 +114,14 @@ if not application.config["no-browser"]:
     threading.Thread(target=open_browser, args=(application.config,), daemon=True).start()
 
 # Start the server.
-if application.config["certificate"] and application.config["key"]:
-    socketio.run(application, host=application.config["host"], port=application.config["port"], ssl_context=(application.config["certificate"], application.config["key"]), debug=application.config["debug"])
-else:
-    socketio.run(application, host=application.config["host"], port=application.config["port"], debug=application.config["debug"])
+kwargs = {
+    "debug": application.config["debug"],
+    "host": application.config["host"],
+    "port": application.config["port"],
+}
 
+if application.config["certificate"] and application.config["key"]:
+    kwargs["certfile"] = application.config["certificate"]
+    kwargs["keyfile"] = application.config["key"]
+
+socketio.run(application, **kwargs)
