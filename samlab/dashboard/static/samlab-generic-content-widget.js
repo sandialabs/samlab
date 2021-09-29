@@ -3,15 +3,13 @@
 // Government retains certain rights in this software.
 
 define([
-    "debug",
     "knockout",
     "knockout.mapping",
-    "samlab-backends",
-    ], function(debug, ko, mapping, backends)
+    "samlab-dashboard",
+    "samlab-object-manager",
+    ], function(ko, mapping, dashboard, object)
 {
-    var component_name = "samlab-backends-widget";
-    var log = debug(component_name);
-
+    var component_name = "samlab-generic-content-widget";
     ko.components.register(component_name,
     {
         viewModel:
@@ -19,28 +17,13 @@ define([
             createViewModel: function(widget, component_info)
             {
                 var component = mapping.fromJS({
+                    service: widget.params.service,
+                    name: widget.params.name,
                 });
-
-                component.backends = backends.backends.map(function(backend)
-                {
-                    return { service: backend.service, name: backend.name};
-                });
-
-                component.open_backend = function(item)
-                {
-                    backends.view(item.service(), item.name());
-                };
 
                 return component;
             }
         },
         template: { require: "text!" + component_name + ".html" }
     });
-
-    var module =
-    {
-        widget: { },
-    };
-
-    return module;
 });
