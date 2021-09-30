@@ -31,7 +31,7 @@ define([
 
                 component.title = ko.pureComputed(function()
                 {
-                    return component.collection() + "/" + component.index();
+                    return component.collection() + "/" + (component.index() + 1);
                 });
 
                 return component;

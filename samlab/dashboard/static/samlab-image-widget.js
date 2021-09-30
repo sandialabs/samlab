@@ -27,7 +27,7 @@ define([
 
                 component.title = ko.pureComputed(function()
                 {
-                    return component.uri() || component.collection() + "/" + component.index();
+                    return component.uri() || component.collection() + "/" + (component.index() + 1);
                 });
 
                 return component;
