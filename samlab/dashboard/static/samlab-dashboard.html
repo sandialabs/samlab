@@ -7,7 +7,7 @@
             <div class="dropdown-menu">
                 <!-- ko if: no_favorites -->
                 <div style="max-width: 220px">
-                    <p style="margin: 0 8px">Click the <span class="bi-star"></span> icon to add any dashboard layout to this list.</p>
+                    <p style="margin: 0 8px">Click the <span class="bi-star"></span> icon to add the current window layout to this list.</p>
                 </div>
                 <!-- /ko -->
                 <!-- ko foreach: favorite_groups -->
@@ -19,12 +19,14 @@
             </div>
         </div>
         <div class="dropdown ms-1 align-self-center">
-            <button type="button" class="btn btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown">Services</button>
+            <button type="button" class="btn btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown">Datasets</button>
             <div class="dropdown-menu">
                 <!-- ko foreach: backends -->
-                <a class="dropdown-item" data-bind="click: $root.view_service">
-                    <span data-bind="text: service"></span>/<span data-bind="text: name"></span>
+                <!-- ko if: name -->
+                <a class="dropdown-item text-end" data-bind="click: $root.view_service">
+                    <span data-bind="text: name"></span>
                 </a>
+                <!-- /ko -->
                 <!-- /ko -->
             </div>
         </div>
