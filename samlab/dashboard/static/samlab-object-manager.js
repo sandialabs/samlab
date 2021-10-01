@@ -41,19 +41,6 @@ define([
         module.deleted(object);
     });
 
-    module.notify_changed = function(otype, oid, callback)
-    {
-        var otype = ko.unwrap(otype);
-        var oid = ko.unwrap(oid);
-        return module.changed.subscribe(function(object)
-        {
-            if(otype == object.otype && oid == object.oid)
-            {
-                callback();
-            }
-        });
-    }
-
     module.label = function(otype, params)
     {
         var params = params || {};
@@ -63,75 +50,6 @@ define([
         if(params.capitalize)
             result = result.substr(0, 1).toUpperCase() + result.substr(1);
         return result;
-    }
-
-    module.delete_content = function(otype, oid, key)
-    {
-        var otype = ko.unwrap(otype);
-        var oid = ko.unwrap(oid);
-        var key = ko.unwrap(key);
-
-        log("delete content", otype, oid, key);
-
-        server.delete("/" + otype + "/" + oid + "/content/" + key, "DELETE");
-    }
-
-    module.lookup_count = function(otype, params)
-    {
-        var params = params || {};
-
-        var uri = URI("/" + otype + "/count").setQuery(
-        {
-            session: params.session || "",
-            search: params.search || "",
-        });
-
-        server.get_json(uri,
-        {
-            success: params.success,
-            error: params.error,
-            finished: params.finished,
-        });
-    }
-
-    module.lookup_index = function(otype, oid, params)
-    {
-        var params = params || {};
-
-        var uri = URI("/" + otype + "/id/" + oid).setQuery(
-        {
-            session: params.session || "",
-            search: params.search || "",
-            sort: params.sort || "",
-            direction: params.direction || "",
-        });
-
-        server.get_json(uri,
-        {
-            success: params.success,
-            error: params.error,
-            finished: params.finished,
-        });
-    }
-
-    module.lookup_id = function(otype, oindex, params)
-    {
-        var params = params || {};
-
-        var uri = URI("/" + otype + "/index/" + oindex).setQuery(
-        {
-            session: params.session || "",
-            search: params.search || "",
-            sort: params.sort || "",
-            direction: params.direction || "",
-        });
-
-        server.get_json(uri,
-        {
-            success: params.success,
-            error: params.error,
-            finished: params.finished,
-        });
     }
 
     return module;
