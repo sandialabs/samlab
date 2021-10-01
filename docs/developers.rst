@@ -20,7 +20,7 @@ Getting Started
 ---------------
 
 If you haven't already, you'll want to get familiar with the Samlab repository
-at http://github.com/shead-custom-design/samlab ... there, you'll find the Samlab
+at http://github.com/sandialabs/samlab ... there, you'll find the Samlab
 sources, issue tracker, and wiki.
 
 Next, you'll need to install Samlab's :ref:`dependencies`.  Then, you'll be
@@ -68,8 +68,8 @@ Building the Documentation
 
 To build the documentation, run::
 
-    $ cd samlab
-    $ python docs/setup.py
+    $ cd samlab/docs
+    $ make html
 
 Note that significant subsets of the documentation are written using Jupyter
 notebooks, so the docs/setup.py script requires Jupyter to convert the

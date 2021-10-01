@@ -2,8 +2,6 @@
 # (NTESS).  Under the terms of Contract DE-NA0003525 with NTESS, the U.S.
 # Government retains certain rights in this software.
 
-"""Functionality for working with :ref:`favorites`."""
-
 import abc
 import json
 import logging

@@ -59,7 +59,6 @@ intersphinx_mapping = {
     "flask": ("http://flask.pocoo.org/docs/0.12", "flask.inv"),
     "numpy": ("http://docs.scipy.org/doc/numpy-1.13.0", "numpy.inv"),
     "python": ("http://docs.python.org/3.6", "python.inv"),
-    "PIL": ("http://pillow.readthedocs.io/en/3.2.x", "pillow.inv"),
     "werkzeug": ("http://werkzeug.pocoo.org/docs/0.14", "werkzeug.inv"),
     }
 
