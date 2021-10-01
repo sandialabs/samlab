@@ -90,7 +90,7 @@ define(
     {
         var grouped = lodash.groupBy(favorites.favorites(), function(favorite)
         {
-            return object.label(favorite.service(), {capitalize: true});
+            return services.label(favorite.service());
         });
 
         var result = [];

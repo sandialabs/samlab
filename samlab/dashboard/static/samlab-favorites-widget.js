@@ -8,8 +8,8 @@ define([
     "lodash",
     "samlab-dashboard",
     "samlab-favorites",
-    "samlab-object-manager",
-    ], function(ko, mapping, lodash, dashboard, favorites, object)
+    "samlab-services",
+    ], function(ko, mapping, lodash, dashboard, favorites, services)
 {
     var component_name = "samlab-favorites-widget";
     ko.components.register(component_name,
@@ -25,7 +25,7 @@ define([
                 {
                     var grouped = lodash.groupBy(favorites.favorites(), function(favorite)
                     {
-                        return object.label(favorite.service(), {capitalize: true});
+                        return services.label(favorite.service());
                     });
 
                     var result = [];

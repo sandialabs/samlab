@@ -41,17 +41,6 @@ define([
         module.deleted(object);
     });
 
-    module.label = function(otype, params)
-    {
-        var params = params || {};
-        var result = ko.unwrap(otype);
-        if(params.singular)
-            result = result.substr(0, result.length-1);
-        if(params.capitalize)
-            result = result.substr(0, 1).toUpperCase() + result.substr(1);
-        return result;
-    }
-
     return module;
 });
 

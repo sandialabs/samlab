@@ -15,6 +15,14 @@ define([
         backends: [],
     });
 
+    module.label = function(service)
+    {
+        if(service == "layouts")
+            return "Layouts";
+        else if(service == "favorites")
+            return "Favorites";
+        return service;
+    }
     function load_backends()
     {
         server.load_json(module, "/backends");
