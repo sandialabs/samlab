@@ -34,6 +34,8 @@ define([
                     count: null,
                     index: widget.params.index,
                     tags: [],
+                    tagid: "w" + uuidv4(),
+                    edittagid: "w" + uuidv4(),
                 });
 
                 component.first_image = function()
