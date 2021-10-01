@@ -33,6 +33,8 @@ define([
                     collection: widget.params.collection,
                     count: null,
                     index: widget.params.index,
+                    metadata: null,
+                    metaid: "w" + uuidv4(),
                     tags: [],
                     tagid: "w" + uuidv4(),
                     edittagid: "w" + uuidv4(),
@@ -47,6 +49,17 @@ define([
                 {
                     component.index(component.count() - 1);
                 }
+
+                component.load_metadata = ko.computed(function()
+                {
+                    server.get_json("/image-collection/" + component.collection() + "/" + component.index() + "/metadata",
+                    {
+                        success: function(data)
+                        {
+                            component.metadata(JSON.stringify(data.metadata, null, 2));
+                        },
+                    });
+                });
 
                 component.load_tags = ko.computed(function()
                 {

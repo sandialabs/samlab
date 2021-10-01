@@ -26,9 +26,14 @@ class ImageCollection(abc.ABC):
 
         Returns
         -------
-        image: :class:`str` or :class:`numpy.ndarray`
+        image: :class:`str`
             If :class:`str`, the filesystem path of the image.
         """
+        raise NotImplementedError()
+
+
+    @abc.abstractmethod
+    def metadata(self, index):
         raise NotImplementedError()
 
 
@@ -77,6 +82,10 @@ class Directory(ImageCollection):
 
     def get(self, index):
         return self._paths[index]
+
+
+    def metadata(self, index):
+        return {}
 
 
     @property
