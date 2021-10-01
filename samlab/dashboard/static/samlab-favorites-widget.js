@@ -39,7 +39,7 @@ define([
 
                 component.show_favorite = function(favorite)
                 {
-                    dashboard.show_object(favorite.service, favorite.name);
+                    dashboard.show_service(favorite.service, favorite.name);
                 };
 
                 return component;

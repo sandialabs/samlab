@@ -27,9 +27,9 @@ define([
                     return { service: backend.service, name: backend.name};
                 });
 
-                component.view_service = function(item)
+                component.show_service = function(item)
                 {
-                    dashboard.view_service(item.service(), item.name());
+                    dashboard.show_service(item.service(), item.name());
                 };
 
                 return component;

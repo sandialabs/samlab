@@ -53,6 +53,7 @@ define(
                 label: "Lists",
                 children:
                 [
+                    { label: "Favorites", icon: "bi-list-stars", component: "samlab-favorites-widget"},
                     { label: "Services", icon: "bi-card-list", component: "samlab-services-widget"},
                 ],
             },
@@ -65,7 +66,6 @@ define(
                     { label: "Edit Attributes", icon: "bi-pencil", component: "samlab-attribute-widget"},
                     { label: "Edit Bounding Boxes", icon: "bi-square", component: "samlab-bounding-box-widget"},
                     { label: "Edit Tags", icon: "bi-tag", component: "samlab-tag-widget"},
-                    { label: "Favorites", icon: "bi-list-stars", component: "samlab-favorites-widget"},
                 ],
             },
             {
@@ -107,9 +107,9 @@ define(
         return { service: backend.service, name: backend.name};
     });
 
-    state.view_service = function(item)
+    state.show_service = function(item)
     {
-        module.view_service(item.service(), item.name());
+        module.show_service(item.service(), item.name());
     };
 
     state.no_favorites = ko.pureComputed(function()
@@ -119,8 +119,7 @@ define(
 
     state.show_favorite = function(favorite)
     {
-        log("show favorite", mapping.toJS(favorite));
-        module.show_object(favorite.service, favorite.name);
+        module.show_service(favorite.service, favorite.name);
     };
 
     state.gridster_options =
@@ -409,28 +408,20 @@ define(
         });
     }
 
-    module.show_object = function(otype, oid)
+    module.show_service = function(service, name)
     {
-        var otype = ko.unwrap(otype);
-        var oid = ko.unwrap(oid);
+        var service = ko.unwrap(service);
+        var name = ko.unwrap(name);
 
-        log("show_object", otype, oid);
+        log("show_service", service, name);
 
-        if(otype == "layouts")
-            module.set_layout_id(oid);
-        else if(otype == "artifacts")
-            module.add_widget("samlab-artifact-widget", {id: oid});
-        else if(otype == "observations")
-            module.add_widget("samlab-observation-widget", {id: oid});
-        else if(otype == "experiments")
-            module.add_widget("samlab-experiment-widget", {id: oid});
-    }
-
-    module.view_service = function(service, name)
-    {
         if(service == "favorites")
         {
             module.add_widget("samlab-favorites-widget");
+        }
+        else if(service == "layouts" && name)
+        {
+            module.set_layout_id(name);
         }
         else if(service == "document-collection")
         {
