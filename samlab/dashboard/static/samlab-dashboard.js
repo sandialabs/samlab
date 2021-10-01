@@ -90,7 +90,7 @@ define(
     {
         var grouped = lodash.groupBy(favorites.favorites(), function(favorite)
         {
-            return object.label(favorite.otype(), {capitalize: true});
+            return object.label(favorite.service(), {capitalize: true});
         });
 
         var result = [];
@@ -120,7 +120,7 @@ define(
     state.show_favorite = function(favorite)
     {
         log("show favorite", mapping.toJS(favorite));
-        module.show_object(favorite.otype, favorite.oid);
+        module.show_object(favorite.service, favorite.name);
     };
 
     state.gridster_options =

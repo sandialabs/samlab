@@ -25,7 +25,7 @@ define([
                 {
                     var grouped = lodash.groupBy(favorites.favorites(), function(favorite)
                     {
-                        return object.label(favorite.otype(), {capitalize: true});
+                        return object.label(favorite.service(), {capitalize: true});
                     });
 
                     var result = [];
@@ -39,7 +39,7 @@ define([
 
                 component.show_favorite = function(favorite)
                 {
-                    dashboard.show_object(favorite.otype, favorite.oid);
+                    dashboard.show_object(favorite.service, favorite.name);
                 };
 
                 return component;

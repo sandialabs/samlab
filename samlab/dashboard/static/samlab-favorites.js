@@ -3,41 +3,44 @@
 // Government retains certain rights in this software.
 
 define([
+    "debug",
     "knockout",
     "knockout.mapping",
-    "samlab-object-manager",
     "samlab-server",
-    ], function(ko, mapping, object, server)
+    "samlab-socket",
+    ], function(debug, ko, mapping, server, socket)
 {
+    var log = debug("samlab-favorites");
+
     var module = mapping.fromJS({
         favorites: [],
     });
 
-    module.get = function(otype, oid)
+    module.get = function(service, name)
     {
-        var otype = ko.unwrap(otype);
-        var oid = ko.unwrap(oid);
+        var service = ko.unwrap(service);
+        var name = ko.unwrap(name);
         for(let favorite of module.favorites())
         {
-            if(otype == favorite.otype() && oid == favorite.oid())
+            if(service == favorite.service() && name == favorite.name())
                 return true;
         }
         return false;
     };
 
-    module.create = function(otype, oid, name)
+    module.create = function(service, name, label)
     {
-        var otype = ko.unwrap(otype);
-        var oid = ko.unwrap(oid);
+        var service = ko.unwrap(service);
         var name = ko.unwrap(name);
-        server.put_json("/favorites/" + otype + "/" + oid, {name: name});
+        var label = ko.unwrap(label);
+        server.put_json("/favorites/" + service + "/" + name, {label: label});
     };
 
-    module.delete = function(otype, oid)
+    module.delete = function(service, name)
     {
-        var otype = ko.unwrap(otype);
-        var oid = ko.unwrap(oid);
-        server.delete("/favorites/" + otype + "/" + oid);
+        var service = ko.unwrap(service);
+        var name = ko.unwrap(name);
+        server.delete("/favorites/" + service + "/" + name);
     };
 
     function load_favorites()
@@ -45,28 +48,22 @@ define([
         server.load_json(module, "/favorites");
     }
 
-    object.changed.subscribe(function(object)
+    socket.on("favorite-changed", function(object)
     {
-        if(object.otype == "favorites")
-        {
-            load_favorites();
-        }
+        log("favorite-changed", object);
+        load_favorites();
     });
 
-    object.created.subscribe(function(object)
+    socket.on("favorite-created", function(object)
     {
-        if(object.otype == "favorites")
-        {
-            load_favorites();
-        }
+        log("favorite-created", object);
+        load_favorites();
     });
 
-    object.deleted.subscribe(function(object)
+    socket.on("favorite-deleted", function(object)
     {
-        if(object.otype == "favorites")
-        {
-            load_favorites();
-        }
+        log("favorite-deleted", object);
+        load_favorites();
     });
 
     load_favorites();

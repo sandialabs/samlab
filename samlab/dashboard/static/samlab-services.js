@@ -20,32 +20,6 @@ define([
         server.load_json(module, "/backends");
     }
 
-/*
-    object.changed.subscribe(function(object)
-    {
-        if(object.otype == "experiments")
-        {
-            load_experiments();
-        }
-    });
-
-    object.created.subscribe(function(object)
-    {
-        if(object.otype == "experiments")
-        {
-            load_experiments();
-        }
-    });
-
-    object.deleted.subscribe(function(object)
-    {
-        if(object.otype == "experiments")
-        {
-            load_experiments();
-        }
-    });
-*/
-
     load_backends();
 
     return module;

@@ -16,24 +16,17 @@ def get_favorites():
     return flask.jsonify(favorites=list(favorites.get()))
 
 
-@application.route("/favorites/<allow(layouts):otype>/<oid>", methods=["PUT", "DELETE"])
+@application.route("/favorites/<allow(layouts):service>/<name>", methods=["PUT", "DELETE"])
 @require_auth
-def put_delete_favorites_otype_oid(otype, oid):
+def put_delete_favorites_service_name(service, name):
     if flask.request.method == "PUT":
         require_permissions(["write"])
-        name = flask.request.json["name"]
-        favorites = require_backend("favorites")
-        if favorites.contains(otype, oid):
-            favorites.create(otype, oid, name)
-            socketio.emit("object-changed", {"otype": "favorites", "oid": oid})
-        else:
-            favorites.create(otype, oid, name)
-            socketio.emit("object-created", {"otype": "favorites", "oid": oid})
+        label = flask.request.json["label"]
+        require_backend("favorites").create(service, name, label)
         return flask.jsonify()
 
     elif flask.request.method == "DELETE":
         require_permissions(["delete"])
-        require_backend("favorites").delete(otype, oid)
-        socketio.emit("object-deleted", {"otype": "favorites", "oid": oid})
+        require_backend("favorites").delete(service, name)
         return flask.jsonify()
 
