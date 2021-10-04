@@ -10,7 +10,7 @@ from samlab.dashboard.service import require_backend
 
 @application.route("/image-collection/<collection>")
 @require_auth
-def get_image_count(collection):
+def get_image_collection(collection):
     require_permissions(["read"])
     image_collection = require_backend("image-collection", collection)
     return flask.jsonify(count=len(image_collection))
@@ -28,12 +28,20 @@ def get_image(collection, index):
         raise RuntimeError(f"Unknown image type: {type(image)}")
 
 
-@application.route("/image-collection/<collection>/<int:index>/bboxes")
+@application.route("/image-collection/<collection>/<int:index>/bboxes", methods=["GET", "PUT"])
 @require_auth
-def get_image_bboxes(collection, index):
-    require_permissions(["read"])
-    image_collection = require_backend("image-collection", collection)
-    return flask.jsonify(bboxes=image_collection.bboxes(index))
+def get_put_image_bboxes(collection, index):
+    if flask.request.method == "GET":
+        require_permissions(["read"])
+        image_collection = require_backend("image-collection", collection)
+        return flask.jsonify(bboxes=image_collection.bboxes(index))
+
+    elif flask.request.method == "PUT":
+        require_permissions(["write"])
+        bboxes = flask.request.json["bboxes"]
+        image_collection = require_backend("image-collection", collection)
+        image_collection.put_bboxes(index, bboxes)
+        return flask.jsonify()
 
 
 @application.route("/image-collection/<collection>/<int:index>/metadata")

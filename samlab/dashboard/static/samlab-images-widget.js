@@ -94,9 +94,8 @@ define([
 
                 component.bboxes_save = function()
                 {
-                    log("bboxes_save");
-                    //var payload = {"samlab:annotations": mapping.toJS(component.attributes["samlab:annotations"]())};
-                    //server.put_json("/" + component.otype() + "/" + component.oid() + "/attributes", payload);
+                    var payload = {"bboxes": mapping.toJS(component.bboxes)};
+                    server.put_json("/image-collection/" + component.collection() + "/" + component.index() + "/bboxes", payload);
                 }
 
                 component.bboxes_toggle = function()

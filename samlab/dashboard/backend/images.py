@@ -49,6 +49,11 @@ class ImageCollection(abc.ABC):
         raise NotImplementedError()
 
 
+    @abc.abstractmethod
+    def put_bboxes(self, index, bboxes):
+        raise NotImplementedError()
+
+
     @property
     def service(self):
         return "image-collection"
@@ -110,6 +115,10 @@ class COCO(ImageCollection):
         return self._name
 
 
+    def put_bboxes(self, index, bboxes):
+        raise NotImplementedError()
+
+
     def tags(self, index):
         result = set()
         annotations = self._coco.loadAnns(self._coco.getAnnIds(imgIds=self._indices[index]))
@@ -161,6 +170,10 @@ class Directory(ImageCollection):
     @property
     def name(self):
         return self._name
+
+
+    def put_bboxes(self, index, bboxes):
+        raise NotImplementedError()
 
 
     def tags(self, index):
