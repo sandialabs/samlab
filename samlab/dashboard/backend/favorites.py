@@ -31,13 +31,13 @@ class Favorites(abc.ABC):
 
 
     @abc.abstractmethod
-    def delete(self, service, label):
+    def delete(self, service, name):
         """Un-favorite an item.
 
         Parameters
         ----------
         service: str, required
-            SErvice type.
+            Service type.
         name: str, required.
             Service name of the item to be un-favorited.
         """
