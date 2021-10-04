@@ -28,6 +28,14 @@ def get_image(collection, index):
         raise RuntimeError(f"Unknown image type: {type(image)}")
 
 
+@application.route("/image-collection/<collection>/<int:index>/bboxes")
+@require_auth
+def get_image_bboxes(collection, index):
+    require_permissions(["read"])
+    image_collection = require_backend("image-collection", collection)
+    return flask.jsonify(bboxes=image_collection.bboxes(index))
+
+
 @application.route("/image-collection/<collection>/<int:index>/metadata")
 @require_auth
 def get_image_metadata(collection, index):

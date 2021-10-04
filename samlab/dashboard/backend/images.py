@@ -4,6 +4,7 @@
 
 import abc
 import glob
+import hashlib
 import os
 import re
 
@@ -12,6 +13,11 @@ class ImageCollection(abc.ABC):
     @abc.abstractmethod
     def __len__(self):
         """Return the number of images in the collection."""
+        raise NotImplementedError()
+
+
+    @abc.abstractmethod
+    def bboxes(self, index):
         raise NotImplementedError()
 
 
@@ -53,6 +59,66 @@ class ImageCollection(abc.ABC):
         raise NotImplementedError()
 
 
+class COCO(ImageCollection):
+    def __init__(self, *, name, annotations, images):
+        self._name = name
+        self._annotations = annotations
+        self._images = images
+        self._update()
+
+
+    def _update(self):
+        import pycocotools.coco
+        self._coco = pycocotools.coco.COCO(self._annotations)
+        self._indices = self._coco.getImgIds()
+
+
+    def __len__(self):
+        return len(self._indices)
+
+
+    def __repr__(self):
+        return f"{self.__class__.__module__}.{self.__class__.__name__}(annotations={self._annotations!r}, images={self._images!r})"
+
+
+    def bboxes(self, index):
+        colors = ["red", "orange", "yellow", "green", "cyan", "blue", "purple"]
+
+        results = []
+        annotations = self._coco.loadAnns(self._coco.getAnnIds(imgIds=self._indices[index]))
+        for annotation in annotations:
+            if "bbox" in annotation:
+                category = self._coco.loadCats(annotation["category_id"])[0]["name"]
+                color_index = int(hashlib.sha256(category.encode("utf8")).hexdigest(), 16) % len(colors)
+                color = colors[color_index]
+                left, top, width, height = annotation["bbox"]
+                results.append({"left": left, "top": top, "width": width, "height": height, "category": category, "color": color, "username": None})
+        return results
+
+    def get(self, index):
+        image = self._coco.loadImgs(self._indices[index])[0]
+        return os.path.join(self._images, image["file_name"])
+
+
+    def metadata(self, index):
+        image = self._coco.loadImgs(self._indices[index])[0]
+        return image
+
+
+    @property
+    def name(self):
+        return self._name
+
+
+    def tags(self, index):
+        result = set()
+        annotations = self._coco.loadAnns(self._coco.getAnnIds(imgIds=self._indices[index]))
+        for annotation in annotations:
+            category = self._coco.loadCats(annotation["category_id"])[0]
+            result.add(category["name"])
+        return list(result)
+
+
 class Directory(ImageCollection):
     def __init__(self, *, name, root, pattern=".*\.(png|jpg|jpeg)"):
         self._name = name
@@ -78,6 +144,10 @@ class Directory(ImageCollection):
 
     def __repr__(self):
         return f"{self.__class__.__module__}.{self.__class__.__name__}(root={self._root!r}, pattern={self._pattern!r})"
+
+
+    def bboxes(self, index):
+        return []
 
 
     def get(self, index):

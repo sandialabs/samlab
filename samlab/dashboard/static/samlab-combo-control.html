@@ -1,12 +1,12 @@
 <div class="dropdown">
-    <button type="button" class="btn btn-sm btn-outline-secondary dropdown-toggle" data-toggle="dropdown" data-boundary="window" data-bind="attr: {disabled: disabled}, html: current_label"></button>
-    <div class="dropdown-menu" style="min-width: 0" data-bind="foreach: items">
+    <button class="btn btn-sm btn-outline-secondary" type="button" data-bs-toggle="dropdown" data-bind="attr: {disabled: disabled}"><span data-bind="html: current_label"></span></button>
+    <ul class="dropdown-menu" style="min-width: 0" data-bind="foreach: items">
         <!-- ko if: "heading" in $data -->
-        <h6 class="dropdown-header" data-bind="text: heading"></h6>
+        <li><h6 class="dropdown-header" data-bind="text: heading"></h6></li>
         <!-- /ko -->
 
         <!-- ko if: "key" in $data -->
-        <small><a class="dropdown-item" data-bind="click: $component.set_item, html:label"></a></small>
+        <li><small><a class="dropdown-item" data-bind="click: $component.set_item, html:label"></a></small></li>
         <!-- /ko -->
-    </div>
+    </ul>
 </div>
