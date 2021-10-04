@@ -18,12 +18,40 @@ class ImageCollection(abc.ABC):
 
     @abc.abstractmethod
     def bboxes(self, index):
+        """Return a list of bounding box annotations for an image.
+
+        Parameters
+        ----------
+        index: int, required
+            Index of the image.
+
+        Returns
+        -------
+        bboxes: :class:`list`
+            Sequence of :class:`dict`, one per bounding box.
+            Each dict *must* have "left", "top", "width", "height", and
+            "category" keys.
+        """
+        raise NotImplementedError()
+
+
+    @abc.abstractproperty
+    @property
+    def categories(self):
+        """Return a list of existing categories for the collection.
+
+        Returns
+        -------
+        categories: :class:`list`
+            Sequence of :class:`str`, one per category, with the
+            unique category name.
+        """
         raise NotImplementedError()
 
 
     @abc.abstractmethod
     def get(self, index):
-        """Return an image by index.
+        """Return an image.
 
         Parameters
         ----------
@@ -100,6 +128,13 @@ class COCO(ImageCollection):
                 results.append({"left": left, "top": top, "width": width, "height": height, "category": category, "color": color, "username": None})
         return results
 
+
+    @property
+    def categories(self):
+        categories = self._coco.loadCats(self._coco.getCatIds())
+        return sorted([category["name"] for category in categories])
+
+
     def get(self, index):
         image = self._coco.loadImgs(self._indices[index])[0]
         return os.path.join(self._images, image["file_name"])
@@ -156,6 +191,11 @@ class Directory(ImageCollection):
 
 
     def bboxes(self, index):
+        return []
+
+
+    @property
+    def categories(self):
         return []
 
 

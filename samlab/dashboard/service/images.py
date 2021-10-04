@@ -8,19 +8,27 @@ from samlab.dashboard import application, require_auth, require_permissions, soc
 from samlab.dashboard.service import require_backend
 
 
-@application.route("/image-collection/<collection>")
+@application.route("/image-collection/<name>")
 @require_auth
-def get_image_collection(collection):
+def get_image_collection(name):
     require_permissions(["read"])
-    image_collection = require_backend("image-collection", collection)
+    image_collection = require_backend("image-collection", name)
     return flask.jsonify(count=len(image_collection))
 
 
-@application.route("/image-collection/<collection>/<int:index>")
+@application.route("/image-collection/<name>/categories")
 @require_auth
-def get_image(collection, index):
+def get_image_collection_categories(name):
     require_permissions(["read"])
-    image_collection = require_backend("image-collection", collection)
+    image_collection = require_backend("image-collection", name)
+    return flask.jsonify({"categories": image_collection.categories})
+
+
+@application.route("/image-collection/<name>/<int:index>")
+@require_auth
+def get_image(name, index):
+    require_permissions(["read"])
+    image_collection = require_backend("image-collection", name)
     image = image_collection.get(index)
     if isinstance(image, str):
         return flask.send_file(image)
@@ -28,12 +36,12 @@ def get_image(collection, index):
         raise RuntimeError(f"Unknown image type: {type(image)}")
 
 
-@application.route("/image-collection/<collection>/<int:index>/bboxes", methods=["GET", "PUT"])
+@application.route("/image-collection/<name>/<int:index>/bboxes", methods=["GET", "PUT"])
 @require_auth
-def get_put_image_bboxes(collection, index):
+def get_put_image_bboxes(name, index):
     if flask.request.method == "GET":
         require_permissions(["read"])
-        image_collection = require_backend("image-collection", collection)
+        image_collection = require_backend("image-collection", name)
         return flask.jsonify(bboxes=image_collection.bboxes(index))
 
     elif flask.request.method == "PUT":
@@ -44,22 +52,22 @@ def get_put_image_bboxes(collection, index):
             if not bbox["category"]:
                 flask.abort(flask.make_response(flask.jsonify(message="Bounding box category cannot be empty."), 400))
 
-        image_collection = require_backend("image-collection", collection)
+        image_collection = require_backend("image-collection", name)
         image_collection.put_bboxes(index, bboxes)
         return flask.jsonify()
 
 
-@application.route("/image-collection/<collection>/<int:index>/metadata")
+@application.route("/image-collection/<name>/<int:index>/metadata")
 @require_auth
-def get_image_metadata(collection, index):
+def get_image_metadata(name, index):
     require_permissions(["read"])
-    image_collection = require_backend("image-collection", collection)
+    image_collection = require_backend("image-collection", name)
     return flask.jsonify(metadata=image_collection.metadata(index))
 
 
-@application.route("/image-collection/<collection>/<int:index>/tags")
+@application.route("/image-collection/<name>/<int:index>/tags")
 @require_auth
-def get_image_tags(collection, index):
+def get_image_tags(name, index):
     require_permissions(["read"])
-    image_collection = require_backend("image-collection", collection)
+    image_collection = require_backend("image-collection", name)
     return flask.jsonify(tags=image_collection.tags(index))
