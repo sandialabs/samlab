@@ -32,6 +32,7 @@ define([
                     bboxes: [],
                     bboxes_id: "w" + uuidv4(),
                     bboxes_mode: "view",
+                    bboxes_svg_id: "w" + uuidv4(),
                     bboxes_visible: widget.params.bboxes,
                     collection: widget.params.collection,
                     color: "yellow",
@@ -250,7 +251,7 @@ define([
 
                 component.update_mouse = function(e)
                 {
-                    var svg = document.querySelector("svg");
+                    var svg = document.getElementById(component.bboxes_svg_id());
                     var point = svg.createSVGPoint();
                     point.x = e.clientX;
                     point.y = e.clientY;
