@@ -30,6 +30,7 @@ define([
                 var component = mapping.fromJS(
                 {
                     bboxes: [],
+                    bboxes_category: null,
                     bboxes_id: "w" + uuidv4(),
                     bboxes_mode: "view",
                     bboxes_svg_id: "w" + uuidv4(),
@@ -95,7 +96,13 @@ define([
                 component.bboxes_save = function()
                 {
                     var payload = {"bboxes": mapping.toJS(component.bboxes)};
-                    server.put_json("/image-collection/" + component.collection() + "/" + component.index() + "/bboxes", payload);
+                    server.put_json("/image-collection/" + component.collection() + "/" + component.index() + "/bboxes", payload, {
+                        error: function(request)
+                        {
+                            var body = JSON.parse(request.responseText);
+                            notify.local({icon: "bi-exclamation-triangle", type: "bg-danger", message: body.message});
+                        }
+                    });
                 }
 
                 component.bboxes_toggle = function()
@@ -181,7 +188,7 @@ define([
                             top: component.y1(),
                             width: 0,
                             height: 0,
-                            category: null, //component.category(),
+                            category: component.bboxes_category(),
                             color: "white", //component.color(),
                             username: null, //component.username(),
                         }));

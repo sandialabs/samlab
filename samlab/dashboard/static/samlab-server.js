@@ -116,7 +116,7 @@ define(["knockout.mapping"], function(mapping)
                 else
                 {
                     if(request.params.error)
-                        request.params.error();
+                        request.params.error(request);
                 }
             };
             request.send(JSON.stringify(data));

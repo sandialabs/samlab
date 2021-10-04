@@ -38,7 +38,12 @@ def get_put_image_bboxes(collection, index):
 
     elif flask.request.method == "PUT":
         require_permissions(["write"])
+
         bboxes = flask.request.json["bboxes"]
+        for bbox in bboxes:
+            if not bbox["category"]:
+                flask.abort(flask.make_response(flask.jsonify(message="Bounding box category cannot be empty."), 400))
+
         image_collection = require_backend("image-collection", collection)
         image_collection.put_bboxes(index, bboxes)
         return flask.jsonify()

@@ -28,8 +28,9 @@
 
         <div class="collapse" data-bind="attr: {id: bboxes_id}, css: {show: bboxes_visible}">
             <div class="d-flex flex-row align-items-center mb-2">
-                <div><span class="bi-bounding-box"></span>&nbsp;Mode:</div>
+                <div class="ms-1"><span class="bi-bounding-box"></span>&nbsp;Mode:</div>
                 <samlab-combo-control class="ms-2" params="current: bboxes_mode, items: bboxes_mode_items"></samlab-combo-control>
+                <div class="ms-3"><input class="form-control form-control-sm" type="text" placeholder="Category" data-bind="attr: {readonly: bboxes_mode() != 'add'}, value: bboxes_category"></div>
             </div>
         </div>
 
