@@ -40,14 +40,14 @@ def k_fold(dataset, n=5, k=2, validation=0.2, count=None):
     return results
 
 
-class TrackImprovements:
+class Loss:
     """Keeps track of whether a loss value has improved.
     """
     def __init__(self, delta=0):
         self._delta = delta
         self._loss = None
 
-    def __call__(self, loss):
+    def improved(self, loss):
         if self._loss is None:
             self._loss = loss
             return True
@@ -57,7 +57,7 @@ class TrackImprovements:
         return False
 
     @property
-    def loss(self):
+    def value(self):
         return self._loss
 
 
@@ -70,7 +70,7 @@ class EarlyStop:
     """
     def __init__(self, patience=10, delta=0):
         self._patience = patience
-        self._improved = TrackImprovements(delta=delta)
+        self._improved = Loss(delta=delta)
 
         self._count = 0
         self._total = 0
