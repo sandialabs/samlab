@@ -164,7 +164,7 @@ class COCO(ImageCollection):
 
 
 class Directory(ImageCollection):
-    def __init__(self, *, name, root, pattern=".*\.(png|jpg|jpeg)"):
+    def __init__(self, *, name, root, pattern=".*\.(png|jpg|jpeg|PNG|JPG|JPEG)"):
         self._name = name
         self._root = root
         self._pattern = pattern
