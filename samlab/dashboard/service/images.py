@@ -49,11 +49,18 @@ def get_put_image_bboxes(name, index):
 
         bboxes = flask.request.json["bboxes"]
         for bbox in bboxes:
+            for key in ["left", "top", "width", "height", "category"]:
+                if key not in bbox:
+                    flask.abort(flask.make_response(flask.jsonify(message="Bounding box missing required key: {key}"), 400))
+
             if not bbox["category"]:
                 flask.abort(flask.make_response(flask.jsonify(message="Bounding box category cannot be empty."), 400))
 
         image_collection = require_backend("image-collection", name)
-        image_collection.put_bboxes(index, bboxes)
+        saved = image_collection.put_bboxes(index, bboxes)
+        if not saved:
+            flask.abort(flask.make_response(flask.jsonify(message="Backend doesn't support modifications."), 400))
+
         return flask.jsonify()
 
 

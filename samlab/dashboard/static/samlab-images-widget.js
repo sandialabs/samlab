@@ -66,9 +66,14 @@ define([
                     }
                 }
 
-                component.bboxes_load = ko.computed(function()
+                component.bboxes_reload = function()
                 {
                     server.load_json(component, "/image-collection/" + component.collection() + "/" + component.index() + "/bboxes");
+                }
+
+                component.bboxes_auto_reload = ko.computed(function()
+                {
+                    component.bboxes_reload();
                 });
 
                 component.bboxes_mode_add = function()
@@ -96,11 +101,16 @@ define([
                 component.bboxes_save = function()
                 {
                     var payload = {"bboxes": mapping.toJS(component.bboxes)};
-                    server.put_json("/image-collection/" + component.collection() + "/" + component.index() + "/bboxes", payload, {
+                    server.put_json("/image-collection/" + component.collection() + "/" + component.index() + "/bboxes", payload,
+                    {
                         error: function(request)
                         {
                             var body = JSON.parse(request.responseText);
                             notify.local({icon: "bi-exclamation-triangle", type: "bg-danger", message: body.message});
+                        },
+                        finished: function()
+                        {
+                            component.bboxes_reload();
                         }
                     });
                 }

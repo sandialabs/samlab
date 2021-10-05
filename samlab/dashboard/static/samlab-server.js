@@ -118,6 +118,8 @@ define(["knockout.mapping"], function(mapping)
                     if(request.params.error)
                         request.params.error(request);
                 }
+                if(request.params.finished)
+                    request.params.finished();
             };
             request.send(JSON.stringify(data));
         },
