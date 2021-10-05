@@ -16,7 +16,6 @@ class ImageCollection(abc.ABC):
         raise NotImplementedError()
 
 
-    @abc.abstractmethod
     def bboxes(self, index):
         """Return a list of bounding box annotations for an image.
 
@@ -29,13 +28,12 @@ class ImageCollection(abc.ABC):
         -------
         bboxes: :class:`list`
             Sequence of :class:`dict`, one per bounding box.
-            Each dict *must* have "left", "top", "width", "height", and
-            "category" keys.
+            Each dict *must* have "left", "top", "width", "height",
+            "category", and "color" keys.
         """
-        raise NotImplementedError()
+        return []
 
 
-    @abc.abstractproperty
     @property
     def categories(self):
         """Return a list of existing categories for the collection.
@@ -43,10 +41,10 @@ class ImageCollection(abc.ABC):
         Returns
         -------
         categories: :class:`list`
-            Sequence of :class:`str`, one per category, with the
+            Sequence of :class:`str`, one per category, with a
             unique category name.
         """
-        raise NotImplementedError()
+        return []
 
 
     @abc.abstractmethod
@@ -66,9 +64,8 @@ class ImageCollection(abc.ABC):
         raise NotImplementedError()
 
 
-    @abc.abstractmethod
     def metadata(self, index):
-        raise NotImplementedError()
+        return {}
 
 
     @abc.abstractproperty
@@ -77,9 +74,8 @@ class ImageCollection(abc.ABC):
         raise NotImplementedError()
 
 
-    @abc.abstractmethod
     def put_bboxes(self, index, bboxes):
-        raise NotImplementedError()
+        return False
 
 
     @property
@@ -87,9 +83,8 @@ class ImageCollection(abc.ABC):
         return "image-collection"
 
 
-    @abc.abstractmethod
     def tags(self, index):
-        raise NotImplementedError()
+        return []
 
 
 class COCO(ImageCollection):
@@ -150,10 +145,6 @@ class COCO(ImageCollection):
         return self._name
 
 
-    def put_bboxes(self, index, bboxes):
-        raise NotImplementedError()
-
-
     def tags(self, index):
         result = set()
         annotations = self._coco.loadAnns(self._coco.getAnnIds(imgIds=self._indices[index]))
@@ -190,30 +181,13 @@ class Directory(ImageCollection):
         return f"{self.__class__.__module__}.{self.__class__.__name__}(root={self._root!r}, pattern={self._pattern!r})"
 
 
-    def bboxes(self, index):
-        return []
-
-
-    @property
-    def categories(self):
-        return []
-
-
     def get(self, index):
         return self._paths[index]
-
-
-    def metadata(self, index):
-        return {}
 
 
     @property
     def name(self):
         return self._name
-
-
-    def put_bboxes(self, index, bboxes):
-        raise NotImplementedError()
 
 
     def tags(self, index):
