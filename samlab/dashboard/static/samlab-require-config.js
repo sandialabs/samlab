@@ -39,6 +39,8 @@ require.config({
         "css": "js/css.min",
         "debug": "js/debug",
         "element-resize-event": "js/element-resize-event",
+        "gridstack": "css/gridstack.min",
+        "gridstack-h5": "js/gridstack-h5",
         "jquery": "js/jquery.min",
         "jquery.gridster": "js/jquery.gridster",
         "jquery.ui": "js/jquery-ui.min",
