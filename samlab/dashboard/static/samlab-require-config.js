@@ -38,7 +38,6 @@ require.config({
         "bootstrap": "js/bootstrap.bundle.min",
         "css": "js/css.min",
         "debug": "js/debug",
-        "element-resize-event": "js/element-resize-event",
         "gridstack": "css/gridstack.min",
         "gridstack-h5": "js/gridstack-h5",
         "jquery": "js/jquery.min",

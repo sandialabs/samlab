@@ -10,13 +10,12 @@ define([
     "lodash",
     "URI",
     "samlab-dashboard",
-    "samlab-dialog",
     "samlab-notify",
     "samlab-permissions",
     "samlab-server",
     "samlab-socket",
     "samlab-uuidv4",
-    ], function(bootstrap, debug, ko, mapping, lodash, URI, dashboard, dialog, notify, permissions, server, socket, uuidv4)
+    ], function(bootstrap, debug, ko, mapping, lodash, URI, dashboard, notify, permissions, server, socket, uuidv4)
 {
     var component_name = "samlab-images-widget";
     var log = debug(component_name);
@@ -175,19 +174,6 @@ define([
 
                     if(component.bboxes_mode() == "add")
                     {
-/*
-                        if(!component.category())
-                        {
-                            dialog.dialog(
-                            {
-                                buttons: [{label: "Close", class_name: "btn-secondary"}],
-                                message: "<span class=''>You must specify a category first.</span><br/><span class='text-muted small'>Ensure that you use consistent spelling and case for categories, and that you coordinate with your team members on category names.</span>",
-                                title: "Add Bounding Box",
-                            });
-
-                            return;
-                        }
-*/
                         component.x1(component.mousex());
                         component.y1(component.mousey());
                         component.x2(component.mousex());

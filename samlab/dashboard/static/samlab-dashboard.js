@@ -5,7 +5,6 @@
 define(
     [
         "debug",
-        "jquery",
         "knockout",
         "knockout.mapping",
         "lodash",
@@ -26,7 +25,7 @@ define(
         "samlab-dropdown",
         "samlab-favorite-control",
         "samlab-gridster-binding",
-    ], function(debug, jquery, ko, mapping, lodash, mousetrap, dom, favorites, notify, object, permissions, server, services, template, URI)
+    ], function(debug, ko, mapping, lodash, mousetrap, dom, favorites, notify, object, permissions, server, services, template, URI)
 {
     var log = debug("samlab-dashboard");
 
@@ -38,7 +37,11 @@ define(
     var rows = 24;
     var cols = 24;
     var gap = 6;
-    var bar_height = jquery("#samlab-dashboard .dashboard-bar").outerHeight(true);
+
+    var bar = document.querySelector(".dashboard-bar");
+    var bar_style = getComputedStyle(bar);
+    var bar_height = bar.offsetHeight + parseInt(bar_style.marginTop) + parseInt(bar_style.marginBottom);
+
     var cell_width = (window.innerWidth - ((cols+1) * gap)) / cols;
     var cell_height = (window.innerHeight - bar_height - ((rows+1) * gap)) / rows;
 
@@ -74,7 +77,6 @@ define(
                 [
                     { label: "Dropdown Test", icon: "bi-wrench", component: "samlab-dropdown-test-widget"},
                     { label: "Keyboard Test", icon: "bi-wrench", component: "samlab-keyboard-test-widget"},
-                    { label: "Layout Test", icon: "bi-wrench", component: "samlab-layout-test-widget"},
                     { label: "Notification Test", icon: "bi-wrench", component: "samlab-notify-test-widget"},
                     { label: "Socket Test", icon: "bi-wrench", component: "samlab-socket-test-widget"},
                     { label: "Widget Layout Test", icon: "bi-wrench", component: "samlab-widget-layout-test-widget"},
@@ -203,13 +205,13 @@ define(
 
     state.mouse_enter = function(widget, event)
     {
-        jquery(event.currentTarget).addClass("grid-item-hover");
+        event.currentTarget.classList.add("grid-item-hover");
         state.set_active(widget);
     }
 
     state.mouse_leave = function(widget, event)
     {
-        jquery(event.currentTarget).removeClass("grid-item-hover");
+        event.currentTarget.classList.remove("grid-item-hover");
     }
 
     state.close_widget = function(widget)

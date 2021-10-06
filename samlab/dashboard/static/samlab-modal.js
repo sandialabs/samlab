@@ -48,14 +48,6 @@ define([], function()
                     params.hidden(modal);
             });
 
-/*
-            if(params.draggable)
-                jquery(modal).draggable(
-                {
-                    handle: ".modal-header",
-                });
-*/
-
             modal.show();
         });
     }
