@@ -86,7 +86,7 @@ def get_put_image_tags(name, index):
         tags = flask.request.json["tags"]
         for tag in tags:
             if not tag:
-                flask.abort(flask.make_response(flask.jsonify(message="Tags cannot be empty."), 400))
+                flask.abort(flask.make_response(flask.jsonify(message="Tag category cannot be empty."), 400))
 
         image_collection = require_backend("image-collection", name)
         saved = image_collection.put_tags(index, tags)
