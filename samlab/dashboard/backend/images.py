@@ -199,3 +199,40 @@ class Directory(ImageCollection):
         tag = os.path.dirname(path)
         return [tag] if tag else []
 
+
+class ImageNet(ImageCollection):
+    def __init__(self, *, name, root, split):
+        self._name = name
+        self._root = root
+        self._split = split
+        self._update()
+
+    def _update(self):
+        import torchvision.datasets
+        self._dataset = torchvision.datasets.ImageNet(root=self._root, split=self._split)
+
+
+    def __len__(self):
+        return len(self._dataset)
+
+
+    def __repr__(self):
+        return f"{self.__class__.__module__}.{self.__class__.__name__}(root={self._root!r}, split={self._split!r})"
+
+
+    def get(self, index):
+        image, category_index = self._dataset.imgs[index]
+        return image
+
+
+    @property
+    def name(self):
+        return self._name
+
+
+    def tags(self, index):
+        image, category_index = self._dataset.imgs[index]
+        categories = self._dataset.classes[category_index]
+        return sorted(list(categories))
+
+
