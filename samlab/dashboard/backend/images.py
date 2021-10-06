@@ -78,6 +78,10 @@ class ImageCollection(abc.ABC):
         return False
 
 
+    def put_tags(self, index, tags):
+        return False
+
+
     @property
     def service(self):
         return "image-collection"

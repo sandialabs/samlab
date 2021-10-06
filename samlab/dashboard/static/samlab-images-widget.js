@@ -37,7 +37,6 @@ define([
                     collection: widget.params.collection,
                     color: "yellow",
                     count: null,
-                    edittagid: "w" + uuidv4(),
                     height: 0,
                     index: widget.params.index,
                     metadata: null,
@@ -46,24 +45,17 @@ define([
                     mousey: null,
                     new_bbox: null,
                     size: [0, 0],
-                    tagid: "w" + uuidv4(),
                     tags: [],
+                    tags_category: null,
+                    tags_id: "w" + uuidv4(),
+                    tags_mode: "view",
+                    tags_visible: widget.params.tags,
                     width: 0,
                     x1: null,
                     x2: null,
                     y1: null,
                     y2: null,
                 });
-
-                component.bbox_click = function(item, event)
-                {
-                    if(component.bboxes_mode() == "delete")
-                    {
-                        component.bboxes.remove(item);
-                        component.bboxes_save();
-                        event.stopPropagation();
-                    }
-                }
 
                 component.bboxes_reload = function()
                 {
@@ -74,6 +66,26 @@ define([
                 {
                     component.bboxes_reload();
                 });
+
+                component.bboxes_clear = function()
+                {
+                    if(component.bboxes_mode() == "delete")
+                    {
+                        component.bboxes.removeAll();
+                        component.bboxes_save();
+                        event.stopPropagation();
+                    }
+                }
+
+                component.bbox_delete = function(item, event)
+                {
+                    if(component.bboxes_mode() == "delete")
+                    {
+                        component.bboxes.remove(item);
+                        component.bboxes_save();
+                        event.stopPropagation();
+                    }
+                }
 
                 component.bboxes_mode_add = function()
                 {
@@ -140,22 +152,6 @@ define([
                         },
                     });
                 });
-
-                component.load_tags = ko.computed(function()
-                {
-                    server.get_json("/image-collection/" + component.collection() + "/" + component.index() + "/tags",
-                    {
-                        success: function(data)
-                        {
-                            component.tags(data.tags);
-                        },
-                    });
-                });
-
-                component.manage_tags = function()
-                {
-                    dashboard.add_widget("samlab-tag-widget");
-                }
 
                 component.next_image = function()
                 {
@@ -251,6 +247,79 @@ define([
                     });
                 }
 
+                component.tag_add = function()
+                {
+                    if(component.tags_mode() == "edit")
+                    {
+                        component.tags.push(component.tags_category());
+                        component.tags_save();
+                    }
+                }
+
+                component.tag_delete = function(tag)
+                {
+                    if(component.tags_mode() == "edit")
+                    {
+                        component.tags.remove(tag);
+                        component.tags_save();
+                        event.stopPropagation();
+                    }
+                }
+
+                component.tags_clear = function()
+                {
+                    if(component.tags_mode() == "edit")
+                    {
+                        component.tags.removeAll();
+                        component.tags_save();
+                    }
+                }
+
+                component.tags_reload = function()
+                {
+                    server.get_json("/image-collection/" + component.collection() + "/" + component.index() + "/tags",
+                    {
+                        success: function(data)
+                        {
+                            component.tags(data.tags);
+                        },
+                    });
+                }
+
+                component.tags_auto_reload = ko.computed(function()
+                {
+                    component.tags_reload();
+                });
+
+                component.tags_mode_items =
+                [
+                    {key: "edit", label: "<span class='text-success bi-pencil'/>&nbsp;Edit"},
+                    {key: "view", label: "<span class='text-primary bi-eye'/>&nbsp;View"},
+                ];
+
+                component.tags_save = function()
+                {
+                    var payload = {"tags": mapping.toJS(component.tags)};
+                    server.put_json("/image-collection/" + component.collection() + "/" + component.index() + "/tags", payload,
+                    {
+                        error: function(request)
+                        {
+                            var body = JSON.parse(request.responseText);
+                            notify.local({icon: "bi-exclamation-triangle", type: "bg-danger", message: body.message});
+                        },
+                        finished: function()
+                        {
+                            component.tags_reload();
+                        }
+                    });
+                }
+
+                component.tags_toggle = function()
+                {
+                    var visible = !component.tags_visible();
+                    component.tags_visible(visible);
+                }
+
                 component.update_mouse = function(e)
                 {
                     var svg = document.getElementById(component.bboxes_svg_id());
@@ -285,7 +354,7 @@ define([
 
     var module =
     {
-        widget: { width: 6, height: 12, params: {bboxes: true, collection: null, index: 0}},
+        widget: { width: 6, height: 12, params: {bboxes: false, tags: false, collection: null, index: 0}},
     };
 
     return module
