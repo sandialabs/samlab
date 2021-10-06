@@ -151,7 +151,7 @@ class COCO(ImageCollection):
         for annotation in annotations:
             category = self._coco.loadCats(annotation["category_id"])[0]
             result.add(category["name"])
-        return list(result)
+        return sorted(list(result))
 
 
 class Directory(ImageCollection):
