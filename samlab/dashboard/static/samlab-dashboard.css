@@ -4,6 +4,26 @@
     padding: 0;
 }
 
+/* New gridstack styles */
+
+
+.grid-stack-item-content
+{
+    background-color: #f8f8f8;
+    border: 1px solid #eee;
+    border-radius: 4px;
+//    display: flex;
+//    flex-direction: row;
+//    height: 100%;
+//    justify-content: stretch;
+//    overflow: auto;
+//    padding: 12px 0;
+//    left: 6px !important;
+//    right: 6px !important;
+//    width: 100%;
+}
+
+/* Obsolete gridster styles */
 .gridster ul
 {
     margin: 0;
