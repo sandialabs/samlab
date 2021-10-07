@@ -17,26 +17,26 @@ from samlab.debounce import debounce
 log = logging.getLogger(__name__)
 
 
-class DocumentCollection(abc.ABC):
+class TimeseriesCollection(abc.ABC):
     @abc.abstractmethod
     def __len__(self):
-        """Return the number of documents in the collection."""
+        """Return the number of timeseries in the collection."""
         raise NotImplementedError()
 
 
     @abc.abstractmethod
     def get(self, index):
-        """Return a document by index.
+        """Return a timeseries by index.
 
         Parameters
         ----------
         index: int, required
-            The index of the image to return.
+            The index of the timeseries to return.
 
         Returns
         -------
-        image: :class:`str` or :class:`numpy.ndarray`
-            If :class:`str`, the filesystem path of the image.
+        timeseries: :class:`numpy.ndarray`
+            Numpy array containing timeseries fields.
         """
         raise NotImplementedError()
 
@@ -49,11 +49,11 @@ class DocumentCollection(abc.ABC):
 
     @property
     def service(self):
-        return "document-collection"
+        return "timeseries-collection"
 
 
-class Directory(DocumentCollection, watchdog.events.FileSystemEventHandler):
-    def __init__(self, *, name, root, pattern=".*\.(html|txt)"):
+class Directory(TimeseriesCollection, watchdog.events.FileSystemEventHandler):
+    def __init__(self, *, name, root, pattern=".*\.(csv|CSV)"):
         self._name = name
         self._root = root
         self._pattern = pattern
