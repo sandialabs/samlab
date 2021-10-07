@@ -3,6 +3,8 @@
 # Government retains certain rights in this software.
 
 import flask
+import toyplot.svg
+import xml.etree
 
 from samlab.dashboard import application, require_auth, require_permissions
 from samlab.dashboard.service import require_backend
@@ -22,9 +24,7 @@ def get_timeseries(name, index):
     require_permissions(["read"])
     timeseries_collection = require_backend("timeseries-collection", name)
     timeseries = timeseries_collection.get(index)
-    if isinstance(timeseries, str):
-        return flask.send_file(timeseries)
-    else:
-        raise RuntimeError(f"Unknown timeseries type: {type(timeseries)}")
-
+    canvas, axes, mark = toyplot.plot(timeseries)
+    svg = toyplot.svg.render(canvas)
+    return flask.Response(xml.etree.ElementTree.tostring(svg, encoding="utf8", method="xml"), mimetype="image/svg+xml")
 

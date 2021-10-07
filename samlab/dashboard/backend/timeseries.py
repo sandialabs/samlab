@@ -8,6 +8,7 @@ import logging
 import os
 import re
 
+import numpy
 import watchdog.events
 import watchdog.observers
 
@@ -77,7 +78,7 @@ class Directory(TimeseriesCollection, watchdog.events.FileSystemEventHandler):
 
 
     def get(self, index):
-        return self._paths[index]
+        return numpy.loadtxt(self._paths[index])
 
 
     @property
@@ -105,4 +106,4 @@ class Directory(TimeseriesCollection, watchdog.events.FileSystemEventHandler):
                 paths.append(os.path.abspath(os.path.join(root, filename)))
         self._paths = sorted(paths)
 
-        socketio.emit("service-changed", {"service": "document-collection", "name": self._name})
+        socketio.emit("service-changed", {"service": "timeseries-collection", "name": self._name})

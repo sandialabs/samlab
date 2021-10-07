@@ -79,6 +79,7 @@ import samlab.dashboard.service.favorites
 import samlab.dashboard.service.images
 import samlab.dashboard.service.layouts
 import samlab.dashboard.service.notify
+import samlab.dashboard.service.timeseries
 
 # Setup default mappings.
 import samlab.dashboard.backend.favorites

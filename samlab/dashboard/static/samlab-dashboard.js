@@ -433,6 +433,10 @@ define(
         {
             module.add_widget("samlab-images-widget", {collection: name, index: 0});
         }
+        else if(service == "timeseries-collection")
+        {
+            module.add_widget("samlab-timeseries-widget", {collection: name, index: 0});
+        }
         else
         {
             module.add_widget("samlab-generic-content-widget", {service: service, name: name});
