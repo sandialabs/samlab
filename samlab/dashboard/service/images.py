@@ -44,7 +44,7 @@ def get_put_image_bboxes(name, index):
         image_collection = require_backend("image-collection", name)
         return flask.jsonify(bboxes=image_collection.bboxes(index))
 
-    elif flask.request.method == "PUT":
+    if flask.request.method == "PUT":
         require_permissions(["write"])
 
         bboxes = flask.request.json["bboxes"]
@@ -72,9 +72,26 @@ def get_image_metadata(name, index):
     return flask.jsonify(metadata=image_collection.metadata(index))
 
 
-@application.route("/image-collection/<name>/<int:index>/tags")
+@application.route("/image-collection/<name>/<int:index>/tags", methods=["GET", "PUT"])
 @require_auth
-def get_image_tags(name, index):
-    require_permissions(["read"])
-    image_collection = require_backend("image-collection", name)
-    return flask.jsonify(tags=image_collection.tags(index))
+def get_put_image_tags(name, index):
+    if flask.request.method == "GET":
+        require_permissions(["read"])
+        image_collection = require_backend("image-collection", name)
+        return flask.jsonify(tags=image_collection.tags(index))
+
+    if flask.request.method == "PUT":
+        require_permissions(["write"])
+
+        tags = flask.request.json["tags"]
+        for tag in tags:
+            if not tag:
+                flask.abort(flask.make_response(flask.jsonify(message="Tag category cannot be empty."), 400))
+
+        image_collection = require_backend("image-collection", name)
+        saved = image_collection.put_tags(index, tags)
+        if not saved:
+            flask.abort(flask.make_response(flask.jsonify(message="Backend doesn't support modifications."), 400))
+
+        return flask.jsonify()
+
