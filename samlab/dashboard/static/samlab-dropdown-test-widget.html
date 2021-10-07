@@ -1,0 +1,25 @@
+<div class="widget-content">
+    <div class="container-fluid">
+        <div class="grid-stack-item-handle">
+            <h1 class="h5">Dropdown Test</h1>
+        </div>
+        <hr></hr>
+        <div class="dropdown">
+            <button type="button"  class="btn btn-outline-primary dropdown-toggle" data-bs-toggle="dropdown" data-bs-boundary="window">Dropdown</button>
+            <div class="dropdown-menu" data-bind="foreach: options">
+                <!-- ko if: type == "group" -->
+                <h6 class="dropdown-header" data-bind="text: label"></h6>
+                <!-- /ko -->
+
+                <!-- ko if: type == "divider" -->
+                <div class="dropdown-divider"></div>
+                <!-- /ko -->
+
+                <!-- ko if: type == "item" -->
+                <a class="dropdown-item" data-bind="click: $parent.select_option, text: label"></a>
+                <!-- /ko -->
+            </div>
+        </div>
+        <button type="button" class="btn btn-primary" data-bind="click: modal_test">Modal Test</button>
+    </div>
+</div>

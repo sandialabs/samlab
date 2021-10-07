@@ -18,17 +18,13 @@ Documentation
     :maxdepth: 2
 
     installation.rst
-    dependencies.rst
-    compatibility.rst
     overview.rst
-    tutorials.rst
-    contributing.rst
-    release-notes.rst
-    python.rst
-    javascript.rst
-    widgets.rst
+    reference.rst
+    compatibility.rst
+    dependencies.rst
+    developers.rst
     support.rst
-    credits.rst
+    release-notes.rst
 
 Indices and tables
 ==================

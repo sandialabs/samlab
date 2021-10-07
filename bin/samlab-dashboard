@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 
 import argparse
-import imp
+import importlib.util
+import json
 import logging
 import os
 import threading
@@ -10,110 +11,86 @@ import webbrowser
 
 import requests
 
-import samlab.database
-import samlab.web.app.acl
-import samlab.web.app.auth
-import samlab.web.app.credentials
+import samlab.dashboard.acl
+import samlab.dashboard.authentication
+import samlab.dashboard.credentials
+
+
+# Parse command-line arguments.
+config_parser = argparse.ArgumentParser(add_help=False)
+config_parser.add_argument("--config", default=os.path.expanduser("~/.samlab/config.py"), help="Configuration file. Default: %(default)s")
+arguments, remaining_argv = config_parser.parse_known_args()
+
+if arguments.config and os.path.exists(arguments.config):
+    spec = importlib.util.spec_from_file_location("config", arguments.config)
+    config = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(config)
+else:
+    config = {}
+
+parser = argparse.ArgumentParser(description="Dashboard for managing data and monitoring experiments.", parents=[config_parser])
+parser.add_argument("--certificate", default=getattr(config, "certificate", None), help="TLS certificate.  Default: %(default)s")
+parser.add_argument("--data-dir", default=getattr(config, "data_dir", os.getcwd()), help="Data directory. Default: %(default)s")
+parser.add_argument("--debug", default=getattr(config, "debug", False), action="store_true", help="Enable server debugging.")
+parser.add_argument("--host", default=getattr(config, "host", "127.0.0.1"), help="Host interface for incoming connections. Default: %(default)s")
+parser.add_argument("--key", default=getattr(config, "key", None), help="TLS private key.  Default: %(default)s")
+parser.add_argument("--no-browser", default=getattr(config, "no_browser", False), action="store_true", help="Disable automatically opening a web browser at startup.")
+parser.add_argument("--port", type=int, default=getattr(config, "port", 4000), help="Host port for incoming connections. Default: %(default)s")
+parser.add_argument("--server-description", default=getattr(config, "server_description", None), help="Server description. Default: %(default)s")
+parser.add_argument("--server-name", default=getattr(config, "server_name", "samlab"), help="Server name. Default: %(default)s")
+parser.add_argument("--session-timeout", type=float, default=getattr(config, "session_timeout", 15 * 60), help="Session timeout in seconds. Default: %(default)s")
+arguments = parser.parse_args(remaining_argv)
 
 # Setup logging.
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.DEBUG if arguments.debug else logging.INFO)
+logging.getLogger("fsevents").setLevel(logging.INFO)
 logging.getLogger("engineio").setLevel(logging.ERROR)
 logging.getLogger("matplotlib").setLevel(logging.INFO)
 logging.getLogger("watchdog").setLevel(logging.INFO)
 log = logging.getLogger()
 
-# Parse command-line arguments.
-config_parser = argparse.ArgumentParser(add_help=False)
-config_parser.add_argument("--config", default="", help="Configuration file. Default: %(default)s")
-arguments, remaining_argv = config_parser.parse_known_args()
-
-config = {}
-if arguments.config:
-    try:
-        module_directory, module_name = os.path.split(arguments.config)
-        module_fp, module_pathname, module_description = imp.find_module(module_name[:-3], [module_directory])
-        config = imp.load_module(module_name[:-3], module_fp, module_pathname, module_description)
-        module_fp.close()
-    except Exception as e:
-        log.error("Error loading configuration file %s: %s", arguments.config, e)
-        exit(1)
-
-defaults = {
-    "certificate": getattr(config, "certificate", None),
-    "data_dir": getattr(config, "data_dir", None),
-    "database_name": getattr(config, "database_name", "samlab"),
-    "database_uri": getattr(config, "database_uri", "mongodb://localhost:27017"),
-    "database_replicaset": getattr(config, "database_replicaset", "samlab"),
-    "debug": getattr(config, "debug", False),
-    "host": getattr(config, "host", "127.0.0.1"),
-    "key": getattr(config, "key", None),
-    "no_browser": getattr(config, "no_browser", False),
-    "port": getattr(config, "port", 4000),
-    "server_name": getattr(config, "server_name", None),
-    "server_description": getattr(config, "server_description", None),
-    "session_timeout": getattr(config, "session_timeout", 15 * 60),
-}
-
-parser = argparse.ArgumentParser(description="Web interface for managing observations, experiments, and artifacts.", parents=[config_parser])
-parser.set_defaults(**defaults)
-parser.add_argument("--certificate", help="TLS certificate.  Default: %(default)s")
-parser.add_argument("--data-dir", default=None, help="If specified, store data in the given directory.")
-parser.add_argument("--database-name", help="Database containing experiments to be analyzed. Default: %(default)s")
-parser.add_argument("--database-replicaset", help="Database replica set name. Default: %(default)s")
-parser.add_argument("--database-uri", help="Database connection string. Default: %(default)s")
-parser.add_argument("--debug", action="store_true", help="Enable server debugging.")
-parser.add_argument("--host", help="Host interface for incoming connections. Default: %(default)s")
-parser.add_argument("--key", help="TLS private key.  Default: %(default)s")
-parser.add_argument("--no-browser", action="store_true", help="Disable automatically opening a web browser at startup.")
-parser.add_argument("--port", type=int, help="Host port for incoming connections. Default: %(default)s")
-parser.add_argument("--server-description", help="Server description. Default: %(default)s")
-parser.add_argument("--server-name", help="Server name. Default: %(default)s")
-parser.add_argument("--session-timeout", type=float, help="Session timeout in seconds. Default: %(default)s")
-arguments = parser.parse_args(remaining_argv)
-
-# If data-dir was specified, run the database server.
-if arguments.data_dir is not None:
-    dbserver = samlab.database.Server(arguments.data_dir)
-    arguments.database_uri = dbserver.uri
-    arguments.database_replicaset = dbserver.replicaset
-
 # Setup the web server.
-from samlab.web.app import application, socketio
+from samlab.dashboard import application, socketio
 
-# Configure the web server.
-application.config["acl"] = config.acl if hasattr(config, "acl") else samlab.web.app.acl.permit_all()
-application.config["authenticate"] = config.authentication if hasattr(config, "authentication") else samlab.web.app.auth.none()
+application.config["acl"] = getattr(config, "acl", samlab.dashboard.acl.PermitAll())
+application.config["authentication"] = getattr(config, "authentication", samlab.dashboard.authentication.Null())
 application.config["certificate"] = arguments.certificate
-application.config["check-credentials"] = config.credential_check if hasattr(config, "credential_check") else samlab.web.app.credentials.pass_empty()
-application.config["database-name"] = arguments.database_name
-application.config["database-uri"] = arguments.database_uri
-application.config["database-replicaset"] = arguments.database_replicaset
+application.config["credentials"] = getattr(config, "credentials", samlab.dashboard.credentials.PermitAny())
 application.config["debug"] = arguments.debug
 application.config["host"] = arguments.host
 application.config["key"] = arguments.key
+application.config["layout"] = getattr(config, "layout", [])
 application.config["no-browser"] = arguments.no_browser
 application.config["port"] = arguments.port
-application.config["server-name"] = arguments.server_name if arguments.server_name is not None else arguments.database_name
 application.config["server-description"] = arguments.server_description
+application.config["server-name"] = arguments.server_name
 application.config["session-timeout"] = arguments.session_timeout
-application.config["layout"] = config.layout if hasattr(config, "layout") else [{"component":"samlab-timeseries-widget"}]
 
 for key, value in sorted(application.config.items()):
     if key not in ["SECRET_KEY"]:
         log.info("Configuration: %s: %s", key, value)
 
-# Load request handlers (note: must happen *after* all configuration).
-import samlab.web.app.handlers
-import samlab.web.app.handlers.artifact
-import samlab.web.app.handlers.asynchronous
-import samlab.web.app.handlers.delivery
-import samlab.web.app.handlers.experiment
-import samlab.web.app.handlers.favorite
-import samlab.web.app.handlers.layout
-import samlab.web.app.handlers.object
-import samlab.web.app.handlers.observation
-import samlab.web.app.handlers.timeseries
-import samlab.web.app.watch
+# Setup services (note: must happen *after* all configuration).
+import samlab.dashboard.service.asynchronous
+import samlab.dashboard.service.basic
+import samlab.dashboard.service.backends
+import samlab.dashboard.service.documents
+import samlab.dashboard.service.favorites
+import samlab.dashboard.service.images
+import samlab.dashboard.service.layouts
+import samlab.dashboard.service.notify
+
+# Setup default mappings.
+import samlab.dashboard.backend.favorites
+import samlab.dashboard.backend.layouts
+
+backends = [
+    samlab.dashboard.backend.favorites.JSONFile(storage=os.path.expanduser("~/.samlab/favorites.json")),
+    samlab.dashboard.backend.layouts.JSONFile(storage=os.path.expanduser("~/.samlab/layouts.json")),
+    ] + getattr(config, "backends", [])
+
+for backend in backends:
+    samlab.dashboard.service.register_backend(backend)
 
 # Optionally open a web browser at startup.
 def open_browser(config):
@@ -137,12 +114,14 @@ if not application.config["no-browser"]:
     threading.Thread(target=open_browser, args=(application.config,), daemon=True).start()
 
 # Start the server.
+kwargs = {
+    "debug": application.config["debug"],
+    "host": application.config["host"],
+    "port": application.config["port"],
+}
+
 if application.config["certificate"] and application.config["key"]:
-    socketio.run(application, host=application.config["host"], port=application.config["port"], ssl_context=(application.config["certificate"], application.config["key"]), debug=application.config["debug"])
-else:
-    socketio.run(application, host=application.config["host"], port=application.config["port"], debug=application.config["debug"])
+    kwargs["certfile"] = application.config["certificate"]
+    kwargs["keyfile"] = application.config["key"]
 
-# Stop the database server.
-if arguments.data_dir is not None:
-    dbserver.stop()
-
+socketio.run(application, **kwargs)

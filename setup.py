@@ -21,23 +21,17 @@ setup(
     install_requires=[
         "arrow",
         "blessings",
-        "cachetools",
-        "Flask",
+        "Flask>=2",
         "flask-socketio",
-#        "huey",
         "ldap3",
-        "nose",
-        "pymongo>=3.6",
-        "pyparsing",
-#        "redis",
         "requests",
-        "toyplot",
+        "watchdog",
     ],
     maintainer="Timothy M. Shead",
     maintainer_email="tshead@sandia.gov",
     packages=find_packages(),
     package_data={
-        "samlab.web.app": [
+        "samlab.dashboard": [
             "static/*",
             "static/css/*",
             "static/fonts/*",

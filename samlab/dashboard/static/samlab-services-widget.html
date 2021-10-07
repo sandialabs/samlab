@@ -1,0 +1,26 @@
+<div class="widget-content">
+    <div class="container-fluid">
+        <div class="grid-stack-item-handle">
+            <h1 class="h5">Services</h1>
+        </div>
+        <hr></hr>
+        <table class="table table-borderless">
+            <thead>
+                <tr>
+                    <th></th>
+                    <th>Name</th>
+                </tr>
+            </thead>
+            <tbody data-bind="foreach: backends">
+                <tr>
+                    <td></td>
+                    <td>
+                        <a href="#" data-bind="click: $component.show_service">
+                            <span data-bind="text: service"></span>/<span data-bind="text: name"></span>
+                        </a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
