@@ -11,9 +11,9 @@
             <button type="button" class="ms-1 btn btn-sm btn-outline-secondary" data-bind="click: last_image" title="Last image"><span class="bi-skip-forward-fill"></span></button>
 
             <span class="ms-1">Image <span data-bind="text: index() + 1"></span>/<span data-bind="text: count"></span></span>
+            <input class="form-control form-control-sm ms-auto" style="width: 100px" type="text" placeholder="Search" data-bind="value: search">
 
-            <!--<samlab-favorite-control params="otype: 'observations', oid: observation.id"></samlab-favorite-control>-->
-            <div class="dropdown ms-auto">
+            <div class="dropdown ms-1">
                 <button type="button" class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" data-boundary="window">View</button>
                 <div class="dropdown-menu">
                     <a class="dropdown-item" data-bind="click: $component.open_image"><span class="bi-card-image"></span>&nbsp;Standalone image</a>
