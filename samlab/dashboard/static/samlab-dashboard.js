@@ -25,6 +25,7 @@ define(
         "samlab-combo-control",
         "samlab-dropdown",
         "samlab-favorite-control",
+        "samlab-gridstack-binding",
         "samlab-gridstack-component",
         "samlab-gridster-binding",
     ], function(debug, ko, mapping, lodash, mousetrap, dom, favorites, notify, object, permissions, server, services, template, URI)
