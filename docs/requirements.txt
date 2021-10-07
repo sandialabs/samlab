@@ -1,9 +1,12 @@
 Flask
 Flask-socketio
+IPython
 arrow
 ldap3
 nbsphinx
+numpy
 requests
 sphinx >= 3.5
 sphinx-gallery
 sphinx_rtd_theme
+torch
