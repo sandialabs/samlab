@@ -9,22 +9,17 @@ The Samlab documentation:
 
 * http://samlab.readthedocs.io
 
-Visit our GitHub repository for access to source code, issue tracker, and the wiki:
+Visit our GitHub repository for access to source code, issue tracker, discussions, and the wiki:
 
 * http://github.com/sandialabs/samlab
 
-We also have a continuous integration server that runs the Samlab regression test
-suite anytime changes are committed to GitHub:
-
-* https://travis-ci.org/sandialabs/samlab
-
-And here are our test coverage stats, also updated automatically when modifications are committed:
+And here are our test coverage stats, updated automatically when modifications are committed:
 
 * https://coveralls.io/r/sandialabs/samlab
 
 For Samlab questions, comments, or suggestions, get in touch with the team at:
 
-* https://gitter.im/sandialabs/samlab
+* https://github.com/sandialabs/samlab/discussions
 
 Otherwise, you can contact Tim directly:
 
