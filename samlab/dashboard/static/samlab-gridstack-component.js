@@ -1,6 +1,6 @@
 define(["debug", "gridstack-h5", "knockout", "knockout.mapping"], function(debug, gridstack, ko, mapping)
 {
-    var component_name = "samlab-dashboard-grid";
+    var component_name = "samlab-gridstack-component";
     var log = debug(component_name);
 
     ko.components.register(component_name,
