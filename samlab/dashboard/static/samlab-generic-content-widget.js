@@ -6,8 +6,7 @@ define([
     "knockout",
     "knockout.mapping",
     "samlab-dashboard",
-    "samlab-object-manager",
-    ], function(ko, mapping, dashboard, object)
+    ], function(ko, mapping, dashboard)
 {
     var component_name = "samlab-generic-content-widget";
     ko.components.register(component_name,
