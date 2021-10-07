@@ -3,15 +3,18 @@
 // Government retains certain rights in this software.
 
 define([
+    "debug",
     "knockout",
     "knockout.mapping",
     "lodash",
     "samlab-dashboard",
     "samlab-favorites",
     "samlab-services",
-    ], function(ko, mapping, lodash, dashboard, favorites, services)
+    ], function(debug, ko, mapping, lodash, dashboard, favorites, services)
 {
     var component_name = "samlab-favorites-widget";
+    var log = debug(component_name);
+
     ko.components.register(component_name,
     {
         viewModel:
@@ -36,6 +39,12 @@ define([
 
                     return result;
                 });
+
+                component.delete_favorite = function(favorite)
+                {
+                    log("delete_favorite", favorite);
+                    favorites.delete(favorite.service(), favorite.name());
+                }
 
                 component.show_favorite = function(favorite)
                 {
