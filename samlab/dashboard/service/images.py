@@ -59,7 +59,7 @@ def get_put_image_bboxes(name, index):
         image_collection = require_backend("image-collection", name)
         saved = image_collection.put_bboxes(index, bboxes)
         if not saved:
-            flask.abort(flask.make_response(flask.jsonify(message="Backend doesn't support modifications."), 400))
+            flask.abort(flask.make_response(flask.jsonify(message="This dataset is read-only."), 400))
 
         return flask.jsonify()
 
@@ -91,7 +91,7 @@ def get_put_image_tags(name, index):
         image_collection = require_backend("image-collection", name)
         saved = image_collection.put_tags(index, tags)
         if not saved:
-            flask.abort(flask.make_response(flask.jsonify(message="Backend doesn't support modifications."), 400))
+            flask.abort(flask.make_response(flask.jsonify(message="This dataset is read-only."), 400))
 
         return flask.jsonify()
 
