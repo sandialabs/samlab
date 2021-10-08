@@ -2,9 +2,11 @@
 // (NTESS).  Under the terms of Contract DE-NA0003525 with NTESS, the U.S.
 // Government retains certain rights in this software.
 
-define(["knockout", "knockout.mapping"], function(ko, mapping)
+define(["debug", "knockout", "knockout.mapping"], function(debug, ko, mapping)
 {
     var component_name = "samlab-layout-test-widget";
+    var log = debug(component_name);
+
     ko.components.register(component_name,
     {
         viewModel:
@@ -16,9 +18,18 @@ define(["knockout", "knockout.mapping"], function(ko, mapping)
                     y: widget.y,
                     width: widget.width,
                     height: widget.height,
+                    contentWidth: 0,
+                    contentHeight: 0,
                 });
 
                 component.state = widget.params.state;
+
+                var observer = new ResizeObserver(function(entries, observer)
+                {
+                    component.contentWidth(entries[0].contentRect.width);
+                    component.contentHeight(entries[0].contentRect.height);
+                });
+                observer.observe(component_info.element.querySelector(".widget-content"));
 
                 return component;
             },
