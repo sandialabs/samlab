@@ -12,7 +12,6 @@ define(
         "samlab-dom",
         "samlab-favorites",
         "samlab-notify",
-        "samlab-object-manager",
         "samlab-permissions",
         "samlab-server",
         "samlab-services",
@@ -25,7 +24,7 @@ define(
         "samlab-dropdown",
         "samlab-favorite-control",
         "samlab-gridster-binding",
-    ], function(debug, ko, mapping, lodash, mousetrap, dom, favorites, notify, object, permissions, server, services, template, URI)
+    ], function(debug, ko, mapping, lodash, mousetrap, dom, favorites, notify, permissions, server, services, template, URI)
 {
     var log = debug("samlab-dashboard");
 
@@ -443,12 +442,7 @@ define(
         }
     }
 
-    /**
-     * Automatically delete a widget if an object is deleted from the database.
-     * @param {object} widget - The widget to be deleted.
-     * @param {string} otype - The type of object to monitor (`observations`, `experiments`, `artifacts`).
-     * @param {string} oid - ID of the object to monitor.
-     */
+/*
     module.auto_delete = function(widget, otype, oid)
     {
         var otype = ko.unwrap(otype);
@@ -462,6 +456,7 @@ define(
             }
         });
     }
+*/
 
     // Setup the initial dashboard state
     var uri = URI(window.location);

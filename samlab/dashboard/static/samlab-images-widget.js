@@ -44,6 +44,7 @@ define([
                     mousex: null,
                     mousey: null,
                     new_bbox: null,
+                    search: null,
                     size: [0, 0],
                     tags: [],
                     tags_category: null,
@@ -246,6 +247,18 @@ define([
                         },
                     });
                 }
+
+                var search_in_progress = false;
+
+                component.search.subscribe(function(value)
+                {
+                    if(search_in_progress)
+                        return;
+                    search_in_progress = true;
+                    component.index(Math.max(1, Math.min(parseInt(value), component.count())) - 1);
+                    component.search("");
+                    search_in_progress = false;
+                });
 
                 component.tag_add = function()
                 {
