@@ -10,20 +10,16 @@
             <button type="button" class="ms-1 btn btn-sm btn-outline-secondary" data-bind="click: next_document" title="Next document"><span class="bi-skip-end-fill"></span></button>
             <button type="button" class="ms-1 btn btn-sm btn-outline-secondary" data-bind="click: last_document" title="Last document"><span class="bi-skip-forward-fill"></span></button>
 
-            <span class="ms-1">Document <span data-bind="text: index()+1"></span>/<span data-bind="text: count"></span></span>
+            <span class="ms-1">Timeseries <span data-bind="text: index()+1"></span>/<span data-bind="text: count"></span></span>
 
-            <!--<samlab-favorite-control params="otype: 'observations', oid: observation.id"></samlab-favorite-control>-->
-            <div class="dropdown ms-auto">
-                <button type="button" class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" data-boundary="window">View</button>
-                <div class="dropdown-menu">
-                    <a class="dropdown-item" data-bind="click: $component.open_document"><span class="bi-card-list"></span>&nbsp;Standalone document</a>
-                </div>
-            </div>
+            <label class="small ms-auto">Smoothing:</label>
+            <input class="form-range ms-1" type="range" style="width: 100px;" data-bind="value:smoothing" min="0" max="0.999" step="0.001"></input>
+            <samlab-combo-control class="ms-1" params="current: yscale, items: yscale_items"></samlab-combo-control>
         </div>
 
         <hr></hr>
 
-        <div data-bind="html: content">
+        <div class="plot d-flex flex-row justify-content-center align-items-center" data-bind="html: plot">
         </div>
     </div>
 </div>

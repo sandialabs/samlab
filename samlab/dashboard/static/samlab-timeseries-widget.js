@@ -24,9 +24,12 @@ define([
                 var component = mapping.fromJS(
                 {
                     collection: widget.params.collection,
-                    content: null,
                     count: null,
                     index: widget.params.index,
+                    plot: null,
+                    size: [100, 100],
+                    smoothing: widget.params.smoothing,
+                    yscale: widget.params.yscale,
                 });
 
                 component.first_document = function()
@@ -47,10 +50,18 @@ define([
                     if(component.count())
                     {
                         var uri = "/timeseries-collection/" + component.collection() + "/" + component.index();
-                        server.get_text(uri, function(text)
-                        {
-                            log("Updating content.");
-                            component.content(text);
+                        var data = {
+                            height: component.size()[1] - 100,
+                            smoothing: component.smoothing(),
+                            width: component.size()[0] - 100,
+                            yscale: component.yscale(),
+                        };
+
+                        server.post_json(uri, data, {
+                            success: function(data)
+                            {
+                                component.plot(data.plot);
+                            },
                         });
                     }
                 });
@@ -105,6 +116,20 @@ define([
                     });
                 }
 
+                component.size.extend({rateLimit: {timeout: 100, method: "notifyWhenChangesStop"}});
+
+                component.yscale_items =
+                [
+                    {key: "linear", label: "Linear"},
+                    {key: "log", label: "Log"},
+                ];
+
+                var observer = new ResizeObserver(function(entries, observer)
+                {
+                    component.size([entries[0].contentRect.width, entries[0].contentRect.height]);
+                });
+                observer.observe(component_info.element.querySelector(".widget-content"));
+
                 socket.on("service-changed", function(changed)
                 {
                     if(changed.service == "timeseries-collection" && changed.name == component.collection())
@@ -125,7 +150,7 @@ define([
 
     var module =
     {
-        widget: { width: 6, height: 12, params: {collection: null, index: 0}},
+        widget: { width: 6, height: 12, params: {collection: null, index: 0, smoothing: 0.5, yscale: "linear"}},
     };
 
     return module
