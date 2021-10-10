@@ -150,7 +150,7 @@ define([
 
     var module =
     {
-        widget: { width: 6, height: 12, params: {collection: null, index: 0, smoothing: 0.5, yscale: "linear"}},
+        widget: { width: 4, height: 12, params: {collection: null, index: 0, smoothing: 0.5, yscale: "linear"}},
     };
 
     return module

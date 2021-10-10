@@ -33,16 +33,13 @@ define(
 
     document.querySelector("#samlab-dashboard").append(dom.parse(template));
 
-    var rows = 24;
-    var cols = 24;
-    var gap = 6;
-
     var bar = document.querySelector(".dashboard-bar");
     var bar_style = getComputedStyle(bar);
     var bar_height = bar.offsetHeight + parseInt(bar_style.marginTop) + parseInt(bar_style.marginBottom);
 
-    var cell_width = (window.innerWidth - ((cols+1) * gap)) / cols;
-    var cell_height = (window.innerHeight - bar_height - ((rows+1) * gap)) / rows;
+    var margin = 4;
+    var rows = 12;
+    var cell_height = (window.innerHeight - bar_height) / rows;
 
     // Setup private state.
     var state = mapping.fromJS(
@@ -79,7 +76,7 @@ define(
                 ],
             },
         ],
-        options: {margin: "4px"},
+        options: {cellHeight: cell_height, margin: margin},
         server: {name: null, description: null},
         tabs: false,
         widgets: [],
@@ -294,7 +291,7 @@ define(
                     params: {},
                     x: null,
                     y: null,
-                    width: 4,
+                    width: 3,
                     height: 6,
                 });
 

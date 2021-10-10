@@ -133,7 +133,7 @@ define([
 
     var module =
     {
-        widget: { width: 6, height: 12, params: {collection: null, index: 0}},
+        widget: { width: 4, height: 12, params: {collection: null, index: 0}},
     };
 
     return module
