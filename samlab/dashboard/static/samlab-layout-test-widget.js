@@ -16,14 +16,20 @@ define(["debug", "knockout", "knockout.mapping"], function(debug, ko, mapping)
                 log("createViewModel", widget, component_info);
 
                 var component = mapping.fromJS({
+                    x: widget.x,
+                    y: widget.y,
+                    width: widget.width,
+                    height: widget.height,
+                    contentWidth: 0,
+                    contentHeight: 0,
                 });
 
-                component.x = widget.x;
-                component.y = widget.y;
-                component.width = widget.width;
-                component.height = widget.height;
-
-                component.state = widget.params.state;
+                var observer = new ResizeObserver(function(entries, observer)
+                {
+                    component.contentWidth(entries[0].contentRect.width);
+                    component.contentHeight(entries[0].contentRect.height);
+                });
+                observer.observe(component_info.element.querySelector(".widget-content"));
 
                 return component;
             },

@@ -1,17 +1,13 @@
 Flask
 Flask-socketio
+IPython
 arrow
-huey
-hyperopt
 ldap3
 nbsphinx
-nose
-pymongo>=3.6
-pyparsing
-redis
+numpy
 requests
-six
-sphinx-js
+sphinx >= 3.5
+sphinx-gallery
 sphinx_rtd_theme
-sphinxcontrib-napoleon
-toyplot
+torch
+tqdm

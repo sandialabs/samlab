@@ -12,7 +12,6 @@ define(
         "samlab-dom",
         "samlab-favorites",
         "samlab-notify",
-        "samlab-object-manager",
         "samlab-permissions",
         "samlab-server",
         "samlab-services",
@@ -25,7 +24,7 @@ define(
         "samlab-dropdown",
         "samlab-favorite-control",
         "samlab-gridstack-binding",
-    ], function(debug, ko, mapping, lodash, mousetrap, dom, favorites, notify, object, permissions, server, services, template, URI)
+    ], function(debug, ko, mapping, lodash, mousetrap, dom, favorites, notify, permissions, server, services, template, URI)
 {
     var log = debug("samlab-dashboard");
 
@@ -72,11 +71,11 @@ define(
                 label: "Development",
                 children:
                 [
-                    {label: "Dropdown Test", icon: "bi-wrench", component: "samlab-dropdown-test-widget"},
-                    {label: "Keyboard Test", icon: "bi-wrench", component: "samlab-keyboard-test-widget"},
-                    {label: "Notification Test", icon: "bi-wrench", component: "samlab-notify-test-widget"},
-                    {label: "Socket Test", icon: "bi-wrench", component: "samlab-socket-test-widget"},
-                    {label: "Widget Layout Test", icon: "bi-wrench", component: "samlab-layout-test-widget"},
+                    { label: "Dropdown Test", icon: "bi-wrench", component: "samlab-dropdown-test-widget"},
+                    { label: "Keyboard Test", icon: "bi-wrench", component: "samlab-keyboard-test-widget"},
+                    { label: "Layout Test", icon: "bi-wrench", component: "samlab-layout-test-widget"},
+                    { label: "Notification Test", icon: "bi-wrench", component: "samlab-notify-test-widget"},
+                    { label: "Socket Test", icon: "bi-wrench", component: "samlab-socket-test-widget"},
                 ],
             },
         ],
@@ -416,18 +415,17 @@ define(
         {
             module.add_widget("samlab-images-widget", {collection: name, index: 0});
         }
+        else if(service == "timeseries-collection")
+        {
+            module.add_widget("samlab-timeseries-widget", {collection: name, index: 0});
+        }
         else
         {
             module.add_widget("samlab-generic-content-widget", {service: service, name: name});
         }
     }
 
-    /**
-     * Automatically delete a widget if an object is deleted from the database.
-     * @param {object} widget - The widget to be deleted.
-     * @param {string} otype - The type of object to monitor (`observations`, `experiments`, `artifacts`).
-     * @param {string} oid - ID of the object to monitor.
-     */
+/*
     module.auto_delete = function(widget, otype, oid)
     {
         var otype = ko.unwrap(otype);
@@ -441,6 +439,7 @@ define(
             }
         });
     }
+*/
 
     // Setup the initial dashboard state
     var uri = URI(window.location);
