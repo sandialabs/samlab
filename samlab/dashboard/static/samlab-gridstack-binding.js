@@ -10,11 +10,9 @@ define(["debug", "gridstack-h5", "knockout", "knockout.mapping"], function(debug
             ko.virtualElements.emptyNode(element);
 
             var options = mapping.toJS(valueAccessor().options) || {};
-            log("options", options);
 
             var grid = gridstack.init(options, element);
             var grid_items = [];
-            var updating = false;
 
             var widgets = valueAccessor().widgets;
             widgets.subscribe(function(changes)
@@ -29,6 +27,13 @@ define(["debug", "gridstack-h5", "knockout", "knockout.mapping"], function(debug
                         element.appendChild(widget_element);
                         ko.applyBindings(widget_context, widget_element)
                         grid.makeWidget(widget_element);
+                        log(widget_element);
+
+                        // Sync ko state with gridstack state.
+                        widget.x(widget_element.gridstackNode.x);
+                        widget.y(widget_element.gridstackNode.y);
+                        widget.width(widget_element.gridstackNode.w);
+                        widget.height(widget_element.gridstackNode.h);
                     }
                     else if(change.status == "deleted")
                     {
@@ -45,6 +50,7 @@ define(["debug", "gridstack-h5", "knockout", "knockout.mapping"], function(debug
                 {
                     var index = Array.from(change.el.parentNode.children).indexOf(change.el);
                     var widget = widgets()[index];
+                    // Sync ko state with gridstack state.
                     widget.x(change.x);
                     widget.y(change.y);
                     widget.width(change.w);

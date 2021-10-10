@@ -13,8 +13,6 @@ define(["debug", "knockout", "knockout.mapping"], function(debug, ko, mapping)
         {
             createViewModel: function(widget, component_info)
             {
-                log("createViewModel", widget, component_info);
-
                 var component = mapping.fromJS({
                     x: widget.x,
                     y: widget.y,
@@ -40,7 +38,7 @@ define(["debug", "knockout", "knockout.mapping"], function(debug, ko, mapping)
 
     var module =
     {
-        widget: { params: {state: ""}},
+        widget: { params: {}},
     };
 
     return module;
