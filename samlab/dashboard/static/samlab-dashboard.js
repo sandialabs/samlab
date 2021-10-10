@@ -19,15 +19,12 @@ define(
         "text!samlab-dashboard.html",
         "URI",
         "css!gridstack.css",
-        "css!jquery.gridster.css",
         "css!samlab-dashboard.css",
         "knockout-projections",
         "samlab-combo-control",
         "samlab-dropdown",
         "samlab-favorite-control",
         "samlab-gridstack-binding",
-        "samlab-gridstack-component",
-        "samlab-gridster-binding",
     ], function(debug, ko, mapping, lodash, mousetrap, dom, favorites, notify, object, permissions, server, services, template, URI)
 {
     var log = debug("samlab-dashboard");
@@ -125,21 +122,6 @@ define(
     state.show_favorite = function(favorite)
     {
         module.show_service(favorite.service, favorite.name);
-    };
-
-    state.gridster_options =
-    {
-        collision: {wait_for_mouseup: true},
-        draggable: {handle: "h1"},
-        min_cols: cols,
-        min_rows: rows,
-        max_cols: cols,
-        max_rows: rows * 3,
-        resize: {enabled: true},
-        shift_larger_widgets_down: false,
-        shift_widgets_up: false,
-        widget_base_dimensions: [cell_width, cell_height],
-        widget_margins: [gap, gap],
     };
 
     state.lid.subscribe(function(lid)

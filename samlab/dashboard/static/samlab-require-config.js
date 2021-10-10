@@ -41,7 +41,6 @@ require.config({
         "gridstack": "css/gridstack.min",
         "gridstack-h5": "js/gridstack-h5",
         "jquery": "js/jquery.min",
-        "jquery.gridster": "js/jquery.gridster",
         "jquery.ui": "js/jquery-ui.min",
         "knockout": "js/knockout-3.5.1",
         "knockout-projections": "js/knockout-projections-1.1.0",

@@ -46,23 +46,12 @@
             </div>
         </div>
     </div>
-    <div class="grid-stack" data-bind="gridStack: {widgets: widgets }">
-        <div class="grid-stack-item">
+    <div class="grid-stack" data-bind="gridStack: {widgets: widgets}">
+        <div class="grid-stack-item" data-bind="attr: {'gs-x': $data.x, 'gs-y': $data.y, 'gs-w': $data.width, 'gs-h': $data.height}">
             <div class="grid-stack-item-content">
                 <div data-bind="component: {name: component, params: $data}"></div>
                 <button data-bind="click: $root.close_widget">Delete me</button>
             </div>
         </div>
     </div>
-<!--
-    <div class="dashboard-grid gridster">
-        <ul data-bind="gridster: {widgets: widgets, options: gridster_options}">
-            <li class="grid-item" data-bind="event: {mouseenter: $parent.mouse_enter, mouseleave: $parent.mouse_leave}">
-                <div class="grid-item-content" data-bind="component: {name: component, params: $data}"></div>
-                <button type="button" class="btn-close grid-item-close" data-bind="click: $parent.close_widget" title="Close widget"></button>
-            </li>
-        </ul>
-    </div>
-    <samlab-gridstack-component params="widgets: widgets"></samlab-gridstack-component>
--->
 </div>
