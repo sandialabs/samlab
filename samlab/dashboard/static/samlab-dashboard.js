@@ -56,34 +56,32 @@ define(
                 label: "Lists",
                 children:
                 [
-                    { label: "Favorites", icon: "bi-list-stars", component: "samlab-favorites-widget"},
-                    { label: "Services", icon: "bi-card-list", component: "samlab-services-widget"},
+                    {label: "Favorites", icon: "bi-list-stars", component: "samlab-favorites-widget"},
+                    {label: "Services", icon: "bi-card-list", component: "samlab-services-widget"},
                 ],
             },
             {
                 label: "Miscellaneous",
                 children:
                 [
-                    { label: "About", icon: "bi-file-person", component: "samlab-markup-viewer-widget", params: {uri: "/static/samlab-about.html"}},
-                    { label: "Acknowledgements", icon: "bi-file-person", component: "samlab-markup-viewer-widget", params: {uri: "/static/samlab-acknowledgements.html"}},
-                    { label: "Edit Attributes", icon: "bi-pencil", component: "samlab-attribute-widget"},
-                    { label: "Edit Bounding Boxes", icon: "bi-square", component: "samlab-bounding-box-widget"},
-                    { label: "Edit Tags", icon: "bi-tag", component: "samlab-tag-widget"},
+                    {label: "About", icon: "bi-file-person", component: "samlab-markup-viewer-widget", params: {uri: "/static/samlab-about.html"}},
+                    {label: "Acknowledgements", icon: "bi-file-person", component: "samlab-markup-viewer-widget", params: {uri: "/static/samlab-acknowledgements.html"}},
                 ],
             },
             {
                 label: "Development",
                 children:
                 [
-                    { label: "Dropdown Test", icon: "bi-wrench", component: "samlab-dropdown-test-widget"},
-                    { label: "Keyboard Test", icon: "bi-wrench", component: "samlab-keyboard-test-widget"},
-                    { label: "Notification Test", icon: "bi-wrench", component: "samlab-notify-test-widget"},
-                    { label: "Socket Test", icon: "bi-wrench", component: "samlab-socket-test-widget"},
-                    { label: "Widget Layout Test", icon: "bi-wrench", component: "samlab-layout-test-widget"},
+                    {label: "Dropdown Test", icon: "bi-wrench", component: "samlab-dropdown-test-widget"},
+                    {label: "Keyboard Test", icon: "bi-wrench", component: "samlab-keyboard-test-widget"},
+                    {label: "Notification Test", icon: "bi-wrench", component: "samlab-notify-test-widget"},
+                    {label: "Socket Test", icon: "bi-wrench", component: "samlab-socket-test-widget"},
+                    {label: "Widget Layout Test", icon: "bi-wrench", component: "samlab-layout-test-widget"},
                 ],
             },
         ],
-        server: { name: null, description: null},
+        options: {margin: "4px"},
+        server: {name: null, description: null},
         tabs: false,
         widgets: [],
     });

@@ -9,7 +9,10 @@ define(["debug", "gridstack-h5", "knockout", "knockout.mapping"], function(debug
             var template = element.firstElementChild;
             ko.virtualElements.emptyNode(element);
 
-            var grid = gridstack.init({}, element);
+            var options = mapping.toJS(valueAccessor().options) || {};
+            log("options", options);
+
+            var grid = gridstack.init(options, element);
             var grid_items = [];
             var updating = false;
 
