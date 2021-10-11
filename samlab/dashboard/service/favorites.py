@@ -13,7 +13,7 @@ from samlab.dashboard.service import require_backend
 def get_favorites():
     require_permissions(["read"])
     favorites = require_backend("favorites")
-    return flask.jsonify(favorites=list(favorites.get()))
+    return flask.jsonify(favorites=favorites.get())
 
 
 @application.route("/favorites/<allow(layouts):service>/<name>", methods=["PUT", "DELETE"])
