@@ -46,7 +46,7 @@ class Favorites(abc.ABC):
 
     @abc.abstractmethod
     def get(self):
-        """Yield a sequence of favorites."""
+        """Return a sequence of favorites."""
         raise NotImplementedError()
 
 
@@ -111,6 +111,9 @@ class JSONFile(Favorites):
 
 
     def get(self):
+        results = []
         for service, names in self._favorites.items():
             for name, label in names.items():
-                yield {"service": service, "name": name, "label": label}
+                results.append({"service": service, "name": name, "label": label})
+        results = sorted(results, key=lambda f: (f["service"], f["label"], f["name"]))
+        return results
