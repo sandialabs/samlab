@@ -9,7 +9,7 @@ The Samlab documentation:
 
 * http://samlab.readthedocs.io
 
-Visit our GitHub repository for access to source code, issue tracker, discussions, and the wiki:
+Visit our GitHub repository for access to source code, issue tracker, regression tests, and the wiki:
 
 * http://github.com/sandialabs/samlab
 
