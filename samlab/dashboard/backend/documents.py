@@ -94,8 +94,6 @@ class Directory(DocumentCollection, watchdog.events.FileSystemEventHandler):
 
 
     def reload(self):
-        log.info(f"{self.__class__.__name__}.reload")
-
         paths = []
         pattern = re.compile(self._pattern)
         for root, dirs, files in os.walk(self._root):
@@ -104,5 +102,7 @@ class Directory(DocumentCollection, watchdog.events.FileSystemEventHandler):
                     continue
                 paths.append(os.path.abspath(os.path.join(root, filename)))
         self._paths = sorted(paths)
+
+        log.info(f"{self.__class__.__name__} loaded {len(self)} documents from {self._root}.")
 
         socketio.emit("service-changed", {"service": "document-collection", "name": self._name})
