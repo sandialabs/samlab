@@ -21,13 +21,19 @@ define([
         {
             createViewModel: function(widget, component_info)
             {
+                var plot_widget_element = component_info.element.querySelector(".plot-widget");
+                var plot_element = component_info.element.querySelector(".plot");
+
                 var component = mapping.fromJS(
                 {
                     collection: widget.params.collection,
                     count: null,
+                    grid_height: widget.height,
+                    grid_width: widget.width,
                     index: widget.params.index,
                     plot: null,
-                    size: [100, 100],
+                    plot_height: plot_element.offsetHeight,
+                    plot_width: plot_element.offsetWidth,
                     smoothing: widget.params.smoothing,
                     yscale: widget.params.yscale,
                 });
@@ -36,6 +42,17 @@ define([
                 {
                     component.index(0);
                 };
+
+                component.grid_height.subscribe(function(newValue)
+                {
+                    var offset = plot_element.getBoundingClientRect().top - plot_widget_element.getBoundingClientRect().top;
+                    component.plot_height(plot_widget_element.offsetHeight - offset);
+                });
+
+                component.grid_width.subscribe(function(newValue)
+                {
+                    component.plot_width(plot_element.offsetWidth);
+                });
 
                 component.last_document = function()
                 {
@@ -47,13 +64,17 @@ define([
 
                 component.load_content = ko.computed(function()
                 {
+                    // We want to update automatically whenever the plot size changes.
+                    var plot_width = component.plot_width();
+                    var plot_height = component.plot_height();
+
                     if(component.count())
                     {
                         var uri = "/timeseries-collection/" + component.collection() + "/" + component.index();
                         var data = {
-                            height: component.size()[1] - 100,
+                            height: plot_height - 10,
                             smoothing: component.smoothing(),
-                            width: component.size()[0] - 100,
+                            width: plot_width - 10,
                             yscale: component.yscale(),
                         };
 
@@ -95,7 +116,6 @@ define([
 
                 component.reload = function()
                 {
-                    log("reload");
                     server.get_json("/timeseries-collection/" + component.collection(),
                     {
                         success: function(data)
@@ -116,19 +136,11 @@ define([
                     });
                 }
 
-                component.size.extend({rateLimit: {timeout: 100, method: "notifyWhenChangesStop"}});
-
                 component.yscale_items =
                 [
                     {key: "linear", label: "Linear"},
                     {key: "log", label: "Log"},
                 ];
-
-                var observer = new ResizeObserver(function(entries, observer)
-                {
-                    component.size([entries[0].contentRect.width, entries[0].contentRect.height]);
-                });
-                observer.observe(component_info.element.querySelector(".widget-content"));
 
                 socket.on("service-changed", function(changed)
                 {
