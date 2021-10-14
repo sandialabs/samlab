@@ -17,6 +17,7 @@ API Reference
     python/samlab.dashboard.backend.favorites.rst
     python/samlab.dashboard.backend.images.rst
     python/samlab.dashboard.backend.layouts.rst
+    python/samlab.dashboard.backend.timeseries.rst
     python/samlab.dashboard.credentials.rst
     python/samlab.dashboard.service.rst
     python/samlab.dashboard.service.asynchronous.rst
@@ -27,6 +28,7 @@ API Reference
     python/samlab.dashboard.service.images.rst
     python/samlab.dashboard.service.layouts.rst
     python/samlab.dashboard.service.notify.rst
+    python/samlab.dashboard.service.timeseries.rst
     python/samlab.debounce.rst
     python/samlab.interactive.rst
     python/samlab.notebook.rst

@@ -30,8 +30,6 @@ you to store it in databases, binary records, or other organizations.  In most c
 a Samlab data adapter can be written in fewer lines of code than you'd need to convert
 your data to a tool-specific format, and avoids the pitfalls of data duplication.
 
-.. _interaction
-
 Interaction
 -----------
 
