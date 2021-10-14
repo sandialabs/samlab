@@ -8,14 +8,17 @@ import re
 setup(
     name="samlab",
     classifiers=[
-        "Development Status :: 3 - Alpha",
-        "Environment :: Console",
-        "Environment :: Other Environment",
-        "Environment :: Web Environment",
+        "Development Status :: 4 - Beta",
+        "Intended Audience :: Developers",
+        "Intended Audience :: Education",
+        "Intended Audience :: Information Technology",
         "Intended Audience :: Science/Research",
         "License :: OSI Approved :: BSD License",
         "Natural Language :: English",
+        "Operating System :: OS Independent",
         "Programming Language :: Python :: 3",
+        "Topic :: Scientific/Engineering",
+        "Topic :: Software Development :: Libraries :: Python Modules",
     ],
     description="Tools for managing machine learning experiments.",
     install_requires=[
@@ -37,6 +40,14 @@ setup(
             "static/fonts/*",
             ],
         },
+    project_urls={
+        "Chat": "https://github.com/sandialabs/samlab/discussions",
+        "Coverage": "https://coveralls.io/r/sandialabs/samlab",
+        "Documentation": "https://samlab.readthedocs.io",
+        "Issue Tracker": "https://github.com/sandialabs/samlab/issues",
+        "Regression Tests": "https://github.com/sandialabs/samlab/actions",
+        "Source": "https://github.com/sandialabs/samlab",
+    },
     scripts = [
         "bin/samlab-gputop",
         "bin/samlab-dashboard",
