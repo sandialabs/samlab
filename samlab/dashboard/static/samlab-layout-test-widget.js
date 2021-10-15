@@ -27,7 +27,7 @@ define(["debug", "knockout", "knockout.mapping"], function(debug, ko, mapping)
                     component.contentWidth(entries[0].contentRect.width);
                     component.contentHeight(entries[0].contentRect.height);
                 });
-                observer.observe(component_info.element.querySelector(".widget-content"));
+                observer.observe(component_info.element);
 
                 return component;
             },
