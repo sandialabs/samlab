@@ -21,7 +21,7 @@ define([
         {
             createViewModel: function(widget, component_info)
             {
-                var plot_widget_element = component_info.element.querySelector(".plot-widget");
+                var plot_widget_element = component_info.element;
                 var plot_element = component_info.element.querySelector(".plot");
 
                 var component = mapping.fromJS(

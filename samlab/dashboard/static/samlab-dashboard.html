@@ -49,7 +49,7 @@
     <div class="grid-stack" data-bind="gridStack: {options: options, widgets: widgets}">
         <div class="grid-stack-item" data-bind="attr: {'gs-x': $data.x, 'gs-y': $data.y, 'gs-w': $data.width, 'gs-h': $data.height}">
             <div class="grid-stack-item-content">
-                <div class="h-100" data-bind="component: {name: component, params: $data}"></div>
+                <div class="widget-component w-100 h-100 px-2 d-flex flex-column" data-bind="component: {name: component, params: $data}"></div>
                 <button class="grid-stack-item-close btn-close" data-bind="click: $root.close_widget"></button>
             </div>
         </div>

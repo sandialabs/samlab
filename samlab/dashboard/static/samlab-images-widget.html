@@ -1,80 +1,74 @@
-<div class="widget-content">
-    <div class="container-fluid">
-        <div class="grid-stack-item-handle">
-            <h1 class="h5"><span data-bind="text: collection"></span> <small class="text-muted ms-auto">Image Collection</small></h1>
-        </div>
-        <div class="d-flex flex-row align-items-center">
-            <button type="button" class="btn btn-sm btn-outline-secondary" data-bind="click: first_image" title="First image"><span class="bi-skip-backward-fill"></span></button>
-            <button type="button" class="ms-1 btn btn-sm btn-outline-secondary" data-bind="click: previous_image" title="Previous image"><span class="bi-skip-start-fill"></span></button>
-            <button type="button" class="ms-1 btn btn-sm btn-outline-secondary" data-bind="click: random_image" title="Random image"><span class="bi-shuffle"></span></button>
-            <button type="button" class="ms-1 btn btn-sm btn-outline-secondary" data-bind="click: next_image" title="Next image"><span class="bi-skip-end-fill"></span></button>
-            <button type="button" class="ms-1 btn btn-sm btn-outline-secondary" data-bind="click: last_image" title="Last image"><span class="bi-skip-forward-fill"></span></button>
+<h1 class="h5"><span data-bind="text: collection"></span> <small class="text-muted ms-auto">Image Collection</small></h1>
+<div class="d-flex flex-row align-items-center">
+    <button type="button" class="btn btn-sm btn-outline-secondary" data-bind="click: first_image" title="First image"><span class="bi-skip-backward-fill"></span></button>
+    <button type="button" class="ms-1 btn btn-sm btn-outline-secondary" data-bind="click: previous_image" title="Previous image"><span class="bi-skip-start-fill"></span></button>
+    <button type="button" class="ms-1 btn btn-sm btn-outline-secondary" data-bind="click: random_image" title="Random image"><span class="bi-shuffle"></span></button>
+    <button type="button" class="ms-1 btn btn-sm btn-outline-secondary" data-bind="click: next_image" title="Next image"><span class="bi-skip-end-fill"></span></button>
+    <button type="button" class="ms-1 btn btn-sm btn-outline-secondary" data-bind="click: last_image" title="Last image"><span class="bi-skip-forward-fill"></span></button>
 
-            <span class="ms-1">Image <span data-bind="text: index() + 1"></span>/<span data-bind="text: count"></span></span>
-            <input class="form-control form-control-sm ms-auto" style="width: 100px" type="text" placeholder="Search" data-bind="value: search">
+    <span class="ms-1">Image <span data-bind="text: index() + 1"></span>/<span data-bind="text: count"></span></span>
+    <input class="form-control form-control-sm ms-auto" style="width: 100px" type="text" placeholder="Search" data-bind="value: search">
 
-            <div class="dropdown ms-1">
-                <button type="button" class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" data-boundary="window">View</button>
-                <div class="dropdown-menu">
-                    <a class="dropdown-item" data-bind="click: $component.open_image"><span class="bi-card-image"></span>&nbsp;Standalone image</a>
-                    <a class="dropdown-item" data-bind="click: $component.bboxes_toggle"><span class="bi-bounding-box"></span>&nbsp;Bounding boxes</a>
-                    <a class="dropdown-item" data-bs-toggle="collapse" data-bind="attr: {'data-bs-target': '#' + metaid()}"><span class="bi-list-nested"></span>&nbsp;Metadata</a>
-                    <a class="dropdown-item" data-bind="click: $component.tags_toggle"><span class="bi-tags-fill"></span>&nbsp;Tags</a>
-                </div>
-            </div>
-        </div>
-
-        <hr></hr>
-
-        <div class="collapse" data-bind="attr: {id: bboxes_id}, css: {show: bboxes_visible}">
-            <div class="d-flex flex-row align-items-center mb-2">
-                <div class="ms-1"><span class="bi-bounding-box me-2"></span>Mode:</div>
-                <samlab-combo-control class="ms-2" style="width: 80px!important" params="current: bboxes_mode, items: bboxes_mode_items"></samlab-combo-control>
-                <button type="button" class="btn btn-sm btn-danger ms-2" data-bind="click: bboxes_clear, attr: {disabled: bboxes_mode() != 'delete'}">Clear</button>
-                <div class="ms-2"><input class="form-control form-control-sm" type="text" placeholder="Category" data-bind="attr: {readonly: bboxes_mode() != 'add'}, value: bboxes_category, valueUpdate: 'input'"></div>
-            </div>
-        </div>
-
-        <div class="collapse" data-bind="attr: {id: tags_id}, css: {show: tags_visible}">
-            <div class="d-flex flex-row align-items-center mb-2">
-                <div class="ms-1"><span class="bi-tags-fill me-2"></span>Mode:</div>
-                <samlab-combo-control class="ms-2" style="width: 80px!important" params="current: tags_mode, items: tags_mode_items"></samlab-combo-control>
-                <button type="button" class="btn btn-sm btn-danger ms-2" data-bind="click: tags_clear, attr: {disabled: tags_mode() != 'edit'}">Clear</button>
-                <div class="ms-2"><input class="form-control form-control-sm" type="text" placeholder="Category" data-bind="attr: {readonly: tags_mode() != 'edit'}, value: tags_category, valueUpdate: 'input'"></div>
-                <button class="btn btn-sm btn-success ms-2" type="button" data-bind="click: tag_add, attr: {disabled: tags_mode() != 'edit'}"><span class="bi-plus"></span></button>
-            </div>
-            <div class="d-flex flex-row align-items-center mb-2">
-                <span data-bind="foreach: tags">
-                    <span class="badge bg-primary me-2" data-bind="click: $parent.tag_delete"><span class="bi-tag-fill"></span>&nbsp;<span data-bind="text: $data"></span>&nbsp;<span class="bi-x" data-bind="visible: $parent.tags_mode() == 'edit'"></span></span>
-                </span>
-            </div>
-        </div>
-
-        <div class="img-overlay-wrap">
-            <img class="rounded" data-bind="attr: {src: uri}, event: {load: on_imageloaded}"></img>
-            <!-- ko if: bboxes_visible-->
-            <svg data-bind="attr: {id: bboxes_svg_id, viewBox: viewbox}, event: {mousedown: on_mousedown, mousemove: on_mousemove, mouseup: on_mouseup}" font-size="12" stroke-width="1">
-                <defs>
-                    <filter id="shadow">
-                        <feDropShadow dx="0.2" dy="0.2" stdDeviation="0.2"/>
-                    </filter>
-                </defs>
-                <!-- ko if: bboxes_mode() == 'add' -->
-                <line style="pointer-events: none; filter:url(#shadow)" x1="0" data-bind="attr:{y1: mousey, y2: mousey, x2: width}" opacity="0.5" stroke="white"/>
-                <line style="pointer-events: none; filter:url(#shadow)" y1="0" data-bind="attr:{x1: mousex, x2: mousex, y2: height}" opacity="0.5" stroke="white"/>
-                <!-- /ko -->
-
-                <!-- ko foreach: bboxes -->
-                <rect fill-opacity="0.2" style="filter:url(#shadow)" data-bind="attr: {x:left, y:top, width:width, height:height, fill:color, stroke:color}, style: {'pointer-events': $component.bboxes_mode() == 'delete' ? 'auto' : 'none'}, click: $parent.bbox_delete"/>
-                <text style="pointer-events: none; filter:url(#shadow)" stroke="none" data-bind="attr: {x:left()+3, y:top()+12, fill:color}, text:category"/>
-                <text style="pointer-events: none; filter:url(#shadow); text-anchor: end" stroke="none" data-bind="attr: {x:left()+width()-3, y:top()+height()-12, fill:color}, text:username"/>
-                <!-- /ko -->
-            </svg>
-            <!-- /ko -->
-        </div>
-
-        <div class="col collapse mb-2" data-bind="attr: {id: metaid}">
-            <pre><textarea class="form-control" data-bind="text: metadata" rows="6" readonly></textarea></pre>
+    <div class="dropdown ms-1">
+        <button type="button" class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" data-boundary="window">View</button>
+        <div class="dropdown-menu">
+            <a class="dropdown-item" data-bind="click: $component.open_image"><span class="bi-card-image"></span>&nbsp;Standalone image</a>
+            <a class="dropdown-item" data-bind="click: $component.bboxes_toggle"><span class="bi-bounding-box"></span>&nbsp;Bounding boxes</a>
+            <a class="dropdown-item" data-bs-toggle="collapse" data-bind="attr: {'data-bs-target': '#' + metaid()}"><span class="bi-list-nested"></span>&nbsp;Metadata</a>
+            <a class="dropdown-item" data-bind="click: $component.tags_toggle"><span class="bi-tags-fill"></span>&nbsp;Tags</a>
         </div>
     </div>
+</div>
+
+<hr></hr>
+
+<div class="collapse" data-bind="attr: {id: bboxes_id}, css: {show: bboxes_visible}">
+    <div class="d-flex flex-row align-items-center mb-2">
+        <div class="ms-1"><span class="bi-bounding-box me-2"></span>Mode:</div>
+        <samlab-combo-control class="ms-2" style="width: 80px!important" params="current: bboxes_mode, items: bboxes_mode_items"></samlab-combo-control>
+        <button type="button" class="btn btn-sm btn-danger ms-2" data-bind="click: bboxes_clear, attr: {disabled: bboxes_mode() != 'delete'}">Clear</button>
+        <div class="ms-2"><input class="form-control form-control-sm" type="text" placeholder="Category" data-bind="attr: {readonly: bboxes_mode() != 'add'}, value: bboxes_category, valueUpdate: 'input'"></div>
+    </div>
+</div>
+
+<div class="collapse" data-bind="attr: {id: tags_id}, css: {show: tags_visible}">
+    <div class="d-flex flex-row align-items-center mb-2">
+        <div class="ms-1"><span class="bi-tags-fill me-2"></span>Mode:</div>
+        <samlab-combo-control class="ms-2" style="width: 80px!important" params="current: tags_mode, items: tags_mode_items"></samlab-combo-control>
+        <button type="button" class="btn btn-sm btn-danger ms-2" data-bind="click: tags_clear, attr: {disabled: tags_mode() != 'edit'}">Clear</button>
+        <div class="ms-2"><input class="form-control form-control-sm" type="text" placeholder="Category" data-bind="attr: {readonly: tags_mode() != 'edit'}, value: tags_category, valueUpdate: 'input'"></div>
+        <button class="btn btn-sm btn-success ms-2" type="button" data-bind="click: tag_add, attr: {disabled: tags_mode() != 'edit'}"><span class="bi-plus"></span></button>
+    </div>
+    <div class="d-flex flex-row align-items-center mb-2">
+        <span data-bind="foreach: tags">
+            <span class="badge bg-primary me-2" data-bind="click: $parent.tag_delete"><span class="bi-tag-fill"></span>&nbsp;<span data-bind="text: $data"></span>&nbsp;<span class="bi-x" data-bind="visible: $parent.tags_mode() == 'edit'"></span></span>
+        </span>
+    </div>
+</div>
+
+<div class="img-overlay-wrap">
+    <img class="rounded" data-bind="attr: {src: uri}, event: {load: on_imageloaded}"></img>
+    <!-- ko if: bboxes_visible-->
+    <svg data-bind="attr: {id: bboxes_svg_id, viewBox: viewbox}, event: {mousedown: on_mousedown, mousemove: on_mousemove, mouseup: on_mouseup}" font-size="12" stroke-width="1">
+        <defs>
+            <filter id="shadow">
+                <feDropShadow dx="0.2" dy="0.2" stdDeviation="0.2"/>
+            </filter>
+        </defs>
+        <!-- ko if: bboxes_mode() == 'add' -->
+        <line style="pointer-events: none; filter:url(#shadow)" x1="0" data-bind="attr:{y1: mousey, y2: mousey, x2: width}" opacity="0.5" stroke="white"/>
+        <line style="pointer-events: none; filter:url(#shadow)" y1="0" data-bind="attr:{x1: mousex, x2: mousex, y2: height}" opacity="0.5" stroke="white"/>
+        <!-- /ko -->
+
+        <!-- ko foreach: bboxes -->
+        <rect fill-opacity="0.2" style="filter:url(#shadow)" data-bind="attr: {x:left, y:top, width:width, height:height, fill:color, stroke:color}, style: {'pointer-events': $component.bboxes_mode() == 'delete' ? 'auto' : 'none'}, click: $parent.bbox_delete"/>
+        <text style="pointer-events: none; filter:url(#shadow)" stroke="none" data-bind="attr: {x:left()+3, y:top()+12, fill:color}, text:category"/>
+        <text style="pointer-events: none; filter:url(#shadow); text-anchor: end" stroke="none" data-bind="attr: {x:left()+width()-3, y:top()+height()-12, fill:color}, text:username"/>
+        <!-- /ko -->
+    </svg>
+    <!-- /ko -->
+</div>
+
+<div class="col collapse mb-2" data-bind="attr: {id: metaid}">
+    <pre><textarea class="form-control" data-bind="text: metadata" rows="6" readonly></textarea></pre>
 </div>
