@@ -46,10 +46,10 @@
     </div>
 </div>
 
-<div class="img-overlay-wrap">
-    <img class="rounded" data-bind="attr: {src: uri}, event: {load: on_imageloaded}"></img>
+<div style="position: relative;">
+    <img style="position: absolute; top: 0; left: 0;" class="rounded" data-bind="attr: {src: uri}, event: {load: on_imageloaded}, style: { width: zoom_width}"></img>
     <!-- ko if: bboxes_visible-->
-    <svg data-bind="attr: {id: bboxes_svg_id, viewBox: viewbox}, event: {mousedown: on_mousedown, mousemove: on_mousemove, mouseup: on_mouseup}" font-size="12" stroke-width="1">
+    <svg style="position: absolute; top: 0; left: 0;" data-bind="attr: {id: bboxes_svg_id, viewBox: viewbox}, event: {mousedown: on_mousedown, mousemove: on_mousemove, mouseup: on_mouseup}, style: {width: zoom_width}" font-size="12" stroke-width="1">
         <defs>
             <filter id="shadow">
                 <feDropShadow dx="0.2" dy="0.2" stdDeviation="0.2"/>

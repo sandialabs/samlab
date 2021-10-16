@@ -52,6 +52,7 @@ define([
                     tags_mode: "view",
                     tags_visible: widget.params.tags,
                     width: 0,
+                    zoom: 1,
                     x1: null,
                     x2: null,
                     y1: null,
@@ -355,8 +356,33 @@ define([
                     return "0 0 " + component.width() + " " + component.height();
                 });
 
+                component.zoom_in = function()
+                {
+                    component.zoom(component.zoom() * 1.25);
+                }
+
+                component.zoom_out = function()
+                {
+                    component.zoom(component.zoom() * (1/1.25));
+                }
+
+                component.zoom_reset = function()
+                {
+                    component.zoom(1.0);
+                }
+
+                component.zoom_width = ko.computed(function()
+                {
+                    return component.zoom() * 100 + "%";
+                });
+
                 dashboard.bind({widget: widget, keys: "left", callback: component.previous_image});
                 dashboard.bind({widget: widget, keys: "right", callback: component.next_image});
+                dashboard.bind({widget: widget, keys: "up", callback: component.zoom_in});
+                dashboard.bind({widget: widget, keys: "down", callback: component.zoom_out});
+                dashboard.bind({widget: widget, keys: "+", callback: component.zoom_in});
+                dashboard.bind({widget: widget, keys: "-", callback: component.zoom_out});
+                dashboard.bind({widget: widget, keys: "0", callback: component.zoom_reset});
                 component.reload();
 
                 return component;
