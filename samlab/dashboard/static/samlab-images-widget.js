@@ -8,14 +8,13 @@ define([
     "knockout",
     "knockout.mapping",
     "lodash",
-    "URI",
     "samlab-dashboard",
     "samlab-notify",
     "samlab-permissions",
     "samlab-server",
     "samlab-socket",
     "samlab-uuidv4",
-    ], function(bootstrap, debug, ko, mapping, lodash, URI, dashboard, notify, permissions, server, socket, uuidv4)
+    ], function(bootstrap, debug, ko, mapping, lodash, dashboard, notify, permissions, server, socket, uuidv4)
 {
     var component_name = "samlab-images-widget";
     var log = debug(component_name);

@@ -6,8 +6,7 @@ define([
     "debug",
     "knockout",
     "knockout.mapping",
-    "URI",
-    ], function(debug, ko, mapping, URI)
+    ], function(debug, ko, mapping)
 {
     var component_name = "samlab-markup-viewer-widget";
     var log = debug(component_name);
@@ -37,18 +36,8 @@ define([
                             {
                                 anchor.addEventListener("click", function(event)
                                 {
-                                    console.log("anchor click", URI(event.target.href));
-                                    /*
-                                    if(URI(document.location.href).authority() == URI(event.target.href).authority())
-                                    {
-                                        component.uri(event.target.href);
-                                    }
-                                    else
-                                    */
-                                    {
-                                        window.open(event.target.href, "_blank");
-                                        event.preventDefault();
-                                    }
+                                    window.open(event.target.href, "_blank");
+                                    event.preventDefault();
                                 });
                             }
                         });
