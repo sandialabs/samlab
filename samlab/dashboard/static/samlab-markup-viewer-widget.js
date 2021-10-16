@@ -3,13 +3,15 @@
 // Government retains certain rights in this software.
 
 define([
-    "jquery",
+    "debug",
     "knockout",
     "knockout.mapping",
     "URI",
-    ], function(jquery, ko, mapping, URI)
+    ], function(debug, ko, mapping, URI)
 {
     var component_name = "samlab-markup-viewer-widget";
+    var log = debug(component_name);
+
     ko.components.register(component_name,
     {
         viewModel:
@@ -31,19 +33,24 @@ define([
                         require(["text!" + uri], function(content)
                         {
                             component.content(content);
-                            jquery(component_info.element).find("a").click(function(event)
+                            for(anchor of component_info.element.querySelectorAll("a"))
                             {
-                                console.log("anchor click", URI(event.target.href));
-                                if(URI(document.location.href).authority() == URI(event.target.href).authority())
+                                anchor.addEventListener("click", function(event)
                                 {
-                                    component.uri(event.target.href);
-                                }
-                                else
-                                {
-                                    window.open(event.target.href, "_blank");
-                                }
-                                return false;
-                            });
+                                    console.log("anchor click", URI(event.target.href));
+                                    /*
+                                    if(URI(document.location.href).authority() == URI(event.target.href).authority())
+                                    {
+                                        component.uri(event.target.href);
+                                    }
+                                    else
+                                    */
+                                    {
+                                        window.open(event.target.href, "_blank");
+                                        event.preventDefault();
+                                    }
+                                });
+                            }
                         });
                     }
                 });

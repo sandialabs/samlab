@@ -21,19 +21,4 @@ define(["debug"], function(debug)
             body.appendChild(menu);
         }
     });
-
-/*
-    // If a dropdown is about to be hidden ...
-    jquery(window).on('hide.bs.dropdown', function(e)
-    {
-        // And it was previously reparented to the document body ...
-        if(dropdown_menu)
-        {
-            // Reparent the menu back where it came from.
-            jquery(e.target).append(dropdown_menu.detach());
-            dropdown_menu.hide();
-            dropdown_menu = null;
-        }
-    });
-*/
 });
