@@ -2,18 +2,18 @@
 <hr></hr>
 <div class="dropdown">
     <button type="button"  class="btn btn-outline-primary dropdown-toggle" data-bs-toggle="dropdown" data-bs-boundary="window">Dropdown</button>
-    <div class="dropdown-menu" data-bind="foreach: options">
+    <ul class="dropdown-menu" data-bind="foreach: options">
         <!-- ko if: type == "group" -->
-        <h6 class="dropdown-header" data-bind="text: label"></h6>
+        <li><h6 class="dropdown-header" data-bind="text: label"></h6></li>
         <!-- /ko -->
 
         <!-- ko if: type == "divider" -->
-        <div class="dropdown-divider"></div>
+        <li><hr class="dropdown-divider"></li>
         <!-- /ko -->
 
         <!-- ko if: type == "item" -->
-        <a class="dropdown-item" data-bind="click: $parent.select_option, text: label"></a>
+        <li><a class="dropdown-item" data-bind="click: $parent.select_option, text: label"></a></li>
         <!-- /ko -->
-    </div>
+    </ul>
 </div>
 <button class="btn btn-primary mt-2" type="button" data-bind="click: modal_test">Modal Test</button>
