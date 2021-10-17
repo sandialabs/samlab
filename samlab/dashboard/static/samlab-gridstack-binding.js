@@ -31,7 +31,6 @@ define(["debug", "gridstack-h5", "knockout", "knockout.mapping"], function(debug
                         element.appendChild(widget_element);
                         ko.applyBindings(widget_context, widget_element)
                         grid.makeWidget(widget_element);
-                        log(widget_element);
 
                         // Sync ko state with gridstack state.
                         widget.x(widget_element.gridstackNode.x);
