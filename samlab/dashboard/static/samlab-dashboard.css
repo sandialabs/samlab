@@ -19,6 +19,22 @@
     top: 4px;
 }
 
+.grid-stack-item-handle
+{
+    background: none;
+    height: 2.25rem;
+    left: 0;
+    position: absolute;
+    right: 0;
+    top: 0;
+}
+
+.grid-stack-item-handle:hover
+{
+    background: linear-gradient(180deg, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0) 66%);
+}
+
+
 .widget-component h1:first-of-type
 {
     font-size: 1.25rem;

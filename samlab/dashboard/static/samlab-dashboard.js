@@ -76,7 +76,7 @@ define(
                 ],
             },
         ],
-        options: {cellHeight: cell_height, margin: margin},
+        options: {cellHeight: cell_height, handle: ".grid-stack-item-handle", margin: margin},
         server: {name: null, description: null},
         tabs: false,
         widgets: [],
