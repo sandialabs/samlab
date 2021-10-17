@@ -2,6 +2,8 @@
 # (NTESS).  Under the terms of Contract DE-NA0003525 with NTESS, the U.S.
 # Government retains certain rights in this software.
 
+import hashlib
+
 import flask
 import scipy.signal
 import toyplot.html
@@ -27,30 +29,34 @@ def post_timeseries_plot(name):
     require_permissions(["read"])
     timeseries_collection = require_backend("timeseries-collection", name)
 
-    timeseries = [timeseries_collection.get(key) for key in sorted(flask.request.json.get("keys", []))]
-
     height = int(float(flask.request.json.get("height", 500)))
+    keys = flask.request.json.get("keys", [])
     max_samples = int(float(flask.request.json.get("max_samples", 1000)))
     smoothing = float(flask.request.json.get("smoothing", "0"))
     width = int(float(flask.request.json.get("width", 500)))
     yscale = flask.request.json.get("yscale", "linear")
 
+    timeseries = [timeseries_collection.get(key) for key in keys]
+
     canvas = toyplot.Canvas(width=width, height=height)
     axes = canvas.cartesian(xlabel="Step", yscale=yscale)
 
     palette = toyplot.color.brewer.palette("Set2")
-    for index, columns in enumerate(timeseries):
-        color = palette[index]
+    for key in keys:
+        color_index = int(hashlib.sha256(key.encode("utf8")).hexdigest(), 16) % len(palette)
+        color = palette[color_index]
 
-        if columns.shape[1] == 1:
-            x = numpy.arange(columns.shape[0])
-            y = columns[:,0]
-        elif columns.shape[1] == 2:
-            x = columns[:,0]
-            y = columns[:,1]
-        if columns.shape[1] == 3:
-            x = columns[:,0]
-            y = columns[:,2]
+        timeseries = timeseries_collection.get(key)
+
+        if timeseries.shape[1] == 1:
+            x = numpy.arange(timeseries.shape[0])
+            y = timeseries[:,0]
+        elif timeseries.shape[1] == 2:
+            x = timeseries[:,0]
+            y = timeseries[:,1]
+        if timeseries.shape[1] == 3:
+            x = timeseries[:,0]
+            y = timeseries[:,2]
 
         if smoothing:
             alpha = 1 - smoothing
