@@ -29,6 +29,7 @@ define([
                     grid_height: widget.height,
                     grid_width: widget.width,
                     keys: [],
+                    legend: widget.params.legend,
                     pattern: widget.params.pattern,
                     plot: null,
                     plot_height: plot_element.offsetHeight,
@@ -52,6 +53,18 @@ define([
                 {
                     component.plot_width(plot_element.offsetWidth);
                 });
+
+                component.legend_items =
+                [
+                    {key: "top-left", label: "Top-Left"},
+                    {key: "top", label: "Top"},
+                    {key: "top-right", label: "Top-Right"},
+                    {key: "right", label: "Right"},
+                    {key: "bottom-right", label: "Bottom-Right"},
+                    {key: "bottom", label: "Bottom"},
+                    {key: "bottom-left", label: "Bottom-Left"},
+                    {key: "left", label: "Left"},
+                ];
 
                 component.reload = function()
                 {
@@ -81,6 +94,7 @@ define([
                     var data = {
                         height: component.plot_height() - 10,
                         keys: component.selected_keys(),
+                        legend: component.legend(),
                         smoothing: component.smoothing(),
                         width: component.plot_width() - 10,
                         yscale: component.yscale(),
@@ -120,7 +134,7 @@ define([
 
     var module =
     {
-        widget: { width: 4, height: 12, params: {collection: null, pattern: ".*", smoothing: 0.5, yscale: "linear"}},
+        widget: { width: 4, height: 12, params: {collection: null, legend: "bottom-right", pattern: ".*", smoothing: 0.5, yscale: "linear"}},
     };
 
     return module

@@ -31,6 +31,7 @@ def post_timeseries_plot(name):
 
     height = int(float(flask.request.json.get("height", 500)))
     keys = flask.request.json.get("keys", [])
+    legend_corner = flask.request.json.get("legend", "bottom-right")
     max_samples = int(float(flask.request.json.get("max_samples", 1000)))
     smoothing = float(flask.request.json.get("smoothing", "0"))
     width = int(float(flask.request.json.get("width", 500)))
@@ -42,6 +43,8 @@ def post_timeseries_plot(name):
     axes = canvas.cartesian(xlabel="Step", yscale=yscale)
 
     palette = toyplot.color.brewer.palette("Set2")
+    legend = []
+
     for key in keys:
         color_index = int(hashlib.sha256(key.encode("utf8")).hexdigest(), 16) % len(palette)
         color = palette[color_index]
@@ -65,8 +68,14 @@ def post_timeseries_plot(name):
             zi = scipy.signal.lfiltic(b, a, y[0:1], [0])
             ys = scipy.signal.lfilter(b, a, y, zi=zi)[0]
             axes.plot(x, y, color=color, opacity=0.25)
-            axes.plot(x, ys, color=color)
+            legend.append((key, axes.plot(x, ys, color=color)))
         else:
-            axes.plot(x, y, color=color)
+            legend.append((key, axes.plot(x, y, color=color)))
+
+    if legend:
+        height = len(legend) * 16
+        inset = 50
+        canvas.legend(legend, corner=(legend_corner, inset, 100, height))
+
     return flask.jsonify({"plot": toyplot.html.tostring(canvas)})
 
