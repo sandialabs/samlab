@@ -6,7 +6,7 @@
 logfile.txt
 .cover
 .coverage
-features/db
+archive
 build
 dist
 favorites.json
