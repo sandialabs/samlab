@@ -6,11 +6,10 @@ define([
     "debug",
     "knockout",
     "knockout.mapping",
-    "lodash",
     "samlab-dashboard",
     "samlab-server",
     "samlab-socket",
-    ], function(debug, ko, mapping, lodash, dashboard, server, socket)
+    ], function(debug, ko, mapping, dashboard, server, socket)
 {
     var component_name = "samlab-timeseries-widget";
     var log = debug(component_name);
@@ -27,21 +26,18 @@ define([
                 var component = mapping.fromJS(
                 {
                     collection: widget.params.collection,
-                    count: null,
                     grid_height: widget.height,
                     grid_width: widget.width,
-                    index: widget.params.index,
+                    keys: [],
                     plot: null,
                     plot_height: plot_element.offsetHeight,
                     plot_width: plot_element.offsetWidth,
+                    selection: widget.params.keys,
                     smoothing: widget.params.smoothing,
                     yscale: widget.params.yscale,
                 });
 
-                component.first_document = function()
-                {
-                    component.index(0);
-                };
+                log(widget.params.keys, component.selection);
 
                 component.grid_height.subscribe(function(newValue)
                 {
@@ -54,65 +50,28 @@ define([
                     component.plot_width(plot_element.offsetWidth);
                 });
 
-                component.last_document = function()
-                {
-                    if(component.count())
-                    {
-                        component.index(component.count() - 1);
-                    }
-                }
-
                 component.load_content = ko.computed(function()
                 {
                     // We want to update automatically whenever the plot size changes.
                     var plot_width = component.plot_width();
                     var plot_height = component.plot_height();
 
-                    if(component.count())
-                    {
-                        var uri = "/timeseries-collection/" + component.collection() + "/" + component.index();
-                        var data = {
-                            height: plot_height - 10,
-                            smoothing: component.smoothing(),
-                            width: plot_width - 10,
-                            yscale: component.yscale(),
-                        };
+                    var uri = "/timeseries-collection/" + component.collection() + "/plot";
+                    var data = {
+                        height: plot_height - 10,
+                        keys: component.selection(),
+                        smoothing: component.smoothing(),
+                        width: plot_width - 10,
+                        yscale: component.yscale(),
+                    };
 
-                        server.post_json(uri, data, {
-                            success: function(data)
-                            {
-                                component.plot(data.plot);
-                            },
-                        });
-                    }
+                    server.post_json(uri, data, {
+                        success: function(data)
+                        {
+                            component.plot(data.plot);
+                        },
+                    });
                 });
-
-                component.next_document = function()
-                {
-                    if(component.count())
-                    {
-                        component.index((component.index() + 1) % component.count());
-                    }
-                };
-
-                component.previous_document = function()
-                {
-                    if(component.count())
-                    {
-                        component.index((component.index() + component.count() - 1) % component.count());
-                    }
-                }
-
-                component.random_document = function()
-                {
-                    if(component.count())
-                    {
-                        var index = lodash.random(0, component.count() - 1);
-                        if(index == component.index())
-                            index = (index + 1) % component.count();
-                        component.index(index);
-                    }
-                };
 
                 component.reload = function()
                 {
@@ -120,20 +79,23 @@ define([
                     {
                         success: function(data)
                         {
-                            // This logic is a little tricky, because
-                            // we want to avoid unnecessary updates.
-                            if(data.count != component.count())
-                            {
-                                if(component.index() >= data.count)
-                                    component.index(0);
-                                component.count(data.count);
-                            }
-                            else
-                            {
-                                component.index.valueHasMutated();
-                            }
+                            component.keys(data.keys);
+                            component.keys.valueHasMutated();
                         },
                     });
+                }
+
+                component.toggle_timeseries = function(key)
+                {
+                    log("toggle_timeseries", key);
+                    if(component.selection.indexOf(key) == -1)
+                    {
+                        component.selection.push(key);
+                    }
+                    else
+                    {
+                        component.selection.remove(key);
+                    }
                 }
 
                 component.yscale_items =
@@ -162,7 +124,7 @@ define([
 
     var module =
     {
-        widget: { width: 4, height: 12, params: {collection: null, index: 0, smoothing: 0.5, yscale: "linear"}},
+        widget: { width: 4, height: 12, params: {collection: null, keys: [], smoothing: 0.5, yscale: "linear"}},
     };
 
     return module

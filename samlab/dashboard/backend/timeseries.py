@@ -26,19 +26,24 @@ class TimeseriesCollection(abc.ABC):
 
 
     @abc.abstractmethod
-    def get(self, index):
-        """Return a timeseries by index.
+    def get(self, key):
+        """Return a timeseries by key.
 
         Parameters
         ----------
-        index: int, required
-            The index of the timeseries to return.
+        index: :class:`str`, required
+            The key of the timeseries to return.
 
         Returns
         -------
         timeseries: :class:`numpy.ndarray`
             Numpy array containing timeseries fields.
         """
+        raise NotImplementedError()
+
+
+    @abc.abstractmethod
+    def keys(self):
         raise NotImplementedError()
 
 
@@ -66,7 +71,7 @@ class Directory(TimeseriesCollection, watchdog.events.FileSystemEventHandler):
 
 
     def __len__(self):
-        return len(self._paths)
+        return len(self._items)
 
 
     def __repr__(self):
@@ -77,8 +82,12 @@ class Directory(TimeseriesCollection, watchdog.events.FileSystemEventHandler):
         return self._re_pattern.match(path)
 
 
-    def get(self, index):
-        return numpy.loadtxt(self._paths[index])
+    def get(self, key):
+        return numpy.loadtxt(self._items[key], skiprows=1, delimiter=",")
+
+
+    def keys(self):
+        return self._items.keys()
 
 
     @property
@@ -104,6 +113,7 @@ class Directory(TimeseriesCollection, watchdog.events.FileSystemEventHandler):
                 if not self._match(filename):
                     continue
                 paths.append(os.path.abspath(os.path.join(root, filename)))
-        self._paths = sorted(paths)
+
+        self._items = {os.path.relpath(os.path.splitext(path)[0], self._root) : path for path in sorted(paths)}
 
         socketio.emit("service-changed", {"service": "timeseries-collection", "name": self._name})
