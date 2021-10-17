@@ -1,26 +1,20 @@
 <h1><span data-bind="text: collection"></span> <small class="text-muted ms-auto">Timeseries Collection</small></h1>
 <div class="d-flex flex-row align-items-center">
-    <div class="dropdown">
-        <button type="button" class="btn btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown">Timeseries</button>
-        <ul class="dropdown-menu">
-            <!-- ko foreach: keys -->
-            <li><a class="dropdown-item" data-bind="click: $parent.toggle_timeseries"><span data-bind="text: $data"></span></a></li>
-            <!-- /ko -->
-        </ul>
+    <div class="input-group">
+        <input class="form-control form-control-sm" type="text" placeholder="Pattern" data-bind="value: pattern">
+        <div class="dropdown">
+            <button type="button" class="btn btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown"></button>
+            <ul class="dropdown-menu">
+                <!-- ko foreach: keys -->
+                <li><a class="dropdown-item" data-bind="click: $parent.select_timeseries"><span data-bind="text: $data"></span></a></li>
+                <!-- /ko -->
+            </ul>
+        </div>
     </div>
-<!--
-    <button type="button" class="btn btn-sm btn-outline-secondary" data-bind="click: first_document" title="First document"><span class="bi-skip-backward-fill"></span></button>
-    <button type="button" class="ms-1 btn btn-sm btn-outline-secondary" data-bind="click: previous_document" title="Previous document"><span class="bi-skip-start-fill"></span></button>
-    <button type="button" class="ms-1 btn btn-sm btn-outline-secondary" data-bind="click: random_document" title="Random document"><span class="bi-shuffle"></span></button>
-    <button type="button" class="ms-1 btn btn-sm btn-outline-secondary" data-bind="click: next_document" title="Next document"><span class="bi-skip-end-fill"></span></button>
-    <button type="button" class="ms-1 btn btn-sm btn-outline-secondary" data-bind="click: last_document" title="Last document"><span class="bi-skip-forward-fill"></span></button>
 
-    <span class="ms-1">Timeseries <span data-bind="text: index()+1"></span>/<span data-bind="text: count"></span></span>
--->
-
-    <label class="small ms-auto">Smoothing:</label>
-    <input class="form-range ms-1" type="range" style="width: 100px;" data-bind="value:smoothing" min="0" max="0.999" step="0.001"></input>
-    <samlab-combo-control class="ms-1" params="current: yscale, items: yscale_items"></samlab-combo-control>
+    <label class="small ms-2">Smoothing:</label>
+    <input class="form-range ms-2" type="range" style="width: 100px;" data-bind="value:smoothing" min="0" max="0.999" step="0.001"></input>
+    <samlab-combo-control class="ms-2" params="current: yscale, items: yscale_items"></samlab-combo-control>
 </div>
 
 <hr></hr>

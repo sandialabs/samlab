@@ -29,19 +29,18 @@ define([
                     grid_height: widget.height,
                     grid_width: widget.width,
                     keys: [],
+                    pattern: widget.params.pattern,
                     plot: null,
                     plot_height: plot_element.offsetHeight,
                     plot_width: plot_element.offsetWidth,
-//                    selection: widget.params.keys,
                     smoothing: widget.params.smoothing,
                     yscale: widget.params.yscale,
                 });
-                // For reasons I don't understand, running observable arrays
-                // through mapping.fromJS() breaks their connection to the
-                // original widget parameters.
-                component.selection = widget.params.keys;
 
-                log(widget.params.keys, component.selection);
+                component.compiled_pattern = ko.computed(function()
+                {
+                    return new RegExp(component.pattern());
+                });
 
                 component.grid_height.subscribe(function(newValue)
                 {
@@ -52,29 +51,6 @@ define([
                 component.grid_width.subscribe(function(newValue)
                 {
                     component.plot_width(plot_element.offsetWidth);
-                });
-
-                component.load_content = ko.computed(function()
-                {
-                    // We want to update automatically whenever the plot size changes.
-                    var plot_width = component.plot_width();
-                    var plot_height = component.plot_height();
-
-                    var uri = "/timeseries-collection/" + component.collection() + "/plot";
-                    var data = {
-                        height: plot_height - 10,
-                        keys: component.selection(),
-                        smoothing: component.smoothing(),
-                        width: plot_width - 10,
-                        yscale: component.yscale(),
-                    };
-
-                    server.post_json(uri, data, {
-                        success: function(data)
-                        {
-                            component.plot(data.plot);
-                        },
-                    });
                 });
 
                 component.reload = function()
@@ -89,18 +65,34 @@ define([
                     });
                 }
 
-                component.toggle_timeseries = function(key)
+                component.selected_keys = component.keys.filter(function(key)
                 {
-                    log("toggle_timeseries", key);
-                    if(component.selection.indexOf(key) == -1)
-                    {
-                        component.selection.push(key);
-                    }
-                    else
-                    {
-                        component.selection.remove(key);
-                    }
+                    return component.compiled_pattern().test(key);
+                });
+
+                component.select_timeseries = function(key)
+                {
+                    component.pattern(key);
                 }
+
+                component.sync_content = ko.computed(function()
+                {
+                    var uri = "/timeseries-collection/" + component.collection() + "/plot";
+                    var data = {
+                        height: component.plot_height() - 10,
+                        keys: component.selected_keys(),
+                        smoothing: component.smoothing(),
+                        width: component.plot_width() - 10,
+                        yscale: component.yscale(),
+                    };
+
+                    server.post_json(uri, data, {
+                        success: function(data)
+                        {
+                            component.plot(data.plot);
+                        },
+                    });
+                });
 
                 component.yscale_items =
                 [
@@ -128,7 +120,7 @@ define([
 
     var module =
     {
-        widget: { width: 4, height: 12, params: {collection: null, keys: [], smoothing: 0.5, yscale: "linear"}},
+        widget: { width: 4, height: 12, params: {collection: null, pattern: ".*", smoothing: 0.5, yscale: "linear"}},
     };
 
     return module
