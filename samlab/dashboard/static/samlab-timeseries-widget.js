@@ -32,10 +32,14 @@ define([
                     plot: null,
                     plot_height: plot_element.offsetHeight,
                     plot_width: plot_element.offsetWidth,
-                    selection: widget.params.keys,
+//                    selection: widget.params.keys,
                     smoothing: widget.params.smoothing,
                     yscale: widget.params.yscale,
                 });
+                // For reasons I don't understand, running observable arrays
+                // through mapping.fromJS() breaks their connection to the
+                // original widget parameters.
+                component.selection = widget.params.keys;
 
                 log(widget.params.keys, component.selection);
 
