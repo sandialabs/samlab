@@ -8,6 +8,8 @@ from behave import *
 
 import samlab.dashboard
 
+root_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
+
 
 @given(u'a running dashboard server')
 def step_impl(context):
@@ -16,4 +18,4 @@ def step_impl(context):
 
     context.dashboard = samlab.dashboard.Server(config=False, coverage=True, quiet=True)
     context.add_cleanup(cleanup, context.dashboard)
-    context.dashboard.ready()
+    context.dashboard.ready(timeout=10)

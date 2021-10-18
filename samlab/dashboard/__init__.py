@@ -5,6 +5,7 @@
 import contextlib
 import logging
 import os
+import signal
 import socket
 import subprocess
 import sys
@@ -80,6 +81,7 @@ class Server(object):
             command += ["--coverage"]
         if debug:
             command += ["--debug"]
+        print("Starting dashboard server", " ".join(command))
         log.info("Starting dashboard server: %s", " ".join(command))
         self._server = subprocess.Popen(command, stdout=output, stderr=output)
 
@@ -134,7 +136,7 @@ class Server(object):
             raise RuntimeError("dashboard server already stopped.")
 
         log.info("Stopping dashboard server.")
-        self._server.terminate()
+        self._server.send_signal(signal.SIGINT)
         self._server.wait()
         self._server = None
         log.info("Dashboard server stopped.")

@@ -27,7 +27,8 @@ arguments, remaining_argv = config_parser.parse_known_args()
 
 if arguments.coverage:
     import coverage
-    coverage.process_startup()
+    cov = coverage.Coverage(auto_data=True, config_file=False, data_suffix=True, include="samlab*")
+    cov.start()
 
 if not arguments.no_config:
     spec = importlib.util.spec_from_file_location("config", arguments.config)
