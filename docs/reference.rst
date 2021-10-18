@@ -19,6 +19,7 @@ API Reference
     python/samlab.dashboard.backend.layouts.rst
     python/samlab.dashboard.backend.timeseries.rst
     python/samlab.dashboard.credentials.rst
+    python/samlab.dashboard.server.rst
     python/samlab.dashboard.service.rst
     python/samlab.dashboard.service.asynchronous.rst
     python/samlab.dashboard.service.backends.rst
