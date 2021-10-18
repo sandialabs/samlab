@@ -123,6 +123,7 @@ class Server(object):
                 requests.get(self.uri + "/ready", proxies={"http": None})
                 return
             except Exception as e:
+                print(e)
                 time.sleep(1.0)
 
 
