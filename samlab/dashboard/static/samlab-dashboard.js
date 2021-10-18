@@ -184,13 +184,11 @@ define(
 
     state.mouse_enter = function(widget, event)
     {
-        event.currentTarget.classList.add("grid-item-hover");
         state.set_active(widget);
     }
 
     state.mouse_leave = function(widget, event)
     {
-        event.currentTarget.classList.remove("grid-item-hover");
     }
 
     state.close_widget = function(widget)
