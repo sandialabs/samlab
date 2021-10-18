@@ -21,8 +21,13 @@ logging.basicConfig(level=logging.INFO)
 # Parse command-line arguments.
 config_parser = argparse.ArgumentParser(add_help=False, description="Dashboard for managing data and monitoring experiments.")
 config_parser.add_argument("--config", default=os.path.expanduser("~/.samlab/config.py"), help="Configuration file. Default: %(default)s")
+config_parser.add_argument("--coverage", action="store_true", help="Enable code coverage.")
 config_parser.add_argument("--no-config", action="store_true", help="Do not use a config file for initialization.")
 arguments, remaining_argv = config_parser.parse_known_args()
+
+if arguments.coverage:
+    import coverage
+    coverage.process_startup()
 
 if not arguments.no_config:
     spec = importlib.util.spec_from_file_location("config", arguments.config)

@@ -43,7 +43,7 @@ class Server(object):
     debug: bool, optional
         If :any:`True`, allow samlab server debugging.
     """
-    def __init__(self, host=None, port=None, config=True, quiet=True, debug=False):
+    def __init__(self, host=None, port=None, config=True, coverage=False, debug=False, quiet=True):
         # Choose an interface for binding.
         if host is None:
             host = "127.0.0.1"
@@ -76,6 +76,8 @@ class Server(object):
             ]
         if not config:
             command += ["--no-config"]
+        if coverage:
+            command += ["--coverage"]
         if debug:
             command += ["--debug"]
         log.info("Starting dashboard server: %s", " ".join(command))
@@ -84,12 +86,13 @@ class Server(object):
         self._host = host
         self._port = port
         self._config = config
+        self._coverage = coverage
         self._quiet = quiet
         self._debug = debug
 
 
     def __repr__(self):
-        return "samlab.dashboard.Server(host={self._host!r}, port={self._port!r}, config={self._config!r}, quiet={self._quiet!r}, debug={self._debug!r})"
+        return "samlab.dashboard.Server(host={self._host!r}, port={self._port!r}, config={self._config!r}, coverage={self._coverage!r}, quiet={self._quiet!r}, debug={self._debug!r})"
 
 
     def __enter__(self):
@@ -103,8 +106,22 @@ class Server(object):
 
     def browser(self, timeout=None):
         """Open a web browser pointed to the running server."""
-        self.wait(timeout=timeout)
+        self.ready(timeout=timeout)
         webbrowser.open(self.uri)
+
+
+    def ready(self, timeout=None):
+        """Wait until the server has started and is ready to receive requests."""
+        start = time.time()
+        while True:
+            if timeout and time.time() - start > timeout:
+                raise RuntimeError("Timed-out waiting for server.")
+
+            try:
+                requests.get(self.uri + "/ready", proxies={"http": None})
+                return
+            except Exception as e:
+                time.sleep(1.0)
 
 
     def stop(self):
@@ -127,18 +144,4 @@ class Server(object):
     def uri(self):
         """Address of the running server that can be used with web clients."""
         return "http://%s:%s" % (self._host, self._port)
-
-
-    def wait(self, timeout=None):
-        """Wait until the server has started and is ready to receive requests."""
-        start = time.time()
-        while True:
-            if timeout and time.time() - start > timeout:
-                raise RuntimeError("Timed-out waiting for server.")
-
-            try:
-                requests.get(self.uri + "/ready", proxies={"http": None})
-                return
-            except Exception as e:
-                time.sleep(1.0)
 
