@@ -28,6 +28,7 @@ setup(
         "flask-socketio",
         "ldap3",
         "requests",
+        "scipy",
         "watchdog",
     ],
     maintainer="Timothy M. Shead",
