@@ -77,11 +77,13 @@ class Server(object):
             ]
         if not config:
             command += ["--no-config"]
-        if coverage:
-            command += ["--coverage"]
         if debug:
             command += ["--debug"]
-        print("Starting dashboard server", " ".join(command))
+
+        env = dict(os.environ)
+        if coverage:
+            env["SAMLAB_DASHBOARD_COVERAGE"] = "1"
+
         log.info("Starting dashboard server: %s", " ".join(command))
         self._server = subprocess.Popen(command, stdout=output, stderr=output)
 
