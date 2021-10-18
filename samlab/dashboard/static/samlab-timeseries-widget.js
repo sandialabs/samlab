@@ -56,13 +56,13 @@ define([
 
                 component.legend_items =
                 [
-                    {key: "top-left", label: "Top-Left"},
+                    {key: "top-left", label: "Top Left"},
                     {key: "top", label: "Top"},
-                    {key: "top-right", label: "Top-Right"},
+                    {key: "top-right", label: "Top Right"},
                     {key: "right", label: "Right"},
-                    {key: "bottom-right", label: "Bottom-Right"},
+                    {key: "bottom-right", label: "Bottom Right"},
                     {key: "bottom", label: "Bottom"},
-                    {key: "bottom-left", label: "Bottom-Left"},
+                    {key: "bottom-left", label: "Bottom Left"},
                     {key: "left", label: "Left"},
                 ];
 
@@ -82,6 +82,11 @@ define([
                 {
                     return component.compiled_pattern().test(key);
                 });
+
+                component.select_all = function(key)
+                {
+                    component.pattern(".*");
+                }
 
                 component.select_timeseries = function(key)
                 {
