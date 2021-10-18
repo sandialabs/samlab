@@ -5,7 +5,7 @@
 ._.DS_Store
 logfile.txt
 .cover
-.coverage
+.coverage*
 archive
 build
 dist

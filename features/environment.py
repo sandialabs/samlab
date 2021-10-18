@@ -18,6 +18,5 @@ def after_all(context):
         context.coverage.combine()
         context.coverage.report()
         context.coverage.html_report(directory=".cover")
-        context.coverage.erase()
     except coverage.CoverageException as e:
         pass
