@@ -29,6 +29,7 @@ setup(
         "ldap3",
         "requests",
         "scipy",
+        "toyplot",
         "watchdog",
     ],
     maintainer="Timothy M. Shead",
