@@ -8,15 +8,15 @@ import sys
 import coverage
 
 def before_all(context):
-    context.coverage = coverage.Coverage(auto_data=True, config_file=False, data_suffix=True, include="samlab*")
+    context.coverage = coverage.Coverage(auto_data=True, config_file=False, data_suffix=False, debug=["dataio", "pid", "process"], include="samlab*")
     context.coverage.start()
 
 def after_all(context):
     try:
         context.coverage.stop()
-        context.coverage.save()
         context.coverage.combine()
         context.coverage.report()
         context.coverage.html_report(directory=".cover")
+        context.coverage.save()
     except coverage.CoverageException as e:
         pass
