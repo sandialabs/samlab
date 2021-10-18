@@ -19,18 +19,19 @@ import samlab.dashboard.credentials
 logging.basicConfig(level=logging.INFO)
 
 # Parse command-line arguments.
-config_parser = argparse.ArgumentParser(add_help=False)
+config_parser = argparse.ArgumentParser(description="Dashboard for managing data and monitoring experiments.")
 config_parser.add_argument("--config", default=os.path.expanduser("~/.samlab/config.py"), help="Configuration file. Default: %(default)s")
+config_parser.add_argument("--no-config", action="store_true", help="Do not use a config file for initialization.")
 arguments, remaining_argv = config_parser.parse_known_args()
 
-if arguments.config and os.path.exists(arguments.config):
+if not arguments.no_config:
     spec = importlib.util.spec_from_file_location("config", arguments.config)
     config = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(config)
 else:
     config = {}
 
-parser = argparse.ArgumentParser(description="Dashboard for managing data and monitoring experiments.", parents=[config_parser])
+parser = argparse.ArgumentParser(parents=[config_parser], add_help=False)
 parser.add_argument("--certificate", default=getattr(config, "certificate", None), help="TLS certificate.  Default: %(default)s")
 parser.add_argument("--data-dir", default=getattr(config, "data_dir", os.getcwd()), help="Data directory. Default: %(default)s")
 parser.add_argument("--debug", default=getattr(config, "debug", False), action="store_true", help="Enable server debugging.")
