@@ -53,7 +53,7 @@ logging.getLogger("watchdog").setLevel(logging.INFO)
 log = logging.getLogger()
 
 # Setup the web server.
-from samlab.dashboard import application, socketio
+from samlab.dashboard.server import application, socketio
 
 application.config["acl"] = getattr(config, "acl", samlab.dashboard.acl.PermitAll())
 application.config["authentication"] = getattr(config, "authentication", samlab.dashboard.authentication.Null())

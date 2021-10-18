@@ -4,7 +4,7 @@
 
 import flask
 
-from samlab.dashboard import application, socketio, require_auth, require_permissions
+from samlab.dashboard.server import application, socketio, require_auth, require_permissions
 
 
 @application.route("/notify", methods=["POST"])

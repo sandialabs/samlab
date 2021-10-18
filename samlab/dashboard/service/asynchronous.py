@@ -6,7 +6,7 @@ import logging
 
 import flask
 
-from samlab.dashboard import socketio, require_auth, require_permissions
+from samlab.dashboard.server import socketio, require_auth, require_permissions
 
 
 log = logging.getLogger(__name__)

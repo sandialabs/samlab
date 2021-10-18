@@ -11,8 +11,7 @@ import re
 import watchdog.events
 import watchdog.observers
 
-from samlab.dashboard import socketio
-from samlab.debounce import debounce
+from samlab.dashboard.server import socketio
 
 log = logging.getLogger(__name__)
 

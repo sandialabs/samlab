@@ -7,7 +7,7 @@ import json
 import logging
 import os
 
-from samlab.dashboard import socketio
+from samlab.dashboard.server import socketio
 
 
 log = logging.getLogger(__name__)

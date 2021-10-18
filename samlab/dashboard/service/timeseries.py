@@ -9,7 +9,7 @@ import scipy.signal
 import toyplot.html
 import xml.etree
 
-from samlab.dashboard import application, require_auth, require_permissions
+from samlab.dashboard.server import application, require_auth, require_permissions
 from samlab.dashboard.service import require_backend
 
 
