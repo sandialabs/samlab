@@ -11,10 +11,6 @@ import webbrowser
 
 import requests
 
-import samlab.dashboard.acl
-import samlab.dashboard.authentication
-import samlab.dashboard.credentials
-
 # Setup logging so we can see what's happening in the config file.
 logging.basicConfig(level=logging.INFO)
 
@@ -60,6 +56,9 @@ log = logging.getLogger()
 
 # Setup the web server.
 from samlab.dashboard.server import application, socketio
+import samlab.dashboard.acl
+import samlab.dashboard.authentication
+import samlab.dashboard.credentials
 
 application.config["acl"] = getattr(config, "acl", samlab.dashboard.acl.PermitAll())
 application.config["authentication"] = getattr(config, "authentication", samlab.dashboard.authentication.Null())
