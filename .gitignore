@@ -10,4 +10,5 @@ archive
 build
 dist
 favorites.json
+geckodriver.log
 layouts.json
