@@ -26,7 +26,7 @@ class Basic(object):
 
 class Null(object):
     def __call__(self):
-        raise NotImplementedError("This should never be called.")
+        raise NotImplementedError("This should never be called.") # pragma: no cover
 
 
     def __repr__(self):

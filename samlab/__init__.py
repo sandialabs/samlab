@@ -20,7 +20,7 @@ class DeprecationWarning(Warning):
 
 
 def deprecated(message):
-    warnings.warn(message, DeprecationWarning, stacklevel=3)
+    warnings.warn(message, DeprecationWarning, stacklevel=3) # pragma: no cover
 
 
 from threading import Timer

@@ -117,7 +117,7 @@ class Server(object):
         start = time.time()
         while True:
             if timeout and time.time() - start > timeout:
-                raise RuntimeError("Timed-out waiting for server.")
+                raise RuntimeError("Timed-out waiting for server.") # pragma: no cover
 
             try:
                 requests.get(self.uri + "/ready", proxies={"http": None})
@@ -134,7 +134,7 @@ class Server(object):
         RuntimeError, if called more than once, or called on an instance used as a context manager.
         """
         if not self._server:
-            raise RuntimeError("dashboard server already stopped.")
+            raise RuntimeError("dashboard server already stopped.") # pragma: no cover
 
         log.info("Stopping dashboard server.")
         self._server.send_signal(signal.SIGINT)
