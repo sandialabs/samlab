@@ -11,9 +11,9 @@ _backends = {}
 
 def require_backend(service, name=None):
     if service not in _backends:
-        raise RuntimeError(f"No backend found for service: {service}.")
+        raise RuntimeError(f"No backend found for service: {service}.") # pragma: no cover
     if name not in _backends[service]:
-        raise RuntimeError(f"No backend found for service: {service} name: {name}.")
+        raise RuntimeError(f"No backend found for service: {service} name: {name}.") # pragma: no cover
     return _backends[service][name]
 
 
@@ -23,7 +23,7 @@ def register_backend(backend):
     if service not in _backends:
         _backends[service] = {}
     if name in _backends[service]:
-        log.warning(f"Overwriting {service}/{name} {_backends[service][name]} with {backend}.")
+        log.warning(f"Overwriting {service}/{name} {_backends[service][name]} with {backend}.") # pragma: no cover
     _backends[service][name] = backend
     log.info(f"Registered {backend} as {service}/{name}.")
 
