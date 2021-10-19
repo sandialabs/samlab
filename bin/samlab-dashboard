@@ -1,11 +1,5 @@
 #!/usr/bin/env python
 
-import os
-if "SAMLAB_DASHBOARD_COVERAGE" in os.environ:
-    import coverage
-    cov = coverage.Coverage(auto_data=True, config_file=False, data_suffix=True, include="samlab*")
-    cov.start()
-
 import argparse
 import importlib.util
 import json
@@ -17,15 +11,24 @@ import webbrowser
 
 import requests
 
+import samlab.dashboard.acl
+import samlab.dashboard.authentication
+import samlab.dashboard.credentials
+
 # Setup logging so we can see what's happening in the config file.
 logging.basicConfig(level=logging.INFO)
 
 # Parse command-line arguments.
 config_parser = argparse.ArgumentParser(add_help=False, description="Dashboard for managing data and monitoring experiments.")
 config_parser.add_argument("--config", default=os.path.expanduser("~/.samlab/config.py"), help="Configuration file. Default: %(default)s")
+config_parser.add_argument("--coverage", action="store_true", help="Enable code coverage.")
 config_parser.add_argument("--no-config", action="store_true", help="Do not use a config file for initialization.")
 arguments, remaining_argv = config_parser.parse_known_args()
 
+if arguments.coverage:
+    import coverage
+    cov = coverage.Coverage(auto_data=True, config_file=False, data_suffix=True, include="samlab*")
+    cov.start()
 
 if not arguments.no_config:
     spec = importlib.util.spec_from_file_location("config", arguments.config)
@@ -57,10 +60,6 @@ log = logging.getLogger()
 
 # Setup the web server.
 from samlab.dashboard.server import application, socketio
-
-import samlab.dashboard.acl
-import samlab.dashboard.authentication
-import samlab.dashboard.credentials
 
 application.config["acl"] = getattr(config, "acl", samlab.dashboard.acl.PermitAll())
 application.config["authentication"] = getattr(config, "authentication", samlab.dashboard.authentication.Null())
