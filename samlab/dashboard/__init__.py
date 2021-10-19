@@ -41,10 +41,8 @@ class Server(object):
         Port for binding.  Defaults to a randomly-chosen open port.
     quiet: bool, optional
         If :any:`True` (the default), suppresses output from the samlab server process.
-    debug: bool, optional
-        If :any:`True`, allow samlab server debugging.
     """
-    def __init__(self, host=None, port=None, config=True, coverage=False, debug=False, quiet=True):
+    def __init__(self, host=None, port=None, config=True, coverage=False, quiet=True):
         # Choose an interface for binding.
         if host is None:
             host = "127.0.0.1"
@@ -79,8 +77,6 @@ class Server(object):
             command += ["--no-config"]
         if coverage:
             command += ["--coverage"]
-        if debug:
-            command += ["--debug"]
         log.info("Starting dashboard server: %s", " ".join(command))
         self._server = subprocess.Popen(command, stdout=output, stderr=output)
 
@@ -89,11 +85,10 @@ class Server(object):
         self._config = config
         self._coverage = coverage
         self._quiet = quiet
-        self._debug = debug
 
 
     def __repr__(self):
-        return "samlab.dashboard.Server(host={self._host!r}, port={self._port!r}, config={self._config!r}, coverage={self._coverage!r}, quiet={self._quiet!r}, debug={self._debug!r})"
+        return "samlab.dashboard.Server(host={self._host!r}, port={self._port!r}, config={self._config!r}, coverage={self._coverage!r}, quiet={self._quiet!r})"
 
 
     def __enter__(self):
