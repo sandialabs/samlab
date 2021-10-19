@@ -81,7 +81,6 @@ class Server(object):
             command += ["--coverage"]
         if debug:
             command += ["--debug"]
-        print("Starting dashboard server", " ".join(command))
         log.info("Starting dashboard server: %s", " ".join(command))
         self._server = subprocess.Popen(command, stdout=output, stderr=output)
 
@@ -123,7 +122,6 @@ class Server(object):
                 requests.get(self.uri + "/ready", proxies={"http": None})
                 return
             except Exception as e:
-                print(e)
                 time.sleep(1.0)
 
 
