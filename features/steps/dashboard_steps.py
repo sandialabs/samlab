@@ -3,6 +3,7 @@
 # Government retains certain rights in this software.
 
 import os
+import time
 
 from behave import *
 
@@ -39,4 +40,5 @@ def step_impl(context):
     context.browser.get(context.dashboard.uri)
     context.browser_wait = Wait(context.browser, timeout=10)
     context.browser_wait.until(element_located((By.ID, "samlab-notify-container")))
+    time.sleep(1.0) # Give the page a chance to settle-down.
 
