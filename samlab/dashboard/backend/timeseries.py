@@ -21,7 +21,7 @@ class TimeseriesCollection(abc.ABC):
     @abc.abstractmethod
     def __len__(self):
         """Return the number of timeseries in the collection."""
-        raise NotImplementedError()
+        raise NotImplementedError() # pragma: no cover
 
 
     @abc.abstractmethod
@@ -38,18 +38,18 @@ class TimeseriesCollection(abc.ABC):
         timeseries: :class:`numpy.ndarray`
             Numpy array containing timeseries fields.
         """
-        raise NotImplementedError()
+        raise NotImplementedError() # pragma: no cover
 
 
     @abc.abstractmethod
     def keys(self):
-        raise NotImplementedError()
+        raise NotImplementedError() # pragma: no cover
 
 
     @abc.abstractproperty
     @property
     def name(self):
-        raise NotImplementedError()
+        raise NotImplementedError() # pragma: no cover
 
 
     @property

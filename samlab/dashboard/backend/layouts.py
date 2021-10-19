@@ -14,7 +14,7 @@ log = logging.getLogger(__name__)
 class Layouts(abc.ABC):
     @abc.abstractmethod
     def get(self, *, lid):
-        raise NotImplementedError()
+        raise NotImplementedError() # pragma: no cover
 
 
     @property
@@ -24,7 +24,7 @@ class Layouts(abc.ABC):
 
     @abc.abstractmethod
     def put(self, *, content):
-        raise NotImplementedError()
+        raise NotImplementedError() # pragma: no cover
 
 
     @property

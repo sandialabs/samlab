@@ -13,7 +13,7 @@ class ImageCollection(abc.ABC):
     @abc.abstractmethod
     def __len__(self):
         """Return the number of images in the collection."""
-        raise NotImplementedError()
+        raise NotImplementedError() # pragma: no cover
 
 
     def bboxes(self, index):
@@ -61,7 +61,7 @@ class ImageCollection(abc.ABC):
         image: :class:`str`
             If :class:`str`, the filesystem path of the image.
         """
-        raise NotImplementedError()
+        raise NotImplementedError() # pragma: no cover
 
 
     def metadata(self, index):
@@ -71,7 +71,7 @@ class ImageCollection(abc.ABC):
     @abc.abstractproperty
     @property
     def name(self):
-        raise NotImplementedError()
+        raise NotImplementedError() # pragma: no cover
 
 
     def put_bboxes(self, index, bboxes):

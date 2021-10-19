@@ -20,7 +20,7 @@ class DocumentCollection(abc.ABC):
     @abc.abstractmethod
     def __len__(self):
         """Return the number of documents in the collection."""
-        raise NotImplementedError()
+        raise NotImplementedError() # pragma: no cover
 
 
     @abc.abstractmethod
@@ -37,13 +37,13 @@ class DocumentCollection(abc.ABC):
         image: :class:`str` or :class:`numpy.ndarray`
             If :class:`str`, the filesystem path of the image.
         """
-        raise NotImplementedError()
+        raise NotImplementedError() # pragma: no cover
 
 
     @abc.abstractproperty
     @property
     def name(self):
-        raise NotImplementedError()
+        raise NotImplementedError() # pragma: no cover
 
 
     @property

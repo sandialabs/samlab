@@ -27,7 +27,7 @@ class Favorites(abc.ABC):
         label: str, required.
             Human-readable label for the favorite.
         """
-        raise NotImplementedError()
+        raise NotImplementedError() # pragma: no cover
 
 
     @abc.abstractmethod
@@ -41,13 +41,13 @@ class Favorites(abc.ABC):
         name: str, required.
             Service name of the item to be un-favorited.
         """
-        raise NotImplementedError()
+        raise NotImplementedError() # pragma: no cover
 
 
     @abc.abstractmethod
     def get(self):
         """Return a sequence of favorites."""
-        raise NotImplementedError()
+        raise NotImplementedError() # pragma: no cover
 
 
     @property
