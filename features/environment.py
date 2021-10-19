@@ -8,7 +8,7 @@ import sys
 import coverage
 
 def before_all(context):
-    context.coverage = coverage.Coverage(auto_data=True, config_file=False, data_suffix=False, debug=["dataio", "pid", "process"], include="samlab*")
+    context.coverage = coverage.Coverage(auto_data=True, config_file=False, data_suffix=False, include="samlab*")
     context.coverage.start()
 
 def after_all(context):

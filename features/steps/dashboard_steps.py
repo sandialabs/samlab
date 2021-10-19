@@ -16,6 +16,6 @@ def step_impl(context):
     def cleanup(dashboard):
         dashboard.stop()
 
-    context.dashboard = samlab.dashboard.Server(config=False, coverage=True, quiet=False)
+    context.dashboard = samlab.dashboard.Server(config=False, coverage=True, quiet=True)
     context.add_cleanup(cleanup, context.dashboard)
     context.dashboard.ready(timeout=10)
