@@ -47,6 +47,7 @@ define([
                     lastx: null,
                     lasty: null,
                     metadata: null,
+                    metadata_visible: widget.params.metadata,
                     metaid: "w" + uuidv4(),
                     new_bbox: null,
                     pan: false,
@@ -105,9 +106,9 @@ define([
 
                 component.bboxes_mode_items =
                 [
-                    {key: "add", label: "<span class='text-success bi-plus-square'/>&nbsp;Add"},
-                    {key: "delete", label: "<span class='text-danger bi-x-square'/>&nbsp;Delete"},
-                    {key: "view", label: "<span class='text-primary bi-eye'/>&nbsp;View"},
+                    {icon: "bi-plus-square", key: "add", label: "Add", shortcut: "a", extraclass: "text-success"},
+                    {icon: "bi-x-square", key: "delete", label: "Delete", shortcut: "d", extraclass: "text-danger"},
+                    {icon: "bi-eye", key: "view", label: "View", shortcut: "v", extraclass: "text-primary"},
                 ];
 
                 component.bboxes_mode_view = function()
@@ -163,6 +164,11 @@ define([
                         },
                     });
                 });
+
+                component.metadata_toggle = function()
+                {
+                    component.metadata_visible(!component.metadata_visible());
+                }
 
                 component.next_image = function()
                 {
@@ -405,13 +411,32 @@ define([
                     component.imagezoom(1.0);
                 }
 
-                dashboard.bind({widget: widget, keys: "left", callback: component.previous_image});
-                dashboard.bind({widget: widget, keys: "right", callback: component.next_image});
-                dashboard.bind({widget: widget, keys: "up", callback: component.zoom_in});
-                dashboard.bind({widget: widget, keys: "down", callback: component.zoom_out});
+                // This must go last, or some callbacks may be undefined.
+                component.menu_items =
+                [
+                    {icon: "bi-card-image", label: "Standalone image", click: component.open_image},
+                    {icon: "bi-bounding-box", label: "Bounding boxes", click: component.bboxes_toggle, shortcut: "b"},
+                    {icon: "bi-list-nested", label: "Metadata", click: component.metadata_toggle, shortcut: "m"},
+                    {icon: "bi-tags", label: "Tags", click: component.tags_toggle, shortcut: "t"},
+                    {divider: true},
+                    {icon: "bi-zoom-in", label: "Zoom in", click: component.zoom_in, shortcut: "+"},
+                    {icon: "bi-zoom-out", label: "Zoom out", click: component.zoom_out, shortcut: "-"},
+                    {icon: "bi-aspect-ratio", label: "Reset pan & zoom", click: component.zoom_reset, shortcut: "0"},
+                ];
+
+                dashboard.bind({widget: widget, keys: "0", callback: component.zoom_reset});
+                dashboard.bind({widget: widget, keys: "a", callback: function() {component.bboxes_mode("add");}});
+                dashboard.bind({widget: widget, keys: "b", callback: component.bboxes_toggle});
+                dashboard.bind({widget: widget, keys: "d", callback: function() {component.bboxes_mode("delete");}});
                 dashboard.bind({widget: widget, keys: "+", callback: component.zoom_in});
                 dashboard.bind({widget: widget, keys: "-", callback: component.zoom_out});
-                dashboard.bind({widget: widget, keys: "0", callback: component.zoom_reset});
+                dashboard.bind({widget: widget, keys: "down", callback: component.zoom_out});
+                dashboard.bind({widget: widget, keys: "left", callback: component.previous_image});
+                dashboard.bind({widget: widget, keys: "m", callback: component.metadata_toggle});
+                dashboard.bind({widget: widget, keys: "right", callback: component.next_image});
+                dashboard.bind({widget: widget, keys: "t", callback: component.tags_toggle});
+                dashboard.bind({widget: widget, keys: "up", callback: component.zoom_in});
+                dashboard.bind({widget: widget, keys: "v", callback: function() {component.bboxes_mode("view");}});
                 component.reload();
 
                 return component;
@@ -422,7 +447,7 @@ define([
 
     var module =
     {
-        widget: { width: 4, height: 12, params: {bboxes: false, tags: false, collection: null, index: 0}},
+        widget: { width: 4, height: 12, params: {bboxes: false, collection: null, index: 0, metadata: false, tags: false}},
     };
 
     return module

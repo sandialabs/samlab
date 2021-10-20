@@ -9,19 +9,7 @@
     <span class="ms-1">Image <span data-bind="text: index() + 1"></span>/<span data-bind="text: count"></span></span>
     <input class="form-control form-control-sm ms-auto" style="width: 100px" type="text" placeholder="Search" data-bind="value: search">
 
-    <div class="dropdown ms-1">
-        <button type="button" class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" data-boundary="window">View</button>
-        <ul class="dropdown-menu">
-            <li><a class="dropdown-item" data-bind="click: $component.open_image"><span class="bi-card-image"></span>&nbsp;Standalone image</a></li>
-            <li><a class="dropdown-item" data-bind="click: $component.bboxes_toggle"><span class="bi-bounding-box"></span>&nbsp;Bounding boxes</a></li>
-            <li><a class="dropdown-item" data-bs-toggle="collapse" data-bind="attr: {'data-bs-target': '#' + metaid()}"><span class="bi-list-nested"></span>&nbsp;Metadata</a></li>
-            <li><a class="dropdown-item" data-bind="click: $component.tags_toggle"><span class="bi-tags-fill"></span>&nbsp;Tags</a></li>
-            <li><hr class="dropdown-divider"></li>
-            <li><a class="dropdown-item" data-bind="click: $component.zoom_in"><span class="bi-zoom-in"></span>&nbsp;Zoom In</a></li>
-            <li><a class="dropdown-item" data-bind="click: $component.zoom_out"><span class="bi-zoom-out"></span>&nbsp;Zoom Out</a></li>
-            <li><a class="dropdown-item" data-bind="click: $component.zoom_reset"><span class="bi-aspect-ratio"></span>&nbsp;Reset Zoom</a></li>
-        </ul>
-    </div>
+    <samlab-menu-control class="ms-1" params="label: 'View', items: menu_items"></samlab-menu-control>
 </div>
 
 <hr></hr>
@@ -29,7 +17,7 @@
 <div class="collapse" data-bind="attr: {id: bboxes_id}, css: {show: bboxes_visible}">
     <div class="d-flex flex-row align-items-center mb-2">
         <div class="ms-1"><span class="bi-bounding-box me-2"></span>Mode:</div>
-        <samlab-combo-control class="ms-2" style="width: 80px!important" params="current: bboxes_mode, items: bboxes_mode_items"></samlab-combo-control>
+        <samlab-combo-control class="ms-2" style="width: 90px!important" params="current: bboxes_mode, items: bboxes_mode_items"></samlab-combo-control>
         <button type="button" class="btn btn-sm btn-danger ms-2" data-bind="click: bboxes_clear, attr: {disabled: bboxes_mode() != 'delete'}">Clear</button>
         <div class="ms-2"><input class="form-control form-control-sm" type="text" placeholder="Category" data-bind="attr: {readonly: bboxes_mode() != 'add'}, value: bboxes_category, valueUpdate: 'input'"></div>
     </div>
@@ -73,6 +61,6 @@
     </svg>
 </div>
 
-<div class="col collapse mb-2" data-bind="attr: {id: metaid}">
+<div class="col collapse my-2" data-bind="attr: {id: metaid}, css: {show: metadata_visible}">
     <pre><textarea class="form-control" data-bind="text: metadata" rows="6" readonly></textarea></pre>
 </div>

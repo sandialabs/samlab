@@ -1,0 +1,24 @@
+<div class="dropdown">
+    <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" data-bind="attr: {disabled: disabled}"><span data-bind="html: label"></span></button>
+    <ul class="dropdown-menu" data-bind="foreach: expanded_items">
+        <!-- ko if: $data.heading -->
+        <li><h6 class="dropdown-header" data-bind="text: heading"></h6></li>
+        <!-- /ko -->
+
+        <!-- ko if: $data.divider -->
+        <li><hr class="dropdown-divider"></li>
+        <!-- /ko -->
+
+        <!-- ko if: $data.click -->
+        <li>
+            <small>
+                <a class="dropdown-item d-flex" data-bind="click: click">
+                    <span style="min-width: 24px" data-bind="class: icon"></span>
+                    <span class="me-3" data-bind="html: label"></span>
+                    <span class="ms-auto font-monospace text-capitalize" data-bind="html: shortcut"></span>
+                </a>
+            </small>
+        </li>
+        <!-- /ko -->
+    </ul>
+</div>
