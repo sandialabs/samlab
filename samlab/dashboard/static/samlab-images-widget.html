@@ -50,27 +50,27 @@
     </div>
 </div>
 
-<div style="position: relative;">
-    <img style="position: absolute; top: 0; left: 0;" class="rounded" data-bind="attr: {src: uri}, event: {load: on_imageloaded}, style: { width: zoom_width}"></img>
-    <!-- ko if: bboxes_visible-->
-    <svg style="position: absolute; top: 0; left: 0;" data-bind="attr: {id: bboxes_svg_id, viewBox: viewbox}, event: {mousedown: on_mousedown, mousemove: on_mousemove, mouseup: on_mouseup}, style: {width: zoom_width}" font-size="12" stroke-width="1">
+<div style="overflow: hidden; position: relative; width: 100%; height: 100%;">
+    <img style="position: absolute;" class="rounded" data-bind="attr: {src: uri}, event: {load: on_imageloaded}, style: { left: imagex, top: imagey, width: displaywidth}"></img>
+    <svg style="position: absolute;" data-bind="attr: {id: bboxes_svg_id, viewBox: viewbox}, event: {mousedown: on_mousedown, mousemove: on_mousemove, mouseup: on_mouseup}, style: {left: imagex, top: imagey, width: displaywidth}" font-size="12" stroke-width="1">
         <defs>
             <filter id="shadow">
                 <feDropShadow dx="0.2" dy="0.2" stdDeviation="0.2"/>
             </filter>
         </defs>
-        <!-- ko if: bboxes_mode() == 'add' -->
-        <line style="pointer-events: none; filter:url(#shadow)" x1="0" data-bind="attr:{y1: mousey, y2: mousey, x2: width}" opacity="0.5" stroke="white"/>
-        <line style="pointer-events: none; filter:url(#shadow)" y1="0" data-bind="attr:{x1: mousex, x2: mousex, y2: height}" opacity="0.5" stroke="white"/>
-        <!-- /ko -->
+        <!-- ko if: bboxes_visible-->
+            <!-- ko if: bboxes_mode() == 'add' -->
+                <line style="pointer-events: none; filter:url(#shadow)" x1="0" data-bind="attr:{y1: cursory, y2: cursory, x2: imagewidth}" opacity="0.5" stroke="white"/>
+                <line style="pointer-events: none; filter:url(#shadow)" y1="0" data-bind="attr:{x1: cursorx, x2: cursorx, y2: imageheight}" opacity="0.5" stroke="white"/>
+            <!-- /ko -->
 
-        <!-- ko foreach: bboxes -->
-        <rect fill-opacity="0.2" style="filter:url(#shadow)" data-bind="attr: {x:left, y:top, width:width, height:height, fill:color, stroke:color}, style: {'pointer-events': $component.bboxes_mode() == 'delete' ? 'auto' : 'none'}, click: $parent.bbox_delete"/>
-        <text style="pointer-events: none; filter:url(#shadow)" stroke="none" data-bind="attr: {x:left()+3, y:top()+12, fill:color}, text:category"/>
-        <text style="pointer-events: none; filter:url(#shadow); text-anchor: end" stroke="none" data-bind="attr: {x:left()+width()-3, y:top()+height()-12, fill:color}, text:username"/>
+            <!-- ko foreach: bboxes -->
+                <rect fill-opacity="0.2" style="filter:url(#shadow)" data-bind="attr: {x:left, y:top, width:width, height:height, fill:color, stroke:color}, style: {'pointer-events': $component.bboxes_mode() == 'delete' ? 'auto' : 'none'}, click: $parent.bbox_delete"/>
+                <text style="pointer-events: none; filter:url(#shadow)" stroke="none" data-bind="attr: {x:left()+3, y:top()+12, fill:color}, text:category"/>
+                <text style="pointer-events: none; filter:url(#shadow); text-anchor: end" stroke="none" data-bind="attr: {x:left()+width()-3, y:top()+height()-12, fill:color}, text:username"/>
+            <!-- /ko -->
         <!-- /ko -->
     </svg>
-    <!-- /ko -->
 </div>
 
 <div class="col collapse mb-2" data-bind="attr: {id: metaid}">

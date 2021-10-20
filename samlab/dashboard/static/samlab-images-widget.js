@@ -36,13 +36,20 @@ define([
                     collection: widget.params.collection,
                     color: "yellow",
                     count: null,
-                    height: 0,
+                    cursorx: null,
+                    cursory: null,
+                    imageheight: 0,
+                    imagewidth: 0,
+                    imagex: 0,
+                    imagey: 0,
+                    imagezoom: 1,
                     index: widget.params.index,
+                    lastx: null,
+                    lasty: null,
                     metadata: null,
                     metaid: "w" + uuidv4(),
-                    mousex: null,
-                    mousey: null,
                     new_bbox: null,
+                    pan: false,
                     search: null,
                     size: [0, 0],
                     tags: [],
@@ -50,8 +57,6 @@ define([
                     tags_id: "w" + uuidv4(),
                     tags_mode: "view",
                     tags_visible: widget.params.tags,
-                    width: 0,
-                    zoom: 1,
                     x1: null,
                     x2: null,
                     y1: null,
@@ -133,6 +138,11 @@ define([
                     component.bboxes_visible(visible);
                 }
 
+                component.displaywidth = ko.computed(function()
+                {
+                    return component.imagezoom() * 100 + "%";
+                });
+
                 component.first_image = function()
                 {
                     component.index(0);
@@ -161,20 +171,20 @@ define([
 
                 component.on_imageloaded = function(item, e)
                 {
-                    component.width(e.target.naturalWidth);
-                    component.height(e.target.naturalHeight);
+                    component.imagewidth(e.target.naturalWidth);
+                    component.imageheight(e.target.naturalHeight);
                 }
 
                 component.on_mousedown = function(item, e)
                 {
-                    component.update_mouse(e);
+                    component.update_cursor(e);
 
                     if(component.bboxes_mode() == "add")
                     {
-                        component.x1(component.mousex());
-                        component.y1(component.mousey());
-                        component.x2(component.mousex());
-                        component.y2(component.mousey());
+                        component.x1(component.cursorx());
+                        component.y1(component.cursory());
+                        component.x2(component.cursorx());
+                        component.y2(component.cursory());
 
                         component.new_bbox(mapping.fromJS({
                             left: component.x1(),
@@ -188,33 +198,50 @@ define([
                         component.bboxes.push(component.new_bbox());
                         event.stopPropagation();
                     }
+                    else
+                    {
+                        component.pan(true);
+                    }
+
+                    component.update_mouse(e);
                 }
 
                 component.on_mousemove = function(item, e)
                 {
-                    component.update_mouse(e);
+                    component.update_cursor(e);
 
                     if(component.new_bbox() != null)
                     {
-                        component.x2(component.mousex());
-                        component.y2(component.mousey());
+                        component.x2(component.cursorx());
+                        component.y2(component.cursory());
 
                         component.new_bbox().left(Math.min(component.x1(), component.x2()));
                         component.new_bbox().top(Math.min(component.y1(), component.y2()));
                         component.new_bbox().width(Math.abs(component.x1() - component.x2()));
                         component.new_bbox().height(Math.abs(component.y1() - component.y2()));
                     }
+                    else if(component.pan())
+                    {
+                        component.imagex(component.imagex() + e.clientX - component.lastx());
+                        component.imagey(component.imagey() + e.clientY - component.lasty());
+                    }
+
+                    component.update_mouse(e);
                 }
 
                 component.on_mouseup = function(item, e)
                 {
-                    component.update_mouse(e);
+                    component.update_cursor(e);
 
                     if(component.new_bbox() != null)
                     {
-                        component.new_bbox(null);
                         component.bboxes_save();
                     }
+
+                    component.new_bbox(null);
+                    component.pan(false);
+
+                    component.update_mouse(e);
                 }
 
                 component.open_image = function()
@@ -333,7 +360,7 @@ define([
                     component.tags_visible(visible);
                 }
 
-                component.update_mouse = function(e)
+                component.update_cursor = function(e)
                 {
                     var svg = document.getElementById(component.bboxes_svg_id());
                     var point = svg.createSVGPoint();
@@ -341,8 +368,14 @@ define([
                     point.y = e.clientY;
                     var transformed = point.matrixTransform(svg.getScreenCTM().inverse());
 
-                    component.mousex(transformed.x);
-                    component.mousey(transformed.y);
+                    component.cursorx(transformed.x);
+                    component.cursory(transformed.y);
+                }
+
+                component.update_mouse = function(e)
+                {
+                    component.lastx(e.clientX);
+                    component.lasty(e.clientY);
                 }
 
                 component.uri = ko.pureComputed(function()
@@ -352,28 +385,25 @@ define([
 
                 component.viewbox = ko.computed(function()
                 {
-                    return "0 0 " + component.width() + " " + component.height();
+                    return "0 0 " + component.imagewidth() + " " + component.imageheight();
                 });
 
                 component.zoom_in = function()
                 {
-                    component.zoom(component.zoom() * 1.25);
+                    component.imagezoom(component.imagezoom() * 1.25);
                 }
 
                 component.zoom_out = function()
                 {
-                    component.zoom(component.zoom() * (1/1.25));
+                    component.imagezoom(component.imagezoom() * (1/1.25));
                 }
 
                 component.zoom_reset = function()
                 {
-                    component.zoom(1.0);
+                    component.imagex(0);
+                    component.imagey(0);
+                    component.imagezoom(1.0);
                 }
-
-                component.zoom_width = ko.computed(function()
-                {
-                    return component.zoom() * 100 + "%";
-                });
 
                 dashboard.bind({widget: widget, keys: "left", callback: component.previous_image});
                 dashboard.bind({widget: widget, keys: "right", callback: component.next_image});
