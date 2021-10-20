@@ -11,7 +11,7 @@ for path in glob.glob(".coverage*"):
     os.remove(path)
 if os.path.exists(".cover"):
     shutil.rmtree(".cover")
-subprocess.call(["coverage", "run", "--source", "samlab", "-m", "behave"])
+subprocess.call(["coverage", "run", "--parallel-mode", "--source", "samlab", "-m", "behave"])
 subprocess.call(["coverage", "combine"])
 subprocess.call(["coverage", "report"])
 subprocess.call(["coverage", "html", "--directory", ".cover"])

@@ -27,7 +27,7 @@ jobs:
         python setup.py develop
     - name: Run tests
       run: |
-        coverage run --source samlab -m behave
+        coverage run --parallel-mode --source samlab -m behave
         coverage combine
         coverage report
     - name: Upload coverage to Coveralls
