@@ -26,7 +26,10 @@ jobs:
         pip install arrow behave blessings coverage coveralls flask flask-socketio ldap3 requests selenium scipy toyplot watchdog
         python setup.py develop
     - name: Run tests
-      run: behave
+      run: |
+        coverage run --source samlab -m behave
+        coverage combine
+        coverage report
     - name: Upload coverage to Coveralls
       run: coveralls --service=github
       env:
