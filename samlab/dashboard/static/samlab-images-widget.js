@@ -339,8 +339,8 @@ define([
 
                 component.tags_mode_items =
                 [
-                    {key: "edit", label: "<span class='text-success bi-pencil'/>&nbsp;Edit"},
-                    {key: "view", label: "<span class='text-primary bi-eye'/>&nbsp;View"},
+                    {icon: "bi-pencil", key: "edit", label: "Edit", shortcut: "e", extraclass: "text-success"},
+                    {icon: "bi-eye", key: "view", label: "View", shortcut: "v", extraclass: "text-primary"},
                 ];
 
                 component.tags_save = function()
@@ -428,6 +428,7 @@ define([
                 dashboard.bind({widget: widget, keys: "a", callback: function() {component.bboxes_mode("add");}});
                 dashboard.bind({widget: widget, keys: "b", callback: component.bboxes_toggle});
                 dashboard.bind({widget: widget, keys: "d", callback: function() {component.bboxes_mode("delete");}});
+                dashboard.bind({widget: widget, keys: "e", callback: function() {component.tags_mode("edit");}});
                 dashboard.bind({widget: widget, keys: "+", callback: component.zoom_in});
                 dashboard.bind({widget: widget, keys: "-", callback: component.zoom_out});
                 dashboard.bind({widget: widget, keys: "down", callback: component.zoom_out});
@@ -436,7 +437,7 @@ define([
                 dashboard.bind({widget: widget, keys: "right", callback: component.next_image});
                 dashboard.bind({widget: widget, keys: "t", callback: component.tags_toggle});
                 dashboard.bind({widget: widget, keys: "up", callback: component.zoom_in});
-                dashboard.bind({widget: widget, keys: "v", callback: function() {component.bboxes_mode("view");}});
+                dashboard.bind({widget: widget, keys: "v", callback: function() {component.bboxes_mode("view"); component.tags_mode("view"); }});
                 component.reload();
 
                 return component;
