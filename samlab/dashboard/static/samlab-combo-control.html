@@ -1,8 +1,8 @@
 <div class="dropdown">
     <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" data-bind="attr: {disabled: disabled}">
-        <span data-bind="css: current_item().extraclass()">
-            <span style="min-width: 24px" data-bind="class: current_item().icon()"></span>
-            <span data-bind="html: current_item().label()"></span>
+        <span data-bind="css: current_item().extraclass">
+            <span style="min-width: 24px" data-bind="class: current_item().icon"></span>
+            <span data-bind="html: current_item().label"></span>
         </span>
     </button>
     <ul class="dropdown-menu" data-bind="foreach: expanded_items">
