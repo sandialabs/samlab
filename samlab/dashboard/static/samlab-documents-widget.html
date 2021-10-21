@@ -8,13 +8,7 @@
 
     <span class="ms-1">Document <span data-bind="text: index()+1"></span>/<span data-bind="text: count"></span></span>
 
-    <!--<samlab-favorite-control params="otype: 'observations', oid: observation.id"></samlab-favorite-control>-->
-    <div class="dropdown ms-auto">
-        <button type="button" class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" data-boundary="window">View</button>
-        <ul class="dropdown-menu">
-            <li><a class="dropdown-item" data-bind="click: $component.open_document"><span class="bi-card-list"></span>&nbsp;Standalone document</a></li>
-        </ul>
-    </div>
+    <samlab-menu-control class="ms-auto" params="label: 'View', items: menu_items"></samlab-menu-control>
 </div>
 
 <hr></hr>

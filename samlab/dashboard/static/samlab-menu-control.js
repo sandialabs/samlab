@@ -25,8 +25,13 @@ define([
 
                 component.expanded_items = component.items.map(function(item)
                 {
-                    return {click: item.click, divider: item.divider, heading: item.heading, icon: item.icon || "", label: item.label || "", shortcut: item.shortcut || ""};
+                    return {click: item.click, divider: item.divider, heading: item.heading, icon: item.icon || "", key: item.key, label: item.label || "", shortcut: item.shortcut || ""};
                 });
+
+                component.select_item = function(item, event)
+                {
+                    item.click(item, event);
+                }
 
                 return component;
             }

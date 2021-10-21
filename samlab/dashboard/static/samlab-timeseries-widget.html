@@ -1,17 +1,8 @@
 <h1><span data-bind="text: collection"></span> <small class="text-muted ms-auto">Timeseries Collection</small></h1>
 <div class="d-flex flex-row align-items-center">
-    <div class="input-group">
+    <div class="input-group d-flex flex-row align-items-center">
         <input class="form-control form-control-sm font-monospace" type="text" placeholder="Pattern" data-bind="value: pattern">
-        <div class="dropdown">
-            <button type="button" class="btn btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown"></button>
-            <ul class="dropdown-menu">
-                <li><a class="dropdown-item" data-bind="click: select_all">All</a></li>
-                <li><hr class="dropdown-divider"></li>
-                <!-- ko foreach: keys -->
-                <li><a class="dropdown-item" data-bind="click: $parent.select_timeseries"><span data-bind="text: $data"></span></a></li>
-                <!-- /ko -->
-            </ul>
-        </div>
+        <samlab-menu-control params="label: 'Select', items: all_pattern_items"></samlab-menu-control>
     </div>
 
     <label class="small ms-2">Smoothing:</label>

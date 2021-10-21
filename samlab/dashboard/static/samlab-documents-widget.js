@@ -113,6 +113,12 @@ define([
                     });
                 }
 
+                // This must go last, or some callbacks may be undefined.
+                component.menu_items =
+                [
+                    {icon: "bi-card-list", label: "Standalone document", click: component.open_document},
+                ];
+
                 socket.on("service-changed", function(changed)
                 {
                     if(changed.service == "document-collection" && changed.name == component.collection())

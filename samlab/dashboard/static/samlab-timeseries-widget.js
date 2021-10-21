@@ -83,14 +83,14 @@ define([
                     return component.compiled_pattern().test(key);
                 });
 
-                component.select_all = function(key)
+                component.select_all = function(item, event)
                 {
                     component.pattern(".*");
                 }
 
-                component.select_timeseries = function(key)
+                component.select_pattern = function(item, event)
                 {
-                    component.pattern(key);
+                    component.pattern(item.key());
                 }
 
                 component.sync_content = ko.computed(function()
@@ -111,6 +111,16 @@ define([
                             component.plot(data.plot);
                         },
                     });
+                });
+
+                component.pattern_items = component.keys.map(function(key)
+                {
+                    return {key: key, label: key, click: component.select_pattern};
+                });
+
+                component.all_pattern_items = ko.computed(function()
+                {
+                    return [{label: "All", click: component.select_all}, {divider: true}].concat(component.pattern_items());
                 });
 
                 component.yscale_items =

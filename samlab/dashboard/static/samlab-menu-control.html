@@ -12,7 +12,7 @@
         <!-- ko if: $data.click -->
         <li>
             <small>
-                <a class="dropdown-item d-flex" data-bind="click: click">
+                <a class="dropdown-item d-flex" data-bind="click: $component.select_item">
                     <span style="min-width: 24px" data-bind="class: icon"></span>
                     <span class="me-3" data-bind="html: label"></span>
                     <span class="ms-auto font-monospace text-capitalize" data-bind="html: shortcut"></span>
