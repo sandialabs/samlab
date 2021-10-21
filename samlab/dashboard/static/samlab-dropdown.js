@@ -10,15 +10,23 @@ define(["debug"], function(debug)
     // they can be used within grid widgets.
 
     var body = document.querySelector("body");
-    var dropdown_menu = null;
 
     body.addEventListener("show.bs.dropdown", function(event)
     {
-        var menu = event.target.parentElement.querySelector(".dropdown-menu");
+        var dropdown = event.target.parentElement;
+        var menu = dropdown.querySelector(".dropdown-menu");
         var parent_modal = menu.closest(".modal");
         if(!parent_modal)
         {
             body.appendChild(menu);
+
+            function close_dropdown(event)
+            {
+                dropdown.appendChild(menu);
+                body.removeEventListener("hidden.bs.dropdown", close_dropdown);
+            }
+
+            body.addEventListener("hidden.bs.dropdown", close_dropdown);
         }
     });
 });
