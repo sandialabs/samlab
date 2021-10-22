@@ -38,6 +38,8 @@ define([
                     count: null,
                     cursorx: null,
                     cursory: null,
+                    help_id: "w" + uuidv4(),
+                    help_visible: false,
                     imageheight: 0,
                     imagewidth: 0,
                     imagex: 0,
@@ -135,8 +137,7 @@ define([
 
                 component.bboxes_toggle = function()
                 {
-                    var visible = !component.bboxes_visible();
-                    component.bboxes_visible(visible);
+                    component.bboxes_visible(!component.bboxes_visible());
                 }
 
                 component.displaywidth = ko.computed(function()
@@ -148,6 +149,11 @@ define([
                 {
                     component.index(0);
                 };
+
+                component.help_toggle = function()
+                {
+                    component.help_visible(!component.help_visible());
+                }
 
                 component.last_image = function()
                 {
@@ -175,17 +181,17 @@ define([
                     component.index((component.index() + 1) % component.count());
                 };
 
-                component.on_imageloaded = function(item, e)
+                component.on_imageloaded = function(item, event)
                 {
-                    component.imagewidth(e.target.naturalWidth);
-                    component.imageheight(e.target.naturalHeight);
+                    component.imagewidth(event.target.naturalWidth);
+                    component.imageheight(event.target.naturalHeight);
                 }
 
-                component.on_mousedown = function(item, e)
+                component.on_mousedown = function(item, event)
                 {
-                    component.update_cursor(e);
+                    component.update_cursor(event);
 
-                    if(component.bboxes_mode() == "add")
+                    if(event.button == 0 && component.bboxes_mode() == "add")
                     {
                         component.x1(component.cursorx());
                         component.y1(component.cursory());
@@ -204,17 +210,17 @@ define([
                         component.bboxes.push(component.new_bbox());
                         event.stopPropagation();
                     }
-                    else
+                    else if(event.button == 1)
                     {
                         component.pan(true);
                     }
 
-                    component.update_mouse(e);
+                    component.update_mouse(event);
                 }
 
-                component.on_mousemove = function(item, e)
+                component.on_mousemove = function(item, event)
                 {
-                    component.update_cursor(e);
+                    component.update_cursor(event);
 
                     if(component.new_bbox() != null)
                     {
@@ -228,16 +234,16 @@ define([
                     }
                     else if(component.pan())
                     {
-                        component.imagex(component.imagex() + e.clientX - component.lastx());
-                        component.imagey(component.imagey() + e.clientY - component.lasty());
+                        component.imagex(component.imagex() + event.clientX - component.lastx());
+                        component.imagey(component.imagey() + event.clientY - component.lasty());
                     }
 
-                    component.update_mouse(e);
+                    component.update_mouse(event);
                 }
 
-                component.on_mouseup = function(item, e)
+                component.on_mouseup = function(item, event)
                 {
-                    component.update_cursor(e);
+                    component.update_cursor(event);
 
                     if(component.new_bbox() != null)
                     {
@@ -247,7 +253,7 @@ define([
                     component.new_bbox(null);
                     component.pan(false);
 
-                    component.update_mouse(e);
+                    component.update_mouse(event);
                 }
 
                 component.open_image = function()
@@ -362,8 +368,7 @@ define([
 
                 component.tags_toggle = function()
                 {
-                    var visible = !component.tags_visible();
-                    component.tags_visible(visible);
+                    component.tags_visible(component.tags_visible());
                 }
 
                 component.update_cursor = function(e)

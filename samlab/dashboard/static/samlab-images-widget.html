@@ -10,9 +10,21 @@
     <input class="form-control form-control-sm ms-auto" style="width: 100px" type="text" placeholder="Search" data-bind="value: search">
 
     <samlab-menu-control class="ms-1" params="label: 'View', items: menu_items"></samlab-menu-control>
+    <button type="button" class="ms-1 btn btn-sm btn-success" data-bind="css: {active: help_visible}, click: help_toggle"><span class="bi-question-circle-fill"></span></button>
 </div>
 
 <hr></hr>
+
+<div class="collapse" data-bind="attr: {id: help_id}, css: {show: help_visible}">
+    <div class="alert alert-success">
+        <h4 class="alert-heading">Help</h4>
+        <p>
+        Use the View menu to toggle annotations and control image zoom. MMB-drag
+        to pan the image.  LMB-drag to create bounding-boxes in "Add" mode.  LMB-click
+        to delete bounding-boxes in "Delete" mode.
+        </p>
+    </div>
+</div>
 
 <div class="collapse" data-bind="attr: {id: bboxes_id}, css: {show: bboxes_visible}">
     <div class="d-flex flex-row align-items-center mb-2">
