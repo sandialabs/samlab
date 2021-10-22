@@ -34,6 +34,8 @@ define([
                     plot: null,
                     plot_height: plot_element.offsetHeight,
                     plot_width: plot_element.offsetWidth,
+                    refresh_auto: widget.params.autorefresh,
+                    refresh_tick: 0,
                     smoothing: widget.params.smoothing,
                     yscale: widget.params.yscale,
                 });
@@ -66,14 +68,29 @@ define([
                     {key: "left", label: "Left"},
                 ];
 
+                component.refresh_now = function()
+                {
+                    log("refresh_now");
+                    component.refresh_tick(component.refresh_tick() + 1);
+                }
+
+                component.refresh_auto_toggle = function()
+                {
+                    component.refresh_auto(!component.refresh_auto());
+                    if(component.refresh_auto())
+                    {
+                        component.refresh_now();
+                    }
+                }
+
                 component.reload = function()
                 {
+                    log("reload");
                     server.get_json("/timeseries-collection/" + component.collection(),
                     {
                         success: function(data)
                         {
                             component.keys(data.keys);
-                            component.keys.valueHasMutated();
                         },
                     });
                 }
@@ -81,6 +98,11 @@ define([
                 component.selected_keys = component.keys.filter(function(key)
                 {
                     return component.compiled_pattern().test(key);
+                });
+
+                component.selected_keys.subscribe(function(value)
+                {
+                    log("selected_keys", value);
                 });
 
                 component.select_all = function(item, event)
@@ -95,6 +117,10 @@ define([
 
                 component.sync_content = ko.computed(function()
                 {
+                    log("sync_content");
+
+                    component.refresh_tick(); // So we can force updates.
+
                     var uri = "/timeseries-collection/" + component.collection() + "/plot";
                     var data = {
                         height: component.plot_height() - 10,
@@ -111,7 +137,7 @@ define([
                             component.plot(data.plot);
                         },
                     });
-                });
+                }).extend({rateLimit: {timeout: 10, method: "notifyWhenChangesStop"}});
 
                 component.pattern_items = component.keys.map(function(key)
                 {
@@ -133,7 +159,11 @@ define([
                 {
                     if(changed.service == "timeseries-collection" && changed.name == component.collection())
                     {
-                        component.reload();
+                        log("service-changed");
+                        if(component.refresh_auto())
+                        {
+                            component.refresh_now();
+                        }
                     }
                 });
 
@@ -149,7 +179,7 @@ define([
 
     var module =
     {
-        widget: { width: 4, height: 12, params: {collection: null, legend: "bottom-right", pattern: ".*", smoothing: 0.5, yscale: "linear"}},
+        widget: { width: 4, height: 12, params: {autorefresh: true, collection: null, legend: "bottom-right", pattern: ".*", smoothing: 0.5, yscale: "linear"}},
     };
 
     return module
