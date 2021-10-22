@@ -197,7 +197,7 @@ define([
                         component.y1(component.cursory());
                         component.x2(component.cursorx());
                         component.y2(component.cursory());
-
+/*
                         component.new_bbox(mapping.fromJS({
                             left: component.x1(),
                             top: component.y1(),
@@ -208,6 +208,7 @@ define([
                             username: null, //component.username(),
                         }));
                         component.bboxes.push(component.new_bbox());
+*/
                     }
                     else if(event.button == 1)
                     {
@@ -222,7 +223,26 @@ define([
                 {
                     component.update_cursor(event);
 
-                    if(component.new_bbox() != null)
+                    if((event.buttons & 1) && component.bboxes_mode() == "add" && component.new_bbox() == null)
+                    {
+                        component.x2(component.cursorx());
+                        component.y2(component.cursory());
+
+                        if(Math.abs(component.x2() - component.x1()) > 10 && Math.abs(component.y2() - component.y1()) > 10)
+                        {
+                            component.new_bbox(mapping.fromJS({
+                                left: component.x1(),
+                                top: component.y1(),
+                                width: 0,
+                                height: 0,
+                                category: component.bboxes_category(),
+                                color: "white", //component.color(),
+                                username: null, //component.username(),
+                            }));
+                            component.bboxes.push(component.new_bbox());
+                        }
+                    }
+                    else if(component.new_bbox() != null)
                     {
                         component.x2(component.cursorx());
                         component.y2(component.cursory());
