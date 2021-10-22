@@ -71,7 +71,14 @@ define([
                 component.refresh_now = function()
                 {
                     log("refresh_now");
-                    component.refresh_tick(component.refresh_tick() + 1);
+                    server.get_json("/timeseries-collection/" + component.collection(),
+                    {
+                        success: function(data)
+                        {
+                            component.keys(data.keys);
+                            component.refresh_tick(component.refresh_tick() + 1);
+                        },
+                    });
                 }
 
                 component.refresh_auto_toggle = function()
@@ -83,26 +90,9 @@ define([
                     }
                 }
 
-                component.reload = function()
-                {
-                    log("reload");
-                    server.get_json("/timeseries-collection/" + component.collection(),
-                    {
-                        success: function(data)
-                        {
-                            component.keys(data.keys);
-                        },
-                    });
-                }
-
                 component.selected_keys = component.keys.filter(function(key)
                 {
                     return component.compiled_pattern().test(key);
-                });
-
-                component.selected_keys.subscribe(function(value)
-                {
-                    log("selected_keys", value);
                 });
 
                 component.select_all = function(item, event)
@@ -115,9 +105,9 @@ define([
                     component.pattern(item.key());
                 }
 
-                component.sync_content = ko.computed(function()
+                component.sync_plot = ko.computed(function()
                 {
-                    log("sync_content");
+                    log("sync_plot");
 
                     component.refresh_tick(); // So we can force updates.
 
@@ -159,7 +149,6 @@ define([
                 {
                     if(changed.service == "timeseries-collection" && changed.name == component.collection())
                     {
-                        log("service-changed");
                         if(component.refresh_auto())
                         {
                             component.refresh_now();
@@ -169,7 +158,7 @@ define([
 
                 dashboard.bind({widget: widget, keys: "left", callback: component.previous_document});
                 dashboard.bind({widget: widget, keys: "right", callback: component.next_document});
-                component.reload();
+                component.refresh_now();
 
                 return component;
             }
