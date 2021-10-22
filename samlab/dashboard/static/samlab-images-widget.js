@@ -187,7 +187,7 @@ define([
                     component.imageheight(event.target.naturalHeight);
                 }
 
-                component.on_mousedown = function(item, event)
+                component.on_mousedown = function(data, event)
                 {
                     component.update_cursor(event);
 
@@ -208,17 +208,17 @@ define([
                             username: null, //component.username(),
                         }));
                         component.bboxes.push(component.new_bbox());
-                        event.stopPropagation();
                     }
                     else if(event.button == 1)
                     {
                         component.pan(true);
                     }
 
+                    event.stopPropagation();
                     component.update_mouse(event);
                 }
 
-                component.on_mousemove = function(item, event)
+                component.on_mousemove = function(event)
                 {
                     component.update_cursor(event);
 
@@ -227,10 +227,15 @@ define([
                         component.x2(component.cursorx());
                         component.y2(component.cursory());
 
-                        component.new_bbox().left(Math.min(component.x1(), component.x2()));
-                        component.new_bbox().top(Math.min(component.y1(), component.y2()));
-                        component.new_bbox().width(Math.abs(component.x1() - component.x2()));
-                        component.new_bbox().height(Math.abs(component.y1() - component.y2()));
+                        var left = Math.max(0, Math.min(component.x1(), component.x2()));
+                        var top = Math.max(0, Math.min(component.y1(), component.y2()));
+                        var right = Math.min(component.imagewidth(), Math.max(component.x1(), component.x2()));
+                        var bottom = Math.min(component.imageheight(), Math.max(component.y1(), component.y2()));
+
+                        component.new_bbox().left(left);
+                        component.new_bbox().top(top);
+                        component.new_bbox().width(right - left);
+                        component.new_bbox().height(bottom - top);
                     }
                     else if(component.pan())
                     {
@@ -241,7 +246,7 @@ define([
                     component.update_mouse(event);
                 }
 
-                component.on_mouseup = function(item, event)
+                component.on_mouseup = function(event)
                 {
                     component.update_cursor(event);
 
@@ -444,6 +449,9 @@ define([
                 dashboard.bind({widget: widget, keys: "up", callback: component.zoom_in});
                 dashboard.bind({widget: widget, keys: "v", callback: function() {component.bboxes_mode("view"); component.tags_mode("view"); }});
                 component.reload();
+
+                document.querySelector("body").addEventListener("mousemove", component.on_mousemove);
+                document.querySelector("body").addEventListener("mouseup", component.on_mouseup);
 
                 return component;
             }
