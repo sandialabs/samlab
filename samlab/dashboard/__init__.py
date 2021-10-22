@@ -2,7 +2,9 @@
 # (NTESS).  Under the terms of Contract DE-NA0003525 with NTESS, the U.S.
 # Government retains certain rights in this software.
 
+import arrow
 import contextlib
+import itertools
 import logging
 import os
 import signal
@@ -88,7 +90,7 @@ class Server(object):
 
 
     def __repr__(self):
-        return "samlab.dashboard.Server(host={self._host!r}, port={self._port!r}, config={self._config!r}, coverage={self._coverage!r}, quiet={self._quiet!r})"
+        return f"samlab.dashboard.Server(host={self._host!r}, port={self._port!r}, config={self._config!r}, coverage={self._coverage!r}, quiet={self._quiet!r})"
 
 
     def __enter__(self):
@@ -140,4 +142,33 @@ class Server(object):
     def uri(self):
         """Address of the running server that can be used with web clients."""
         return "http://%s:%s" % (self._host, self._port)
+
+
+class Writer(object):
+    def __init__(self, root):
+        self._root = os.path.abspath(root)
+        self._keys = {}
+
+
+    def __repr__(self):
+        return f"samlab.dashboard.Writer(root={self._root!r})"
+
+
+    def add_scalar(self, key, value, index=None, timestamp=None):
+        if timestamp is None:
+            timestamp = arrow.utcnow().timestamp
+
+        path = os.path.join(self._root, key + ".csv")
+
+        if key not in self._keys:
+            self._keys[key] = itertools.count()
+            os.makedirs(os.path.dirname(path), exist_ok=True)
+            with open(path, "w") as stream:
+                stream.write("index,timestamp,value\n")
+
+        if index is None:
+            index = next(self._keys[key])
+
+        with open(path, "a") as stream:
+            stream.write(f"{index},{timestamp},{value}\n")
 
