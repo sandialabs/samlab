@@ -393,7 +393,7 @@ define([
 
                 component.tags_toggle = function()
                 {
-                    component.tags_visible(component.tags_visible());
+                    component.tags_visible(!component.tags_visible());
                 }
 
                 component.update_cursor = function(e)
@@ -461,12 +461,10 @@ define([
                 dashboard.bind({widget: widget, keys: "e", callback: function() {component.tags_mode("edit");}});
                 dashboard.bind({widget: widget, keys: "+", callback: component.zoom_in});
                 dashboard.bind({widget: widget, keys: "-", callback: component.zoom_out});
-                dashboard.bind({widget: widget, keys: "down", callback: component.zoom_out});
                 dashboard.bind({widget: widget, keys: "left", callback: component.previous_image});
                 dashboard.bind({widget: widget, keys: "m", callback: component.metadata_toggle});
                 dashboard.bind({widget: widget, keys: "right", callback: component.next_image});
                 dashboard.bind({widget: widget, keys: "t", callback: component.tags_toggle});
-                dashboard.bind({widget: widget, keys: "up", callback: component.zoom_in});
                 dashboard.bind({widget: widget, keys: "v", callback: function() {component.bboxes_mode("view"); component.tags_mode("view"); }});
                 component.reload();
 
