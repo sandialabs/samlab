@@ -50,6 +50,8 @@ def post_timeseries_plot(name):
         color = palette[color_index]
 
         timeseries = timeseries_collection.get(key)
+        if timeseries.ndim < 2:
+            continue
 
         if timeseries.shape[1] == 1:
             x = numpy.arange(timeseries.shape[0])

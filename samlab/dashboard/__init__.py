@@ -154,6 +154,13 @@ class Writer(object):
         return f"samlab.dashboard.Writer(root={self._root!r})"
 
 
+    def add_document(self, key, document):
+        path = os.path.join(self._root, key + ".html")
+        os.makedirs(os.path.dirname(path), exist_ok=True)
+        with open(path, "w") as stream:
+            stream.write(document)
+
+
     def add_scalar(self, key, value, index=None, timestamp=None):
         if timestamp is None:
             timestamp = arrow.utcnow().timestamp

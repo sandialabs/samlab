@@ -11,7 +11,7 @@ import re
 import watchdog.events
 import watchdog.observers
 
-from samlab.dashboard.server import socketio
+from samlab.dashboard.service.notify import emit
 
 log = logging.getLogger(__name__)
 
@@ -104,4 +104,4 @@ class Directory(DocumentCollection, watchdog.events.FileSystemEventHandler):
 
         log.info(f"{self.__class__.__name__} loaded {len(self)} documents from {self._root}.")
 
-        socketio.emit("service-changed", {"service": "document-collection", "name": self._name})
+        emit("service-changed", {"service": "document-collection", "name": self._name})

@@ -7,6 +7,7 @@ import logging
 import flask
 
 from samlab.dashboard.server import socketio, require_auth, require_permissions
+from samlab.dashboard.service.notify import emit
 
 
 log = logging.getLogger(__name__)
@@ -34,6 +35,6 @@ def disconnect():
 def test():
     require_permissions(["read"])
     _log_request()
-    socketio.emit("test")
+    emit("test")
 
 

@@ -7,7 +7,7 @@ import json
 import logging
 import os
 
-from samlab.dashboard.server import socketio
+from samlab.dashboard.service.notify import emit
 
 
 log = logging.getLogger(__name__)
@@ -95,7 +95,7 @@ class JSONFile(Favorites):
         message = "favorite-changed" if name in self._favorites[service] else "favorite-created"
         self._favorites[service][name] = label
         self._save()
-        socketio.emit(message, {"service": service, "name": name, "label": label})
+        emit(message, {"service": service, "name": name, "label": label})
 
 
     def delete(self, service, name):
@@ -107,7 +107,7 @@ class JSONFile(Favorites):
             if name in self._favorites[service]:
                 del self._favorites[service][name]
                 self._save()
-                socketio.emit("favorite-deleted", {"service": service, "name": name})
+                emit("favorite-deleted", {"service": service, "name": name})
 
 
     def get(self):

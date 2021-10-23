@@ -2,6 +2,8 @@
 # (NTESS).  Under the terms of Contract DE-NA0003525 with NTESS, the U.S.
 # Government retains certain rights in this software.
 
+import queue
+
 import flask
 
 from samlab.dashboard.server import application, socketio, require_auth, require_permissions
@@ -22,3 +24,21 @@ def post_notify():
 
     socketio.emit("notify", flask.request.json)
     return flask.jsonify()
+
+
+def emit(message, data=None):
+    emit.queue.put((message, data))
+emit.queue = queue.Queue()
+
+
+def emit_loop():
+    while True:
+        try:
+            message, data = emit.queue.get_nowait()
+            socketio.emit(message, data)
+        except:
+            socketio.sleep(0.1)
+
+
+socketio.start_background_task(emit_loop)
+

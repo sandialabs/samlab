@@ -12,7 +12,7 @@ import numpy
 import watchdog.events
 import watchdog.observers
 
-from samlab.dashboard.server import socketio
+from samlab.dashboard.service.notify import emit
 
 log = logging.getLogger(__name__)
 
@@ -115,4 +115,4 @@ class Directory(TimeseriesCollection, watchdog.events.FileSystemEventHandler):
 
         self._items = {os.path.relpath(os.path.splitext(path)[0], self._root) : path for path in sorted(paths)}
 
-        socketio.emit("service-changed", {"service": "timeseries-collection", "name": self._name})
+        emit("service-changed", {"service": "timeseries-collection", "name": self._name})
