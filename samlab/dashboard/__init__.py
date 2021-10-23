@@ -161,9 +161,11 @@ class Writer(object):
             stream.write(document)
 
 
-    def add_scalar(self, key, value, index=None, timestamp=None):
+    def add_scalar(self, key, value, index=None, timestamp=None, marker=None):
         if timestamp is None:
             timestamp = arrow.utcnow().timestamp
+        if marker is None:
+            marker = ""
 
         path = os.path.join(self._root, key + ".csv")
 
@@ -171,11 +173,11 @@ class Writer(object):
             self._keys[key] = itertools.count()
             os.makedirs(os.path.dirname(path), exist_ok=True)
             with open(path, "w") as stream:
-                stream.write("index,timestamp,value\n")
+                stream.write("index,timestamp,value,marker\n")
 
         if index is None:
             index = next(self._keys[key])
 
         with open(path, "a") as stream:
-            stream.write(f"{index},{timestamp},{value}\n")
+            stream.write(f"{index},{timestamp},{value},{marker}\n")
 

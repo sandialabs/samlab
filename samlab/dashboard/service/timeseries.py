@@ -50,18 +50,23 @@ def post_timeseries_plot(name):
         color = palette[color_index]
 
         timeseries = timeseries_collection.get(key)
-        if timeseries.ndim < 2:
+        if timeseries is None:
+            continue
+        if "values" not in timeseries:
             continue
 
-        if timeseries.shape[1] == 1:
-            x = numpy.arange(timeseries.shape[0])
-            y = timeseries[:,0]
-        elif timeseries.shape[1] == 2:
-            x = timeseries[:,0]
-            y = timeseries[:,1]
-        if timeseries.shape[1] == 3:
-            x = timeseries[:,0]
-            y = timeseries[:,2]
+        y = timeseries["values"]
+
+        if "indices" in timeseries:
+            indices = timeseries["indices"]
+        else:
+            indices = numpy.arange(len(y))
+        x = indices
+
+        if "markers" in timeseries:
+            marker = timeseries["markers"]
+        else:
+            marker = [None] * len(y)
 
         if smoothing:
             alpha = 1 - smoothing
@@ -70,9 +75,9 @@ def post_timeseries_plot(name):
             zi = scipy.signal.lfiltic(b, a, y[0:1], [0])
             ys = scipy.signal.lfilter(b, a, y, zi=zi)[0]
             axes.plot(x, y, color=color, opacity=0.25)
-            legend.append((key, axes.plot(x, ys, color=color)))
+            legend.append((key, axes.plot(x, ys, color=color, marker=marker)))
         else:
-            legend.append((key, axes.plot(x, y, color=color)))
+            legend.append((key, axes.plot(x, y, color=color, marker=marker)))
 
     if legend:
         height = len(legend) * 16

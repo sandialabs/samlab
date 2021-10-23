@@ -82,7 +82,33 @@ class Directory(TimeseriesCollection, watchdog.events.FileSystemEventHandler):
 
 
     def get(self, key):
-        return numpy.loadtxt(self._items[key], skiprows=1, delimiter=",")
+        data = numpy.loadtxt(self._items[key], skiprows=1, delimiter=",", dtype=str)
+        if data.ndim < 2:
+            return None
+
+        if data.shape[1] == 1:
+            return {
+                "values": data[:,0].astype(numpy.float64),
+                }
+        elif data.shape[1] == 2:
+            return {
+                "timestamps": data[:,0].astype(numpy.float64),
+                "values": data[:,1].astype(numpy.float64),
+                }
+        elif data.shape[1] == 3:
+            return {
+                "indices": data[:,0].astype(numpy.int64),
+                "timestamps": data[:,1].astype(numpy.float64),
+                "values": data[:,2].astype(numpy.float64),
+            }
+        elif data.shape[1] == 4:
+            return {
+                "indices": data[:,0].astype(numpy.int64),
+                "timestamps": data[:,1].astype(numpy.float64),
+                "values": data[:,2].astype(numpy.float64),
+                "markers": data[:,3],
+            }
+        return None
 
 
     def keys(self):
