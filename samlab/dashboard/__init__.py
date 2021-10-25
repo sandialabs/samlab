@@ -163,7 +163,7 @@ class Writer(object):
 
     def add_scalar(self, *, key, value, index=None, timestamp=None, marker=None):
         if timestamp is None:
-            timestamp = arrow.utcnow().timestamp
+            timestamp = arrow.utcnow().timestamp()
         if marker is None:
             marker = ""
 
