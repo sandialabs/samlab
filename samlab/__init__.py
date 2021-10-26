@@ -4,7 +4,7 @@
 
 """Tools for managing machine learning experiments."""
 
-__version__ = "0.3.0"
+__version__ = "0.4.0-dev"
 
 import logging
 import warnings
