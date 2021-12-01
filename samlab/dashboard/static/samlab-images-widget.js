@@ -319,7 +319,7 @@ define([
                     if(search_in_progress)
                         return;
                     search_in_progress = true;
-                    component.index(Math.max(1, Math.min(parseInt(value), component.count())) - 1);
+                    component.index(Math.max(0, Math.min(parseInt(value), component.count()-1)));
                     component.search("");
                     search_in_progress = false;
                 });

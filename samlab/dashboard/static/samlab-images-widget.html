@@ -6,7 +6,7 @@
     <button type="button" class="ms-1 btn btn-sm btn-outline-secondary" data-bind="click: next_image" title="Next image"><span class="bi-skip-end-fill"></span></button>
     <button type="button" class="ms-1 btn btn-sm btn-outline-secondary" data-bind="click: last_image" title="Last image"><span class="bi-skip-forward-fill"></span></button>
 
-    <span class="ms-1">Image <span data-bind="text: index() + 1"></span>/<span data-bind="text: count"></span></span>
+    <span class="ms-1">Image <span data-bind="text: index()"></span>/<span data-bind="text: count"></span></span>
     <input class="form-control form-control-sm ms-auto" style="width: 100px" type="text" placeholder="Search" data-bind="value: search">
 
     <samlab-menu-control class="ms-1" params="label: 'View', items: menu_items"></samlab-menu-control>
