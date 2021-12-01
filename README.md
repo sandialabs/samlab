@@ -10,4 +10,4 @@ Samlab Manager.
 
 You can see the full Samlab documentation with tutorials at
 https://samlab.readthedocs.io ... for questions, comments, or suggestions, get
-in touch with our team at https://gitter.im/sandialabs/samlab.
+in touch with our team at https://github.com/sandialabs/samlab/discussions.
