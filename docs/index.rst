@@ -17,6 +17,7 @@ Documentation
 
     installation.rst
     overview.rst
+    dashboard
     reference.rst
     compatibility.rst
     developers.rst
