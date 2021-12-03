@@ -1,13 +1,10 @@
+version: 2
+
 build:
-  image: latest
+  tools:
+    python: "3.9"
 
-python:
-  version: 3.8
-  setup_py_install: true
-
-search:
-  ignore:
-    - dashboard.html
-    - dashboard/*
+sphinx:
+  configuration: docs/conf.py
 
 
