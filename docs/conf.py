@@ -46,12 +46,18 @@ extensions = [
     "sphinx.ext.viewcode",
     "sphinx_gallery.load_style",
     "sphinx_rtd_theme",
-#    "sphinx_js",
 ]
 
-#js_source_path = "../samlab/web/app/static"
-#js_source_path = "."
-#jsdoc_config_path = "conf.json"
+
+autodoc_mock_imports = [
+"arrow",
+"ldap3",
+"numpy",
+"requests",
+"scipy",
+"torch",
+"tqdm",
+]
 
 
 intersphinx_mapping = {
