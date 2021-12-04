@@ -21,10 +21,13 @@
         <div class="dropdown ms-1 align-self-center">
             <button type="button" class="btn btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown">Datasets</button>
             <ul class="dropdown-menu">
-                <!-- ko foreach: backends -->
-                <!-- ko if: name -->
-                <li><a class="dropdown-item" data-bind="click: $root.show_service"><span data-bind="text: name"></span></a></li>
+                <!-- ko if: no_datasets -->
+                <div style="max-width: 220px">
+                    <p style="margin: 0 8px">Configure datasets at startup to populate this list.</p>
+                </div>
                 <!-- /ko -->
+                <!-- ko foreach: datasets -->
+                <li><a class="dropdown-item" data-bind="click: $root.show_service"><span data-bind="text: name"></span></a></li>
                 <!-- /ko -->
             </ul>
         </div>
