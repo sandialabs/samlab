@@ -27,14 +27,18 @@ class Server(object):
     For your real work you will likely want to setup and administer a dedicated
     instance of the Samlab dashboard server; this class makes it easy to start a temporary
     instance for use in tutorials and our unit tests::
+
         >>> server = samlab.dashboard.Server()
         ... Use the server here ...
         >>> server.stop()
         >>> database.stop()
+
     Alternatively, you can use the server object as a context manager for automatic cleanup::
+
         >>> with samlab.dashboard.Server() as server:
         ...         ... Use the server here ...
         >>> # Server is automatically cleaned-up when the `with` block is exited.
+
     Parameters
     ----------
     host: string, optional
