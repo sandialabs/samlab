@@ -50,13 +50,17 @@ extensions = [
 
 
 autodoc_mock_imports = [
+"IPython",
 "arrow",
+"flask_socketio",
 "ldap3",
 "numpy",
 "requests",
 "scipy",
 "torch",
+"toyplot",
 "tqdm",
+"watchdog",
 ]
 
 
