@@ -2,7 +2,7 @@
     <div class="dashboard-bar d-flex flex-row">
         <h5 class="text-muted align-self-center"><span data-bind="text: server.name"></span>&nbsp;<small data-bind="text: server.description"></small></h5>
         <samlab-favorite-control class="ms-auto align-self-center" params="otype: 'layouts', oid: lid"></samlab-favorite-control>
-        <div class="dropdown ms-1 align-self-center">
+        <div class="dropdown ms-1 align-self-center" id="samlab-dashboard-favorites-menu">
             <button type="button" class="btn btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown">Favorites</button>
             <ul class="dropdown-menu">
                 <!-- ko if: no_favorites -->
@@ -18,7 +18,7 @@
                 <!-- /ko -->
             </ul>
         </div>
-        <div class="dropdown ms-1 align-self-center">
+        <div class="dropdown ms-1 align-self-center" id="samlab-dashboard-datasets-menu">
             <button type="button" class="btn btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown">Datasets</button>
             <ul class="dropdown-menu">
                 <!-- ko if: no_datasets -->
@@ -31,7 +31,7 @@
                 <!-- /ko -->
             </ul>
         </div>
-        <div class="dropdown ms-1 align-self-center">
+        <div class="dropdown ms-1 align-self-center" id="samlab-dashboard-operations-menu">
             <button type="button" class="btn btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown">Operations</button>
             <ul class="dropdown-menu">
                 <li><h6 class="dropdown-header">Dashboard</h6></li>
