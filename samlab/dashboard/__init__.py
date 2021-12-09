@@ -6,6 +6,7 @@ import arrow
 import contextlib
 import itertools
 import logging
+import numbers
 import os
 import signal
 import socket
@@ -158,6 +159,24 @@ class Writer(object):
         return f"samlab.dashboard.Writer(root={self._root!r})"
 
 
+    def _open_timeseries(self, key, index, timestamp):
+        path = os.path.join(self._root, key + ".csv")
+
+        if key not in self._keys:
+            self._keys[key] = itertools.count()
+            os.makedirs(os.path.dirname(path), exist_ok=True)
+            with open(path, "w") as stream:
+                stream.write("index,timestamp,value\n")
+
+        if index is None:
+            index = next(self._keys[key])
+
+        if timestamp is None:
+            timestamp = arrow.utcnow().timestamp()
+
+        return path, index, timestamp
+
+
     def add_document(self, *, key, document):
         path = os.path.join(self._root, key + ".html")
         os.makedirs(os.path.dirname(path), exist_ok=True)
@@ -165,23 +184,12 @@ class Writer(object):
             stream.write(document)
 
 
-    def add_scalar(self, *, key, value, index=None, timestamp=None, marker=None):
-        if timestamp is None:
-            timestamp = arrow.utcnow().timestamp()
-        if marker is None:
-            marker = ""
+    def add_scalar(self, *, key, value, index=None, timestamp=None):
+        if not isinstance(value, numbers.Number):
+            raise ValueError("Scalar value must be a number.")
 
-        path = os.path.join(self._root, key + ".csv")
-
-        if key not in self._keys:
-            self._keys[key] = itertools.count()
-            os.makedirs(os.path.dirname(path), exist_ok=True)
-            with open(path, "w") as stream:
-                stream.write("index,timestamp,value,marker\n")
-
-        if index is None:
-            index = next(self._keys[key])
-
+        path, index, timestamp = self._open_timeseries(key, index, timestamp)
         with open(path, "a") as stream:
-            stream.write(f"{index},{timestamp},{value},{marker}\n")
+            stream.write(f"{index},{timestamp},{value}\n")
+
 
