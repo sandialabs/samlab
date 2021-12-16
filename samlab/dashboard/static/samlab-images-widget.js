@@ -171,6 +171,17 @@ define([
                     });
                 });
 
+                component.metadata_links = ko.computed(function()
+                {
+                    var text = component.metadata();
+                    if(text != null)
+                    {
+                        var exp = /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/ig;
+                        text = text.replace(exp, "<a href='$1'>$1</a>");
+                    }
+                    return text;
+                });
+
                 component.metadata_toggle = function()
                 {
                     component.metadata_visible(!component.metadata_visible());
