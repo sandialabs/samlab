@@ -50,7 +50,7 @@
     </div>
 </div>
 
-<div style="flex: 1; overflow: hidden; position: relative">
+<div style="flex: 1; min-height: 0; overflow: hidden; position: relative">
     <img style="position: absolute;" class="rounded" data-bind="attr: {src: uri}, event: {load: on_imageloaded}, style: { left: imagex, top: imagey, width: displaywidth}"></img>
     <svg style="position: absolute;" data-bind="attr: {id: bboxes_svg_id, viewBox: viewbox}, event: {mousedown: on_mousedown}, style: {left: imagex, top: imagey, width: displaywidth}" font-size="12" stroke-width="1">
         <defs>
@@ -73,6 +73,6 @@
     </svg>
 </div>
 
-<div class="collapse my-2" style="flex: 1" data-bind="attr: {id: metaid}, css: {show: metadata_visible}">
+<div class="collapse my-2" style="flex: 1; min-height: 0; overflow: auto" data-bind="attr: {id: metaid}, css: {show: metadata_visible}">
     <pre style="" data-bind="html: metadata_links"></pre>
 </div>
