@@ -1,0 +1,21 @@
+img.browser
+{
+    box-shadow: 0 0 7px rgba(0, 0, 0, 0.5);
+}
+
+footer p
+{
+    background-image: url('SNL_Stacked_Black.png');
+    background-position: left center;
+    background-repeat: no-repeat;
+    background-size: 120px;
+    padding: 20px 0 20px 140px;
+    text-align: left;
+    font-size: 10pt;
+    line-height: 12pt;
+}
+
+.logo-important
+{
+    margin-top: 100px !important;
+}

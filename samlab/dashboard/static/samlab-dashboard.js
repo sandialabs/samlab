@@ -99,9 +99,14 @@ define(
         return result;
     });
 
-    state.backends = services.backends.map(function(backend)
+    state.datasets = services.backends.filter(function(backend)
     {
-        return { service: backend.service, name: backend.name};
+        return backend.name() != null;
+    });
+
+    state.no_datasets = ko.pureComputed(function()
+    {
+        return state.datasets().length == 0;
     });
 
     state.show_service = function(item)

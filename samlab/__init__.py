@@ -9,8 +9,6 @@ __version__ = "0.4.0-dev"
 import logging
 import warnings
 
-import arrow
-
 log = logging.getLogger(__name__)
 log.addHandler(logging.NullHandler())
 

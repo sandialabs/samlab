@@ -18,12 +18,10 @@ Command Line Tools
 
 *samlab-gputop* provides a colorful, updating display of how hard your GPUs are working.
 
-.. _dashboard:
-
 Dashboard
 ---------
 
-The Samlab dashboard is a web server providing a graphical user interface for
+The Samlab :ref:`dashboard` is a web server providing a graphical user interface for
 annotating images, monitoring experiments, and analyzing results.  Unlike comparable
 tools (Tensorboard, Visdom, Vott, ...), Samlab adapts to your data instead of forcing
 you to store it in databases, binary records, or other organizations.  In most cases,

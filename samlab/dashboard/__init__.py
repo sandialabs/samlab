@@ -6,6 +6,7 @@ import arrow
 import contextlib
 import itertools
 import logging
+import numbers
 import os
 import signal
 import socket
@@ -27,14 +28,18 @@ class Server(object):
     For your real work you will likely want to setup and administer a dedicated
     instance of the Samlab dashboard server; this class makes it easy to start a temporary
     instance for use in tutorials and our unit tests::
+
         >>> server = samlab.dashboard.Server()
         ... Use the server here ...
         >>> server.stop()
         >>> database.stop()
+
     Alternatively, you can use the server object as a context manager for automatic cleanup::
+
         >>> with samlab.dashboard.Server() as server:
         ...         ... Use the server here ...
         >>> # Server is automatically cleaned-up when the `with` block is exited.
+
     Parameters
     ----------
     host: string, optional
@@ -154,6 +159,24 @@ class Writer(object):
         return f"samlab.dashboard.Writer(root={self._root!r})"
 
 
+    def _open_timeseries(self, key, index, timestamp):
+        path = os.path.join(self._root, key + ".csv")
+
+        if key not in self._keys:
+            self._keys[key] = itertools.count()
+            os.makedirs(os.path.dirname(path), exist_ok=True)
+            with open(path, "w") as stream:
+                stream.write("index,timestamp,value\n")
+
+        if index is None:
+            index = next(self._keys[key])
+
+        if timestamp is None:
+            timestamp = arrow.utcnow().timestamp()
+
+        return path, index, timestamp
+
+
     def add_document(self, *, key, document):
         path = os.path.join(self._root, key + ".html")
         os.makedirs(os.path.dirname(path), exist_ok=True)
@@ -161,23 +184,12 @@ class Writer(object):
             stream.write(document)
 
 
-    def add_scalar(self, *, key, value, index=None, timestamp=None, marker=None):
-        if timestamp is None:
-            timestamp = arrow.utcnow().timestamp()
-        if marker is None:
-            marker = ""
+    def add_scalar(self, *, key, value, index=None, timestamp=None):
+        if not isinstance(value, numbers.Number):
+            raise ValueError("Scalar value must be a number.")
 
-        path = os.path.join(self._root, key + ".csv")
-
-        if key not in self._keys:
-            self._keys[key] = itertools.count()
-            os.makedirs(os.path.dirname(path), exist_ok=True)
-            with open(path, "w") as stream:
-                stream.write("index,timestamp,value,marker\n")
-
-        if index is None:
-            index = next(self._keys[key])
-
+        path, index, timestamp = self._open_timeseries(key, index, timestamp)
         with open(path, "a") as stream:
-            stream.write(f"{index},{timestamp},{value},{marker}\n")
+            stream.write(f"{index},{timestamp},{value}\n")
+
 

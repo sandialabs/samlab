@@ -2,7 +2,7 @@
     <div class="dashboard-bar d-flex flex-row">
         <h5 class="text-muted align-self-center"><span data-bind="text: server.name"></span>&nbsp;<small data-bind="text: server.description"></small></h5>
         <samlab-favorite-control class="ms-auto align-self-center" params="otype: 'layouts', oid: lid"></samlab-favorite-control>
-        <div class="dropdown ms-1 align-self-center">
+        <div class="dropdown ms-1 align-self-center" id="samlab-dashboard-favorites-menu">
             <button type="button" class="btn btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown">Favorites</button>
             <ul class="dropdown-menu">
                 <!-- ko if: no_favorites -->
@@ -18,17 +18,20 @@
                 <!-- /ko -->
             </ul>
         </div>
-        <div class="dropdown ms-1 align-self-center">
+        <div class="dropdown ms-1 align-self-center" id="samlab-dashboard-datasets-menu">
             <button type="button" class="btn btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown">Datasets</button>
             <ul class="dropdown-menu">
-                <!-- ko foreach: backends -->
-                <!-- ko if: name -->
-                <li><a class="dropdown-item" data-bind="click: $root.show_service"><span data-bind="text: name"></span></a></li>
+                <!-- ko if: no_datasets -->
+                <div style="max-width: 220px">
+                    <p style="margin: 0 8px">Configure datasets at startup to populate this list.</p>
+                </div>
                 <!-- /ko -->
+                <!-- ko foreach: datasets -->
+                <li><a class="dropdown-item" data-bind="click: $root.show_service"><span data-bind="text: name"></span></a></li>
                 <!-- /ko -->
             </ul>
         </div>
-        <div class="dropdown ms-1 align-self-center">
+        <div class="dropdown ms-1 align-self-center" id="samlab-dashboard-operations-menu">
             <button type="button" class="btn btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown">Operations</button>
             <ul class="dropdown-menu">
                 <li><h6 class="dropdown-header">Dashboard</h6></li>
@@ -45,7 +48,7 @@
         </div>
     </div>
     <div class="grid-stack" data-bind="gridStack: {options: options, widgets: widgets}">
-        <div class="grid-stack-item" data-bind="attr: {'gs-x': $data.x, 'gs-y': $data.y, 'gs-w': $data.width, 'gs-h': $data.height}">
+        <div class="grid-stack-item" data-bind="class: $data.component, attr: {'gs-x': $data.x, 'gs-y': $data.y, 'gs-w': $data.width, 'gs-h': $data.height}">
             <div class="grid-stack-item-content" data-bind="event: {mouseenter: $root.mouse_enter, mouseleave: $root.mouse_leave}">
                 <div class="grid-stack-item-handle"></div>
                 <button class="grid-stack-item-close btn-close" data-bind="click: $root.close_widget"></button>

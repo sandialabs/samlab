@@ -13,6 +13,19 @@ class ForbidAll(object):
         return f"{self.__class__.__module__}.{self.__class__.__name__}()"
 
 
+class ForbidDeveloper(object):
+    """Access control list strategy that allows regular (non developer) access.
+    """
+    def __call__(self, authorization, requested):
+        if "developer" in requested:
+            return False
+        return True
+
+
+    def __repr__(self):
+        return f"{self.__class__.__module__}.{self.__class__.__name__}()"
+
+
 class List(object):
     """Access control list strategy based on lists of usernames."""
     def __init__(self, **permissions):
@@ -42,5 +55,3 @@ class PermitAll(object):
 
     def __repr__(self):
         return f"{self.__class__.__module__}.{self.__class__.__name__}()"
-
-

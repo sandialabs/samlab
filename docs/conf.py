@@ -46,12 +46,22 @@ extensions = [
     "sphinx.ext.viewcode",
     "sphinx_gallery.load_style",
     "sphinx_rtd_theme",
-#    "sphinx_js",
 ]
 
-#js_source_path = "../samlab/web/app/static"
-#js_source_path = "."
-#jsdoc_config_path = "conf.json"
+
+autodoc_mock_imports = [
+"IPython",
+"arrow",
+"flask_socketio",
+"ldap3",
+"numpy",
+"requests",
+"scipy",
+"torch",
+"toyplot",
+"tqdm",
+"watchdog",
+]
 
 
 intersphinx_mapping = {
@@ -88,7 +98,9 @@ html_theme = "sphinx_rtd_theme"
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
-#html_static_path = ["_static"]
+html_static_path = ["_static"]
+
+html_css_files = ["custom.css"]
 
 def warn_undocumented_members(app, what, name, obj, options, lines):
     if what not in [] and len(lines) == 0:
