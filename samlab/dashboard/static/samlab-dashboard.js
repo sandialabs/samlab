@@ -231,6 +231,14 @@ define(
         return state.widgets;
     });
 
+    state.server.name.subscribe(function(name)
+    {
+        if(name)
+            document.title = "Samlab Dashboard | " + name;
+        else
+            document.title = "Samlab Dashboard";
+    });
+
     state.widgets_changed.extend({rateLimit: {timeout: 250, method: "notifyWhenChangesStop"}});
 
     state.widgets_changed.subscribe(function(widgets)
