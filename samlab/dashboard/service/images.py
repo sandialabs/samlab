@@ -56,6 +56,9 @@ def get_put_image_bboxes(name, index):
             if not bbox["category"]:
                 flask.abort(flask.make_response(flask.jsonify(message="Bounding box category cannot be empty."), 400))
 
+            if bbox["width"] == 0 and bbox["height"] == 0:
+                flask.abort(flask.make_response(flask.jsonify(message="Bounding box cannot be empty."), 400))
+
         image_collection = require_backend("image-collection", name)
         saved = image_collection.put_bboxes(index, bboxes)
         if not saved:
