@@ -46,7 +46,7 @@ def post_timeseries_plot(name):
     legend = []
 
     for key in keys:
-        color_index = int(hashlib.sha256(key.encode("utf8")).hexdigest(), 16) % len(palette)
+        color_index = int(hashlib.sha256(key.split("/")[0].encode("utf8")).hexdigest(), 16) % len(palette)
         color = palette[color_index]
 
         timeseries = timeseries_collection.get(key)
