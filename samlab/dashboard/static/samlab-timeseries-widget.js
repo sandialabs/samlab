@@ -58,6 +58,7 @@ define([
 
                 component.legend_items =
                 [
+                    {key: "none", label: "None"},
                     {key: "top-left", label: "Top Left"},
                     {key: "top", label: "Top"},
                     {key: "top-right", label: "Top Right"},

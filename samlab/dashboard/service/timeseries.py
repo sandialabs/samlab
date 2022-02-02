@@ -74,12 +74,12 @@ def post_timeseries_plot(name):
             a = [1, alpha-1]
             zi = scipy.signal.lfiltic(b, a, y[0:1], [0])
             ys = scipy.signal.lfilter(b, a, y, zi=zi)[0]
-            axes.plot(x, y, color=color, opacity=0.25)
+            axes.plot(x, y, color=color, opacity=0.1)
             legend.append((key, axes.plot(x, ys, color=color, marker=marker)))
         else:
             legend.append((key, axes.plot(x, y, color=color, marker=marker)))
 
-    if legend:
+    if legend and legend_corner != "none":
         height = len(legend) * 16
         inset = 50
         canvas.legend(legend, corner=(legend_corner, inset, 100, height))
