@@ -45,7 +45,7 @@ def get_put_image_bboxes(name, index):
         return flask.jsonify(bboxes=image_collection.bboxes(index))
 
     if flask.request.method == "PUT":
-        require_permissions(["write"])
+        require_permissions(["annotate"])
 
         bboxes = flask.request.json["bboxes"]
         for bbox in bboxes:
@@ -84,7 +84,7 @@ def get_put_image_tags(name, index):
         return flask.jsonify(tags=image_collection.tags(index))
 
     if flask.request.method == "PUT":
-        require_permissions(["write"])
+        require_permissions(["annotate"])
 
         tags = flask.request.json["tags"]
         for tag in tags:

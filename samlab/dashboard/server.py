@@ -78,5 +78,5 @@ def require_auth(f):
 
 def require_permissions(permissions):
     if not application.config["acl"](flask.request.authorization, permissions):
-        flask.abort(403)
+        flask.abort(flask.make_response(flask.jsonify(message="You don't have the necessary permissions."), 403))
 
