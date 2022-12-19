@@ -60,8 +60,8 @@
         </defs>
         <!-- ko if: bboxes_visible-->
             <!-- ko if: bboxes_mode() == 'add' -->
-                <line style="pointer-events: none; filter:url(#shadow)" x1="0" data-bind="attr:{y1: cursory, y2: cursory, x2: imagewidth}" opacity="0.5" stroke="white"/>
-                <line style="pointer-events: none; filter:url(#shadow)" y1="0" data-bind="attr:{x1: cursorx, x2: cursorx, y2: imageheight}" opacity="0.5" stroke="white"/>
+                <line style="pointer-events: none; stroke-width: 1" x1="0" data-bind="attr:{y1: cursory, y2: cursory, x2: imagewidth}" opacity="1.0" stroke="white"/>
+                <line style="pointer-events: none; stroke-width: 1" y1="0" data-bind="attr:{x1: cursorx, x2: cursorx, y2: imageheight}" opacity="1.0" stroke="white"/>
             <!-- /ko -->
 
             <!-- ko foreach: bboxes -->
