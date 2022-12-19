@@ -130,7 +130,6 @@ kwargs = {
 }
 
 if application.config["certificate"] and application.config["key"]:
-    kwargs["certfile"] = application.config["certificate"]
-    kwargs["keyfile"] = application.config["key"]
+    kwargs["ssl_context"] = (application.config["certificate"], application.config["key"])
 
 socketio.run(application, **kwargs)
