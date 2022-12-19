@@ -124,6 +124,7 @@ if not application.config["no-browser"]:
 
 # Start the server.
 kwargs = {
+    "allow_unsafe_werkzeug": True,
     "debug": application.config["debug"],
     "host": application.config["host"],
     "port": application.config["port"],
