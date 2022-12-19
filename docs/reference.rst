@@ -17,6 +17,7 @@ API Reference
     python/samlab.dashboard.backend.favorites.rst
     python/samlab.dashboard.backend.images.rst
     python/samlab.dashboard.backend.layouts.rst
+    python/samlab.dashboard.backend.limbo.rst
     python/samlab.dashboard.backend.timeseries.rst
     python/samlab.dashboard.credentials.rst
     python/samlab.dashboard.server.rst
