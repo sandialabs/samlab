@@ -1,14 +1,2 @@
-.DS_Store
-.ipynb_checkpoints
-*.egg-info
-*.pyc
-._.DS_Store
-logfile.txt
-.cover
-.coverage*
-archive
-build
 dist
-favorites.json
-geckodriver.log
-layouts.json
+*.pyc

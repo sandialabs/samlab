@@ -1,0 +1,41 @@
+[build-system]
+requires = ["flit_core >=3.2,<4"]
+build-backend = "flit_core.buildapi"
+
+[tool.flit.module]
+name = "samlab"
+
+[project]
+authors = [{name="Timothy M. Shead", email="tshead@sandia.gov"}]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: BSD License",
+    "Natural Language :: English",
+    "Programming Language :: Python :: 3",
+]
+dependencies=[
+]
+description="Library for analyzing computer vision models."
+dynamic = ["version"]
+maintainers = [{name="Timothy M. Shead", email="tshead@sandia.gov"}]
+name="samlab"
+
+[project.optional-dependencies]
+all = [
+]
+doc = [
+]
+
+[project.scripts]
+samlab = "samlab.cli.main"
+
+[project.urls]
+"Chat" = "https://github.com/sandialabs/samlab/discussions"
+"Coverage" = "https://coveralls.io/r/sandialabs/samlab"
+"Documentation" = "http://samlab.readthedocs.io/"
+"Issue Tracker" = "http://github.com/sandialabs/samlab/issues"
+"Regression Tests" = "http://github.com/sandialabs/samlab/actions"
+"Source" = "http://github.com/sandialabs/samlab"
+
+
