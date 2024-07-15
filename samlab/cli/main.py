@@ -1,16 +1,17 @@
+# Copyright 2018, National Technology & Engineering Solutions of Sandia, LLC
+# (NTESS).  Under the terms of Contract DE-NA0003525 with NTESS, the U.S.
+# Government retains certain rights in this software.
+
 """Provides a command line interface for generating visualizations.
 """
 
 import argparse
-import collections
-import csv
 import logging
 import os
-import shutil
 import sys
-import tempfile
 
 import samlab
+import samlab.deepvis
 
 # Setup the command line user interface.
 parser = argparse.ArgumentParser(description="SAMLAB tools.")
@@ -36,7 +37,7 @@ def main():
 
     # deepvis
     if arguments.command == "deepvis":
-        pass
+        samlab.deepvis.generate(None, arguments.output)
 
     # version
     if arguments.command == "version":
