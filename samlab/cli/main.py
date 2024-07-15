@@ -13,13 +13,17 @@ import sys
 import samlab
 import samlab.deepvis
 
+import torchvision.models
+
+
 # Setup the command line user interface.
 parser = argparse.ArgumentParser(description="SAMLAB tools.")
 subparsers = parser.add_subparsers(title="commands (choose one)", dest="command")
 
 # deepvis
 deepvis_subparser = subparsers.add_parser("deepvis", help="Generate a deep visualization website.")
-deepvis_subparser.add_argument("--output", "-o", help="Directory to receive results. Default: cwd")
+deepvis_subparser.add_argument("model", choices=["vgg19", "resnet50", "inceptionv1"], help="Model to analyze.")
+deepvis_subparser.add_argument("output", help="Directory to receive results.")
 
 # version
 version_subparser = subparsers.add_parser("version", help="Print the Samlab version.")
@@ -37,7 +41,17 @@ def main():
 
     # deepvis
     if arguments.command == "deepvis":
-        samlab.deepvis.generate(None, arguments.output)
+        match arguments.model:
+            case "vgg19":
+                arguments.model = torchvision.models.vgg19(weights="IMAGENET1K_V1")
+            case "resnet50":
+                arguments.model = torchvision.models.resnet50(weights="IMAGENET1K_V2")
+            case "inceptionv1":
+                arguments.model = torchvision.models.googlenet(weights="IMAGENET1K_V1")
+            case _:
+                raise NotImplementedError(f"Unsupported model: {arguments.model}")
+
+        samlab.deepvis.generate(arguments.model, arguments.output)
 
     # version
     if arguments.command == "version":

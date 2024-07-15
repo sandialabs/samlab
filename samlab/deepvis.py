@@ -8,6 +8,6 @@ log = logging.getLogger(__name__)
 
 
 def generate(model, outputdir):
-    log.info(f"Generating deep visualization of {model} in {outputdir}.")
+    log.info(f"Generating deep visualization of {model} in {outputdir}")
 
 
