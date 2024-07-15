@@ -28,7 +28,7 @@ doc = [
 ]
 
 [project.scripts]
-samlab = "samlab.cli.main"
+samlab = "samlab.cli.main:main"
 
 [project.urls]
 "Chat" = "https://github.com/sandialabs/samlab/discussions"
