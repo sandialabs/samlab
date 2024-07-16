@@ -22,8 +22,9 @@ subparsers = parser.add_subparsers(title="commands (choose one)", dest="command"
 
 # deepvis
 deepvis_subparser = subparsers.add_parser("deepvis", help="Generate a deep visualization website.")
+deepvis_subparser.add_argument("--clean", action="store_true", help="Delete the target directory before generating.")
 deepvis_subparser.add_argument("model", choices=["vgg19", "resnet50", "inceptionv1"], help="Model to analyze.")
-deepvis_subparser.add_argument("output", help="Directory to receive results.")
+deepvis_subparser.add_argument("output", help="Target directory to receive results.")
 
 # version
 version_subparser = subparsers.add_parser("version", help="Print the Samlab version.")
@@ -43,15 +44,23 @@ def main():
     if arguments.command == "deepvis":
         match arguments.model:
             case "vgg19":
-                arguments.model = torchvision.models.vgg19(weights="IMAGENET1K_V1")
+                modelname = "VGG-19"
+                model = torchvision.models.vgg19(weights="IMAGENET1K_V1")
             case "resnet50":
-                arguments.model = torchvision.models.resnet50(weights="IMAGENET1K_V2")
+                modelname = "ResNet-50"
+                model = torchvision.models.resnet50(weights="IMAGENET1K_V2")
             case "inceptionv1":
-                arguments.model = torchvision.models.googlenet(weights="IMAGENET1K_V1")
+                modelname = "Inception v1"
+                model = torchvision.models.googlenet(weights="IMAGENET1K_V1")
             case _:
                 raise NotImplementedError(f"Unsupported model: {arguments.model}")
 
-        samlab.deepvis.generate(arguments.model, arguments.output)
+        samlab.deepvis.generate(
+            modelname=modelname,
+            model=model,
+            targetdir=arguments.output,
+            clean=arguments.clean,
+            )
 
     # version
     if arguments.command == "version":
