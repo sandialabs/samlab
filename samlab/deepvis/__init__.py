@@ -7,6 +7,7 @@ import os
 import shutil
 
 import jinja2
+import torch.nn
 
 log = logging.getLogger(__name__)
 
@@ -21,32 +22,72 @@ def generate(modelname, model, targetdir, clean=True):
         os.makedirs(targetdir)
 
     # Copy assets to the target dir.
-    shutil.copytree(os.path.join(__path__[0], "templates", "css"), os.path.join(targetdir, "css"))
-    shutil.copytree(os.path.join(__path__[0], "templates", "js"), os.path.join(targetdir, "js"))
+    log.info(f"Copying assets to {targetdir}")
+    shutil.copytree(os.path.join(__path__[0], "templates", "css"), os.path.join(targetdir, "css"), dirs_exist_ok=True)
+    shutil.copytree(os.path.join(__path__[0], "templates", "js"), os.path.join(targetdir, "js"), dirs_exist_ok=True)
 
     # Generate the home page.
+    log.info(f"Generating home page.")
     environment = jinja2.Environment(
         loader=jinja2.PackageLoader("samlab.deepvis"),
         autoescape=jinja2.select_autoescape(),
         )
 
+    modelproxy = []
+    for name, module in model.named_modules():
+        if not name:
+            continue
+
+        if isinstance(module, torch.nn.Sequential):
+            continue
+
+        layer = {
+            "name": name,
+            "type": str(module.__class__).split(".")[-1].split("'")[0],
+            "channels": [],
+            "conv": None,
+        }
+
+        if isinstance(module, torch.nn.Conv2d):
+            size = module.get_parameter("weight").size()
+            layer["channels"] = [{"name": f"{channel}"} for channel in range(size[0])]
+            layer["conv"] = (int(size[2]), int(size[3]))
+        elif isinstance(module, torch.nn.Linear):
+            size = module.get_parameter("weight").size()
+            layer["channels"] = [{"name": f"{channel}"} for channel in range(size[0])]
+
+        modelproxy.append(layer)
+
+
     context = {
         "webroot": "/",
         "modelname": modelname,
-        "model": [{"name": name, "type": repr(type(module))} for name, module in model.named_modules()],
+        "model": modelproxy,
     }
 
     with open(os.path.join(targetdir, "index.html"), "w") as stream:
         stream.write(environment.get_template("index.html").render(context))
 
-    # Generate layer pages.
-    layerdir = os.path.join(targetdir, "layer")
-    if not os.path.exists(layerdir):
-        os.makedirs(layerdir)
+    # Generate per-layer pages.
+    for layer in modelproxy:
+        log.info(f"Generating layer {layer['name']}.")
+        context["layer"] = layer
 
-    for name, module in model.named_modules():
-        context["layername"] = name
+        layerdir = os.path.join(targetdir, layer["name"])
+        if not os.path.exists(layerdir):
+            os.makedirs(layerdir)
 
-        with open(os.path.join(targetdir, "layer", f"{name}.html"), "w") as stream:
+        with open(os.path.join(layerdir, "index.html"), "w") as stream:
             stream.write(environment.get_template("layer.html").render(context))
 
+        # Generate per-channel pages.
+        for channel in layer["channels"]:
+            log.info(f"Generating channel {channel['name']}.")
+            context["channel"] = channel
+
+            channeldir = os.path.join(layerdir, f"chan.{channel['name']}")
+            if not os.path.exists(channeldir):
+                os.makedirs(channeldir)
+
+                with open(os.path.join(channeldir, "index.html"), "w") as stream:
+                    stream.write(environment.get_template("channel.html").render(context))

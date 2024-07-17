@@ -7,15 +7,29 @@
         <link href="{{webroot}}css/bootstrap.min.css" rel="stylesheet">
     </head>
     <body>
+        <nav class="navbar bg-body-tertiary">
+            <div class="container-fluid">
+                <nav class="navbar-nav" aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item active" aria-current="page">{{modelname}}</li>
+                    </ol>
+                </nav>
+            </div>
+        </nav>
         <div class="container">
-            <h1 class="display-1">{{modelname}}</h1>
             <div class="row">
                 <div class="col">
-                    <ul class="list-unstyled">
-                        {% for item in model %}
-                        <a href="{{webroot}}layer/{{item.name}}.html"><li>{{item.name}} {{item.type}}</li></a>
-                        {% endfor %}
-                    </ul>
+                    {% for layer in model %}
+                    <div class="card" style="width: 18rem">
+                        <div class="card-body">
+                            <a href="{{webroot}}{{layer.name}}">
+                                <h5 class="card-title">{{layer.name}}</h5>
+                            </a>
+                            <h6 class="card-subtitle text-body-secondary mb-2">{{layer.type}}</h6>
+                            <p class="card-text">Channels: {{layer.channels|count}}<br/>Convolution: {{layer.conv}}</p>
+                        </div>
+                    </div>
+                    {% endfor %}
                 </div>
             </div>
         </div>

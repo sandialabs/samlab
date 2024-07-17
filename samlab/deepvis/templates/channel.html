@@ -3,7 +3,7 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>{{modelname}} / {{layer.name}}</title>
+        <title>{{modelname}} / {{layer.name}} / {{channel.name}}</title>
         <link href="{{webroot}}css/bootstrap.min.css" rel="stylesheet">
     </head>
     <body>
@@ -12,13 +12,15 @@
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb">
                         <li class="breadcrumb-item" aria-current="page"><a href="{{webroot}}">{{modelname}}</a></li>
-                        <li class="breadcrumb-item active" aria-current="page">{{layer.name}}</li>
+                        <li class="breadcrumb-item" aria-current="page"><a href="{{webroot}}{{layer.name}}">{{layer.name}}</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">Chan {{channel.name}}</li>
                     </ol>
                 </nav>
             </div>
         </nav>
         <div class="container">
             <div class="row">
+            {#
                 <div class="col-2">
                     <ul class="list-unstyled">
                         <li>Type: {{layer.type}}</li>
@@ -39,6 +41,7 @@
                     {% endfor %}
                     </div>
                 </div>
+            #}
             </div>
         </div>
         <script src="{{webroot}}js/bootstrap.bundle.min.js"></script>
