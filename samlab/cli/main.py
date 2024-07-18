@@ -63,6 +63,8 @@ def main():
         if arguments.imagenet is not None:
             dataset = torchvision.datasets.ImageNet(arguments.imagenet)
             if arguments.imagenet_count is not None:
+                weights = torch.ones(len(dataset))
+                indices = torch.multinomial(weights, arguments.imagenet_count)
                 dataset = torch.utils.data.Subset(dataset, indices)
             datasets.append({"name": "ImageNet 2012", "dataset": dataset})
 

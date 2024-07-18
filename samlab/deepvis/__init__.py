@@ -76,7 +76,7 @@ def generate(modelname, model, targetdir, clean=True, datasets=None):
         log.info(f"Generating layer {layer['name']}.")
         context["layer"] = layer
 
-        layerdir = os.path.join(targetdir, layer["name"])
+        layerdir = os.path.join(targetdir, "layers", layer["name"])
         if not os.path.exists(layerdir):
             os.makedirs(layerdir)
 
@@ -88,7 +88,7 @@ def generate(modelname, model, targetdir, clean=True, datasets=None):
             log.info(f"Generating channel {channel['name']}.")
             context["channel"] = channel
 
-            channeldir = os.path.join(layerdir, f"chan.{channel['name']}")
+            channeldir = os.path.join(layerdir, "channels", channel["name"])
             if not os.path.exists(channeldir):
                 os.makedirs(channeldir)
 
