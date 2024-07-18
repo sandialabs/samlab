@@ -10,10 +10,12 @@ import logging
 import os
 import sys
 
+import torch.utils.data
+import torchvision.datasets
+import torchvision.models
+
 import samlab
 import samlab.deepvis
-
-import torchvision.models
 
 
 # Setup the command line user interface.
@@ -23,6 +25,8 @@ subparsers = parser.add_subparsers(title="commands (choose one)", dest="command"
 # deepvis
 deepvis_subparser = subparsers.add_parser("deepvis", help="Generate a deep visualization website.")
 deepvis_subparser.add_argument("--clean", action="store_true", help="Delete the target directory before generating.")
+deepvis_subparser.add_argument("--imagenet", help="Specify the path to the ImageNet 2012 classification dataset, and use it for testing.")
+deepvis_subparser.add_argument("--imagenet-count", type=int, help="Number of ImageNet 2012 images to use for testing. Default: all")
 deepvis_subparser.add_argument("model", choices=["vgg19", "resnet50", "inceptionv1"], help="Model to analyze.")
 deepvis_subparser.add_argument("output", help="Target directory to receive results.")
 
@@ -55,11 +59,19 @@ def main():
             case _:
                 raise NotImplementedError(f"Unsupported model: {arguments.model}")
 
+        datasets = []
+        if arguments.imagenet is not None:
+            dataset = torchvision.datasets.ImageNet(arguments.imagenet)
+            if arguments.imagenet_count is not None:
+                dataset = torch.utils.data.Subset(dataset, indices)
+            datasets.append({"name": "ImageNet 2012", "dataset": dataset})
+
         samlab.deepvis.generate(
             modelname=modelname,
             model=model,
             targetdir=arguments.output,
             clean=arguments.clean,
+            datasets=datasets,
             )
 
     # version

@@ -12,8 +12,11 @@ import torch.nn
 log = logging.getLogger(__name__)
 
 
-def generate(modelname, model, targetdir, clean=True):
+def generate(modelname, model, targetdir, clean=True, datasets=None):
     log.info(f"Generating deep visualization of {modelname} in {targetdir}")
+
+    if datasets is None:
+        datasets = []
 
     if clean and os.path.exists(targetdir):
         shutil.rmtree(targetdir)

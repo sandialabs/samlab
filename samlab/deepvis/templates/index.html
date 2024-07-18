@@ -18,9 +18,10 @@
         </nav>
         <div class="container">
             <div class="row">
-                <div class="col">
+                <div class="col-2">
+                    <h2>Model</h2>
                     {% for layer in model %}
-                    <div class="card" style="width: 18rem">
+                    <div class="card mb-2">
                         <div class="card-body">
                             <a href="{{webroot}}{{layer.name}}">
                                 <h5 class="card-title">{{layer.name}}</h5>
@@ -30,6 +31,9 @@
                         </div>
                     </div>
                     {% endfor %}
+                </div>
+                <div class="col">
+                    <h2>Data</h2>
                 </div>
             </div>
         </div>
