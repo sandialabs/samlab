@@ -6,6 +6,7 @@ import logging
 import os
 import shutil
 
+import PIL.Image
 import jinja2
 import torch.nn
 
@@ -83,6 +84,19 @@ def generate(modelname, model, targetdir, clean=True, datasets=None):
 
         with open(os.path.join(datasetdir, "index.html"), "w") as stream:
             stream.write(environment.get_template("dataset.html").render(context))
+
+        # Generate disk images.
+        imagedir = os.path.join(datasetdir, "images")
+        if not os.path.exists(imagedir):
+            os.makedirs(imagedir)
+
+        for index in range(len(dataset["samples"])):
+            imagepath = os.path.join(imagedir, f"image-{index}.png")
+            if not os.path.exists(imagepath):
+                for item in dataset["samples"][index]:
+                    if isinstance(item, PIL.Image.Image):
+                        log.info(f"Generating image {index}.")
+                        item.save(imagepath)
 
     # Generate per-layer pages.
     for layer in modelproxy:
