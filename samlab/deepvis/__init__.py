@@ -64,12 +64,25 @@ def generate(modelname, model, targetdir, clean=True, datasets=None):
 
     context = {
         "webroot": "/",
+        "datasets": datasets,
         "modelname": modelname,
         "model": modelproxy,
     }
 
     with open(os.path.join(targetdir, "index.html"), "w") as stream:
         stream.write(environment.get_template("index.html").render(context))
+
+    # Generate per-dataset pages.
+    for dataset in datasets:
+        log.info(f"Generating dataset {dataset['name']}.")
+        context["dataset"] = dataset
+
+        datasetdir = os.path.join(targetdir, "datasets", dataset["slug"])
+        if not os.path.exists(datasetdir):
+            os.makedirs(datasetdir)
+
+        with open(os.path.join(datasetdir, "index.html"), "w") as stream:
+            stream.write(environment.get_template("dataset.html").render(context))
 
     # Generate per-layer pages.
     for layer in modelproxy:

@@ -33,7 +33,17 @@
                     {% endfor %}
                 </div>
                 <div class="col">
-                    <h2>Data</h2>
+                    <h2>Datasets</h2>
+                    {% for dataset in datasets %}
+                    <div class="card mb-2">
+                        <div class="card-body">
+                            <a href="{{webroot}}datasets/{{dataset.slug}}">
+                                <h5 class="card-title">{{dataset.name}}</h5>
+                            </a>
+                            <p class="card-text">Samples: {{dataset.samples|count}}</p>
+                        </div>
+                    </div>
+                    {% endfor %}
                 </div>
             </div>
         </div>

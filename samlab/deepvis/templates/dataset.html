@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>{{modelname}} / {{dataset.name}}</title>
+        <link href="{{webroot}}css/bootstrap.min.css" rel="stylesheet">
+    </head>
+    <body>
+        <nav class="navbar">
+            <div class="container-fluid">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item" aria-current="page"><a href="{{webroot}}">{{modelname}}</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">{{dataset.name}}</li>
+                    </ol>
+                </nav>
+            </div>
+        </nav>
+        <div class="container">
+            <div class="row">
+                <div class="col-2">
+                    <ul class="list-unstyled">
+                        <li>Samples: {{dataset.samples|count}}</li>
+                    </ul>
+                </div>
+                <div class="col">
+                    <div class="d-flex flex-wrap">
+                    {% for sample in dataset.samples %}
+                        <div class="card mb-1 me-1" style="width: 6rem">
+                            <div class="card-body">
+                                <div class="card-title" style="font-size: 0.7em">Sample {{loop.index0}}</div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script src="{{webroot}}js/bootstrap.bundle.min.js"></script>
+    </body>
+</html>

@@ -66,7 +66,7 @@ def main():
                 weights = torch.ones(len(dataset))
                 indices = torch.multinomial(weights, arguments.imagenet_count)
                 dataset = torch.utils.data.Subset(dataset, indices)
-            datasets.append({"name": "ImageNet 2012", "dataset": dataset})
+            datasets.append({"name": "ImageNet 2012", "slug": "imagenet2012", "samples": dataset})
 
         samlab.deepvis.generate(
             modelname=modelname,
