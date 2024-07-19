@@ -13,6 +13,7 @@ import sys
 import torch.utils.data
 import torchvision.datasets
 import torchvision.models
+import torchvision.transforms.v2
 
 import samlab
 import samlab.deepvis
@@ -27,6 +28,8 @@ deepvis_subparser = subparsers.add_parser("deepvis", help="Generate a deep visua
 deepvis_subparser.add_argument("--clean", action="store_true", help="Delete the target directory before generating.")
 deepvis_subparser.add_argument("--imagenet", help="Specify the path to the ImageNet 2012 classification dataset, and use it for testing.")
 deepvis_subparser.add_argument("--imagenet-count", type=int, help="Number of ImageNet 2012 images to use for testing. Default: all")
+deepvis_subparser.add_argument("--no-activations", action="store_true", help="Don't calculate channel activations.")
+deepvis_subparser.add_argument("--no-html", action="store_true", help="Don't generate HTML output.")
 deepvis_subparser.add_argument("model", choices=["vgg19", "resnet50", "inceptionv1"], help="Model to analyze.")
 deepvis_subparser.add_argument("output", help="Target directory to receive results.")
 
@@ -61,7 +64,13 @@ def main():
 
         datasets = []
         if arguments.imagenet is not None:
-            dataset = torchvision.datasets.ImageNet(arguments.imagenet)
+            dataset = torchvision.datasets.ImageNet(
+                arguments.imagenet,
+                transform=torchvision.transforms.v2.Compose([
+                    torchvision.transforms.v2.ToImage(),
+                    torchvision.transforms.v2.CenterCrop((224, 224)),
+                    ]),
+                )
             if arguments.imagenet_count is not None:
                 weights = torch.ones(len(dataset))
                 indices = torch.multinomial(weights, arguments.imagenet_count)
@@ -74,6 +83,8 @@ def main():
             targetdir=arguments.output,
             clean=arguments.clean,
             datasets=datasets,
+            activations=not arguments.no_activations,
+            html=not arguments.no_html,
             )
 
     # version
