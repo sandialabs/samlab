@@ -69,6 +69,8 @@ def main():
                 transform=torchvision.transforms.v2.Compose([
                     torchvision.transforms.v2.ToImage(),
                     torchvision.transforms.v2.CenterCrop((224, 224)),
+                    torchvision.transforms.v2.ToDtype(torch.float32, scale=True),
+                    torchvision.transforms.v2.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
                     ]),
                 )
             if arguments.imagenet_count is not None:

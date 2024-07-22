@@ -2,6 +2,8 @@
 # (NTESS).  Under the terms of Contract DE-NA0003525 with NTESS, the U.S.
 # Government retains certain rights in this software.
 
+import collections
+import functools
 import logging
 import os
 import shutil
@@ -26,12 +28,44 @@ def generate(modelname, model, targetdir, clean=True, batchsize=64, datasets=Non
     if not os.path.exists(targetdir):
         os.makedirs(targetdir)
 
-    # Generate channel activations.
+    # Record channel activations.
+    activations = {}
+
+    def hook_fn(dataname, layername, module, inputs, outputs):
+        if outputs.ndim == 2:
+            activations[dataname][layername].append(outputs.detach().cpu())
+        elif outputs.ndim == 4:
+            activations[dataname][layername].append(torch.amax(outputs, dim=(2, 3)).detach().cpu())
+
     for dataset in datasets:
         log.info(f"Generating activations for dataset {dataset['name']}.")
+
+        activations[dataset["slug"]] = collections.defaultdict(list)
+
+        handles = []
+        for layername, module in model.named_modules():
+            if not layername:
+                continue
+
+            if isinstance(module, torch.nn.Sequential):
+                continue
+
+            handles.append(module.register_forward_hook(functools.partial(hook_fn, dataset["slug"], layername)))
+
         loader = torch.utils.data.DataLoader(dataset["samples"], batch_size=batchsize, shuffle=False)
         for x, y in loader:
-            print(x.shape, y.shape)
+            y_hat = model(x)
+
+        for handle in handles:
+            handle.remove()
+
+    for dataset in activations:
+        activations[dataset] = {layer: torch.cat(activations[dataset][layer]) for layer in activations[dataset]}
+
+    for dataset in activations:
+        print(dataset)
+        for layer in activations[dataset]:
+            print(layer, activations[dataset][layer].shape)
 
     # Copy assets to the target dir.
     if html:
