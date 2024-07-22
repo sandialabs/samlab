@@ -21,12 +21,12 @@
             <div class="row">
                 <div class="col-2">
                     <ul class="list-unstyled">
-                        <li>Samples: {{dataset.samples|count}}</li>
+                        <li>Samples: {{dataset.view|count}}</li>
                     </ul>
                 </div>
                 <div class="col">
                     <div class="d-flex flex-wrap">
-                    {% for sample in dataset.samples %}
+                    {% for sample in dataset.view %}
                         <div class="card mb-1 me-1" style="width: 6rem">
                             <img src="{{webroot}}datasets/{{dataset.slug}}/images/image-{{loop.index0}}.png" class="card-img-top" loading="lazy">
                             <div class="card-body">

@@ -19,6 +19,20 @@ import samlab
 import samlab.deepvis
 
 
+class TransformedDataset(torch.utils.data.Dataset):
+    def __init__(self, dataset, transform):
+        self._dataset = dataset
+        self._transform = transform
+
+    def __len__(self):
+        return self._dataset.__len__()
+
+    def __getitem__(self, key):
+        item = self._dataset.__getitem__(key)
+        item = (self._transform(item[0]), item[1])
+        return item
+
+
 # Setup the command line user interface.
 parser = argparse.ArgumentParser(description="SAMLAB tools.")
 subparsers = parser.add_subparsers(title="commands (choose one)", dest="command")
@@ -63,22 +77,38 @@ def main():
                 raise NotImplementedError(f"Unsupported model: {arguments.model}")
 
         datasets = []
+
+        # Optionally use ImageNet for testing.
         if arguments.imagenet is not None:
-            dataset = torchvision.datasets.ImageNet(
-                arguments.imagenet,
-                transform=torchvision.transforms.v2.Compose([
+            dataset = torchvision.datasets.ImageNet(arguments.imagenet)
+
+            evaluate = TransformedDataset(dataset, transform=torchvision.transforms.v2.Compose([
                     torchvision.transforms.v2.ToImage(),
                     torchvision.transforms.v2.CenterCrop((224, 224)),
                     torchvision.transforms.v2.ToDtype(torch.float32, scale=True),
                     torchvision.transforms.v2.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
                     ]),
                 )
+
+            view = TransformedDataset(dataset, transform=torchvision.transforms.v2.Compose([
+                    torchvision.transforms.v2.CenterCrop((224, 224)),
+                    ]),
+                )
+
             if arguments.imagenet_count is not None:
                 weights = torch.ones(len(dataset))
                 indices = torch.multinomial(weights, arguments.imagenet_count)
-                dataset = torch.utils.data.Subset(dataset, indices)
-            datasets.append({"name": "ImageNet 2012", "slug": "imagenet2012", "samples": dataset})
+                evaluate = torch.utils.data.Subset(evaluate, indices)
+                view = torch.utils.data.Subset(view, indices)
 
+            datasets.append({
+                "name": "ImageNet 2012",
+                "slug": "imagenet2012",
+                "evaluate": evaluate,
+                "view": view,
+                })
+
+        # Generate the website.
         samlab.deepvis.generate(
             modelname=modelname,
             model=model,

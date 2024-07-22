@@ -52,7 +52,7 @@ def generate(modelname, model, targetdir, clean=True, batchsize=64, datasets=Non
 
             handles.append(module.register_forward_hook(functools.partial(hook_fn, dataset["slug"], layername)))
 
-        loader = torch.utils.data.DataLoader(dataset["samples"], batch_size=batchsize, shuffle=False)
+        loader = torch.utils.data.DataLoader(dataset["evaluate"], batch_size=batchsize, shuffle=False)
         for x, y in loader:
             y_hat = model(x)
 
@@ -61,11 +61,6 @@ def generate(modelname, model, targetdir, clean=True, batchsize=64, datasets=Non
 
     for dataset in activations:
         activations[dataset] = {layer: torch.cat(activations[dataset][layer]) for layer in activations[dataset]}
-
-    for dataset in activations:
-        print(dataset)
-        for layer in activations[dataset]:
-            print(layer, activations[dataset][layer].shape)
 
     # Copy assets to the target dir.
     if html:
@@ -161,10 +156,10 @@ def generate(modelname, model, targetdir, clean=True, batchsize=64, datasets=Non
             if not os.path.exists(imagedir):
                 os.makedirs(imagedir)
 
-            for index in range(len(dataset["samples"])):
+            for index in range(len(dataset["view"])):
                 imagepath = os.path.join(imagedir, f"image-{index}.png")
                 if not os.path.exists(imagepath):
                     log.info(f"Copying image {index}.")
-                    sample = dataset["samples"][index]
-                    torchvision.transforms.v2.functional.to_pil_image(sample[0]).save(imagepath)
+                    sample = dataset["view"][index]
+                    sample[0].save(imagepath)
 
