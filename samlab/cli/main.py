@@ -44,6 +44,7 @@ deepvis_subparser.add_argument("--imagenet", help="Specify the path to the Image
 deepvis_subparser.add_argument("--imagenet-count", type=int, help="Number of ImageNet 2012 images to use for testing. Default: all")
 deepvis_subparser.add_argument("--no-activations", action="store_true", help="Don't calculate channel activations.")
 deepvis_subparser.add_argument("--no-html", action="store_true", help="Don't generate HTML output.")
+deepvis_subparser.add_argument("--seed", type=int, default=1234, help="Random seed. Default: %(default)s")
 deepvis_subparser.add_argument("model", choices=["vgg19", "resnet50", "inceptionv1"], help="Model to analyze.")
 deepvis_subparser.add_argument("output", help="Target directory to receive results.")
 
@@ -60,6 +61,9 @@ def main():
     logging.basicConfig(level=logging.INFO)
     log = logging.getLogger()
     log.name = os.path.basename(sys.argv[0])
+
+    generator = torch.Generator()
+    generator.manual_seed(arguments.seed)
 
     # deepvis
     if arguments.command == "deepvis":
@@ -97,7 +101,7 @@ def main():
 
             if arguments.imagenet_count is not None:
                 weights = torch.ones(len(dataset))
-                indices = torch.multinomial(weights, arguments.imagenet_count)
+                indices = torch.multinomial(weights, arguments.imagenet_count, generator=generator)
                 evaluate = torch.utils.data.Subset(evaluate, indices)
                 view = torch.utils.data.Subset(view, indices)
 
@@ -117,6 +121,7 @@ def main():
             datasets=datasets,
             activations=not arguments.no_activations,
             html=not arguments.no_html,
+            seed=arguments.seed,
             )
 
     # version

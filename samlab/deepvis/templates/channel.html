@@ -12,7 +12,7 @@
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb">
                         <li class="breadcrumb-item" aria-current="page"><a href="{{webroot}}">{{modelname}}</a></li>
-                        <li class="breadcrumb-item" aria-current="page"><a href="{{webroot}}layers/{{layer.name}}">{{layer.name}}</a></li>
+                        <li class="breadcrumb-item" aria-current="page"><a href="{{webroot}}layers/{{layer.slug}}">{{layer.name}}</a></li>
                         <li class="breadcrumb-item active" aria-current="page">Chan {{channel.name}}</li>
                     </ol>
                 </nav>
@@ -20,28 +20,27 @@
         </nav>
         <div class="container">
             <div class="row">
-            {#
                 <div class="col-2">
+                    <h2>Description</h2>
                     <ul class="list-unstyled">
-                        <li>Type: {{layer.type}}</li>
-                        <li>Channels: {{layer.channels|count}}</li>
-                        <li>Convolution: {{layer.conv}}</li>
                     </ul>
                 </div>
                 <div class="col">
+                    <h2>Examples</h2>
+                    {% for example in channel.examples %}
+                    <h3>{{example.dataset}}</h3>
                     <div class="d-flex flex-wrap">
-                    {% for channel in layer.channels %}
-                        <a href="{{webroot}}{{layer.name}}/chan.{{channel.name}}">
-                        <div class="card" style="width: 6rem">
+                    {% for image in example.images %}
+                        <div class="card mb-1 me-1" style="width: 6rem">
+                            <img src="{{webroot}}datasets/{{example.dataset}}/images/image-{{image}}.png" class="card-img-top" loading="lazy">
                             <div class="card-body">
-                                <div class="card-title" style="font-size: 0.7em">Chan {{channel.name}}</div>
+                                <div class="card-title" style="font-size: 0.7em">Sample {{image}}</div>
                             </div>
                         </div>
-                        </a>
                     {% endfor %}
                     </div>
+                    {% endfor %}
                 </div>
-            #}
             </div>
         </div>
         <script src="{{webroot}}js/bootstrap.bundle.min.js"></script>

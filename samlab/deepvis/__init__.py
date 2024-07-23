@@ -16,7 +16,7 @@ import torchvision.transforms.v2.functional
 log = logging.getLogger(__name__)
 
 
-def generate(modelname, model, targetdir, clean=True, batchsize=64, datasets=None, activations=True, html=True):
+def generate(modelname, model, targetdir, clean=True, batchsize=64, datasets=None, activations=True, html=True, seed=1234):
     log.info(f"Generating deep visualization of {modelname} in {targetdir}")
 
     if datasets is None:
@@ -62,59 +62,76 @@ def generate(modelname, model, targetdir, clean=True, batchsize=64, datasets=Non
     for dataset in activations:
         activations[dataset] = {layer: torch.cat(activations[dataset][layer]) for layer in activations[dataset]}
 
-    # Copy assets to the target dir.
+
+    # Generate a context version of the model for page generation.
+    contextmodel = []
+    for name, module in model.named_modules():
+        if not name:
+            continue
+
+        if isinstance(module, torch.nn.Sequential):
+            continue
+
+        layer = {
+            "name": name,
+            "slug": name,
+            "type": str(module.__class__).split(".")[-1].split("'")[0],
+            "channels": [],
+            "conv": None,
+        }
+
+        if isinstance(module, torch.nn.Conv2d):
+            size = module.get_parameter("weight").size()
+            layer["channels"] = [{"name": f"{channel}"} for channel in range(size[0])]
+            layer["conv"] = (int(size[2]), int(size[3]))
+        elif isinstance(module, torch.nn.Linear):
+            size = module.get_parameter("weight").size()
+            layer["channels"] = [{"name": f"{channel}"} for channel in range(size[0])]
+
+        for index, channel in enumerate(layer["channels"]):
+            channel["slug"] = channel["name"]
+
+            channel["examples"] = []
+            for dataset in activations:
+                layeract = activations[dataset][layer["slug"]]
+                print(layeract)
+                channel["examples"].append({
+                    "dataset": dataset,
+                    "images": range(10),
+                })
+
+        contextmodel.append(layer)
+
+    import pprint
+    pprint.pprint(contextmodel)
+
+    # Generate HTML
     if html:
+        # Copy assets to the target dir.
         log.info(f"Copying assets to {targetdir}")
         shutil.copytree(os.path.join(__path__[0], "templates", "css"), os.path.join(targetdir, "css"), dirs_exist_ok=True)
         shutil.copytree(os.path.join(__path__[0], "templates", "js"), os.path.join(targetdir, "js"), dirs_exist_ok=True)
 
-    # Generate the home page.
-    if html:
-        log.info(f"Generating home page.")
+        # Setup the context and environment for generating pages.
+        context = {
+            "webroot": "/",
+            "datasets": datasets,
+            "modelname": modelname,
+            "model": contextmodel,
+        }
+
         environment = jinja2.Environment(
             loader=jinja2.PackageLoader("samlab.deepvis"),
             autoescape=jinja2.select_autoescape(),
             )
 
-        modelproxy = []
-        for name, module in model.named_modules():
-            if not name:
-                continue
-
-            if isinstance(module, torch.nn.Sequential):
-                continue
-
-            layer = {
-                "name": name,
-                "type": str(module.__class__).split(".")[-1].split("'")[0],
-                "channels": [],
-                "conv": None,
-            }
-
-            if isinstance(module, torch.nn.Conv2d):
-                size = module.get_parameter("weight").size()
-                layer["channels"] = [{"name": f"{channel}"} for channel in range(size[0])]
-                layer["conv"] = (int(size[2]), int(size[3]))
-            elif isinstance(module, torch.nn.Linear):
-                size = module.get_parameter("weight").size()
-                layer["channels"] = [{"name": f"{channel}"} for channel in range(size[0])]
-
-            modelproxy.append(layer)
-
-
-        context = {
-            "webroot": "/",
-            "datasets": datasets,
-            "modelname": modelname,
-            "model": modelproxy,
-        }
-
+        # Generate the home page.
+        log.info(f"Generating home page.")
         with open(os.path.join(targetdir, "index.html"), "w") as stream:
             stream.write(environment.get_template("index.html").render(context))
 
-    # Generate per-layer pages.
-    if html:
-        for layer in modelproxy:
+        # Generate per-layer pages.
+        for layer in contextmodel:
             log.info(f"Generating layer {layer['name']}.")
             context["layer"] = layer
 
@@ -137,9 +154,7 @@ def generate(modelname, model, targetdir, clean=True, batchsize=64, datasets=Non
                     with open(os.path.join(channeldir, "index.html"), "w") as stream:
                         stream.write(environment.get_template("channel.html").render(context))
 
-
-    # Generate per-dataset pages.
-    if html:
+        # Generate per-dataset pages.
         for dataset in datasets:
             log.info(f"Generating dataset {dataset['name']}.")
             context["dataset"] = dataset
