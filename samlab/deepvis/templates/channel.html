@@ -27,14 +27,15 @@
                 </div>
                 <div class="col">
                     <h2>Examples</h2>
-                    {% for example in channel.examples %}
-                    <h3>{{example.dataset}}</h3>
+                    {% for examples in channel.examples %}
+                    <h3>{{examples.dataset}}</h3>
                     <div class="d-flex flex-wrap">
-                    {% for image in example.images %}
+                    {% for index in range(examples.images | count) %}
                         <div class="card mb-1 me-1" style="width: 6rem">
-                            <img src="{{webroot}}datasets/{{example.dataset}}/images/image-{{image}}.png" class="card-img-top" loading="lazy">
+                            <img src="{{webroot}}datasets/{{examples.dataset}}/images/image-{{examples.images[index]}}.png" class="card-img-top" loading="lazy">
                             <div class="card-body">
-                                <div class="card-title" style="font-size: 0.7em">Sample {{image}}</div>
+                                <div class="card-title" style="font-size: 0.7em">Sample {{examples.images[index]}}</div>
+                                <p style="font-size: 0.6em">Act: {{"%.3f" | format(examples.activations[index])}}</p>
                             </div>
                         </div>
                     {% endfor %}

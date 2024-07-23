@@ -5,10 +5,12 @@
 import collections
 import functools
 import logging
+import math
 import os
 import shutil
 
 import PIL.Image
+import enlighten
 import jinja2
 import torch.nn
 import torchvision.transforms.v2.functional
@@ -16,7 +18,7 @@ import torchvision.transforms.v2.functional
 log = logging.getLogger(__name__)
 
 
-def generate(modelname, model, targetdir, clean=True, batchsize=64, datasets=None, activations=True, html=True, seed=1234):
+def generate(*, modelname, model, targetdir, clean=True, batchsize=64, datasets=None, activations=True, html=True, seed=1234, examples=100):
     log.info(f"Generating deep visualization of {modelname} in {targetdir}")
 
     if datasets is None:
@@ -37,6 +39,7 @@ def generate(modelname, model, targetdir, clean=True, batchsize=64, datasets=Non
         elif outputs.ndim == 4:
             activations[dataname][layername].append(torch.amax(outputs, dim=(2, 3)).detach().cpu())
 
+    manager = enlighten.get_manager()
     for dataset in datasets:
         log.info(f"Generating activations for dataset {dataset['name']}.")
 
@@ -52,9 +55,11 @@ def generate(modelname, model, targetdir, clean=True, batchsize=64, datasets=Non
 
             handles.append(module.register_forward_hook(functools.partial(hook_fn, dataset["slug"], layername)))
 
+        counter = manager.counter(total = math.ceil(len(dataset["evaluate"]) / batchsize), desc="Batches", unit="batches")
         loader = torch.utils.data.DataLoader(dataset["evaluate"], batch_size=batchsize, shuffle=False)
         for x, y in loader:
             y_hat = model(x)
+            counter.update()
 
         for handle in handles:
             handle.remove()
@@ -94,16 +99,16 @@ def generate(modelname, model, targetdir, clean=True, batchsize=64, datasets=Non
             channel["examples"] = []
             for dataset in activations:
                 layeract = activations[dataset][layer["slug"]]
-                print(layeract)
+                channelact = layeract.T[index]
+                images = torch.argsort(channelact, descending=True)[:examples]
+                acts = channelact[images]
                 channel["examples"].append({
                     "dataset": dataset,
-                    "images": range(10),
+                    "images": images.tolist(),
+                    "activations": acts.tolist(),
                 })
 
         contextmodel.append(layer)
-
-    import pprint
-    pprint.pprint(contextmodel)
 
     # Generate HTML
     if html:

@@ -15,7 +15,12 @@ classifiers = [
     "Programming Language :: Python :: 3",
 ]
 dependencies=[
+    "enlighten",
     "Jinja2",
+    "numpy",
+    "Pillow",
+    "torch",
+    "torchvision",
 ]
 description="Library for analyzing computer vision models."
 dynamic = ["version"]
