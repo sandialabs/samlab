@@ -18,11 +18,14 @@ import torchvision.transforms.v2.functional
 log = logging.getLogger(__name__)
 
 
-def generate(*, modelname, model, targetdir, clean=True, batchsize=64, datasets=None, activations=True, html=True, seed=1234, examples=100):
+def generate(*, modelname, model, targetdir, device=None, clean=True, batchsize=64, datasets=None, activations=True, html=True, seed=1234, examples=100):
     log.info(f"Generating deep visualization of {modelname} in {targetdir}")
 
     if datasets is None:
         datasets = []
+
+    if device is None:
+        device = torch.device("cpu")
 
     if clean and os.path.exists(targetdir):
         shutil.rmtree(targetdir)
@@ -32,6 +35,8 @@ def generate(*, modelname, model, targetdir, clean=True, batchsize=64, datasets=
 
     # Record channel activations.
     activations = {}
+
+    model.to(device)
 
     def hook_fn(dataname, layername, module, inputs, outputs):
         if outputs.ndim == 2:
@@ -58,7 +63,7 @@ def generate(*, modelname, model, targetdir, clean=True, batchsize=64, datasets=
         counter = manager.counter(total=math.ceil(len(dataset["evaluate"]) / batchsize), desc="Activations", unit="batches", leave=False)
         loader = torch.utils.data.DataLoader(dataset["evaluate"], batch_size=batchsize, shuffle=False)
         for x, y in loader:
-            y_hat = model(x)
+            y_hat = model(x.to(device))
             counter.update()
         counter.close()
 

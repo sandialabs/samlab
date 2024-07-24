@@ -41,6 +41,7 @@ subparsers = parser.add_subparsers(title="commands (choose one)", dest="command"
 deepvis_subparser = subparsers.add_parser("deepvis", help="Generate a deep visualization website.")
 deepvis_subparser.add_argument("--batch-size", type=int, default=64, help="Batch size for evaluation. Default: %(default)s")
 deepvis_subparser.add_argument("--clean", action="store_true", help="Delete the target directory before generating.")
+deepvis_subparser.add_argument("--device", default="cpu", help="PyTorch device to use for evaluation. Default: %(default)s")
 deepvis_subparser.add_argument("--examples", type=int, default=100, help="Number of examples to display for each channel. Default: %(default)s")
 deepvis_subparser.add_argument("--imagenet", help="Specify the path to the ImageNet 2012 classification dataset, and use it for testing.")
 deepvis_subparser.add_argument("--imagenet-count", type=int, help="Number of ImageNet 2012 images to use for testing. Default: all")
@@ -120,6 +121,7 @@ def main():
             batchsize=arguments.batch_size,
             clean=arguments.clean,
             datasets=datasets,
+            device=torch.device(arguments.device),
             examples=arguments.examples,
             html=not arguments.no_html,
             model=model,
