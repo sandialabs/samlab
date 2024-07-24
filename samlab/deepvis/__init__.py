@@ -181,17 +181,21 @@ def generate(*, modelname, model, targetdir, device=None, clean=True, batchsize=
             with open(os.path.join(datasetdir, "index.html"), "w") as stream:
                 stream.write(environment.get_template("dataset.html").render(context))
 
-            # Generate disk images.
-            imagedir = os.path.join(datasetdir, "images")
-            if not os.path.exists(imagedir):
-                os.makedirs(imagedir)
-
+            # Generate per-image pages.
             counter = manager.counter(total=len(dataset["view"]), desc="Images", unit="images", leave=False)
             for index in range(len(dataset["view"])):
-                imagepath = os.path.join(imagedir, f"image-{index}.png")
-                if not os.path.exists(imagepath):
-                    sample = dataset["view"][index]
-                    sample[0].save(imagepath)
+                context["image"] = index
+
+                imagedir = os.path.join(datasetdir, "images", f"image-{index}")
+                if not os.path.exists(imagedir):
+                    os.makedirs(imagedir)
+
+                with open(os.path.join(imagedir, "index.html"), "w") as stream:
+                    stream.write(environment.get_template("image.html").render(context))
+
+                imagepath = os.path.join(imagedir, f"image.png")
+                sample = dataset["view"][index]
+                sample[0].save(imagepath)
                 counter.update()
             counter.close()
 

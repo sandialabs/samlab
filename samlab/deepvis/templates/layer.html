@@ -34,7 +34,7 @@
                                 <div class="card-title" style="font-size: 0.7rem">Chan {{channel.name}}</div>
                                 {% for examples in channel.examples %}
                                 {% for index in range(3) %}
-                                    <img src="{{webroot}}datasets/{{examples.dataset}}/images/image-{{examples.images[index]}}.png" style="width: 1.5rem" loading="lazy">
+                                    <img src="{{webroot}}datasets/{{examples.dataset}}/images/image-{{examples.images[index]}}/image.png" style="width: 1.5rem" loading="lazy">
                                 {% endfor %}
                                 {% endfor %}
                             </div>

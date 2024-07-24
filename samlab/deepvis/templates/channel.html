@@ -32,8 +32,8 @@
                     <div class="d-flex flex-wrap">
                     {% for index in range(examples.images | count) %}
                         <div class="card mb-1 me-1" style="width: 6rem">
-                            <a href="{{webroot}}datasets/{{examples.dataset}}/images/image-{{examples.images[index]}}.png">
-                            <img src="{{webroot}}datasets/{{examples.dataset}}/images/image-{{examples.images[index]}}.png" class="card-img-top" loading="lazy">
+                            <a href="{{webroot}}datasets/{{examples.dataset}}/images/image-{{examples.images[index]}}">
+                            <img src="{{webroot}}datasets/{{examples.dataset}}/images/image-{{examples.images[index]}}/image.png" class="card-img-top" loading="lazy">
                             </a>
                             <div class="card-body">
                                 <div class="card-title" style="font-size: 0.7em">Sample {{examples.images[index]}}</div>

@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>{{modelname}} / {{dataset.name}} / {{image}}</title>
+        <link href="{{webroot}}css/bootstrap.min.css" rel="stylesheet">
+    </head>
+    <body>
+        <div class="container">
+            <div class="row">
+                <span class="h1">
+                    <a style="text-decoration: none" href="{{webroot}}">{{modelname}}</a>
+                    /
+                    {{dataset.name}}
+                    /
+                    {{image}}
+                </span>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <h2>Image</h2>
+                    <img src="{{webroot}}datasets/{{dataset.slug}}/images/image-{{image}}/image.png">
+                    <h2>Examples</h2>
+                </div>
+            </div>
+        </div>
+        <script src="{{webroot}}js/bootstrap.bundle.min.js"></script>
+    </body>
+</html>

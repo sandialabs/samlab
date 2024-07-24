@@ -26,9 +26,9 @@
                     <h2>Images</h2>
                     <div class="d-flex flex-wrap">
                     {% for sample in dataset.view %}
-                        <a href="{{webroot}}datasets/{{dataset.slug}}/images/image-{{loop.index0}}.png">
+                        <a href="{{webroot}}datasets/{{dataset.slug}}/images/image-{{loop.index0}}">
                         <div class="card mb-1 me-1" style="width: 6rem">
-                            <img src="{{webroot}}datasets/{{dataset.slug}}/images/image-{{loop.index0}}.png" class="card-img-top" loading="lazy">
+                            <img src="{{webroot}}datasets/{{dataset.slug}}/images/image-{{loop.index0}}/image.png" class="card-img-top" loading="lazy">
                             <div class="card-body">
                                 <div class="card-title" style="font-size: 0.7em">Sample {{loop.index0}}</div>
                             </div>
