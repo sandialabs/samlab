@@ -28,7 +28,7 @@
                     <h2>Channels</h2>
                     <div class="d-flex flex-wrap">
                     {% for channel in layer.channels %}
-                        <a href="{{webroot}}layers/{{layer.name}}/channels/{{channel.slug}}">
+                        <a style="text-decoration: none" href="{{webroot}}layers/{{layer.name}}/channels/{{channel.slug}}">
                         <div class="card mb-1 me-1" style="width: 6rem">
                             <div class="card-body" style="padding: 0.4rem">
                                 <div class="card-title" style="font-size: 0.7rem">Chan {{channel.name}}</div>
