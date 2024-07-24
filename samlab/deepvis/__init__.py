@@ -55,11 +55,12 @@ def generate(*, modelname, model, targetdir, clean=True, batchsize=64, datasets=
 
             handles.append(module.register_forward_hook(functools.partial(hook_fn, dataset["slug"], layername)))
 
-        counter = manager.counter(total = math.ceil(len(dataset["evaluate"]) / batchsize), desc="Batches", unit="batches")
+        counter = manager.counter(total=math.ceil(len(dataset["evaluate"]) / batchsize), desc="Activations", unit="batches", leave=False)
         loader = torch.utils.data.DataLoader(dataset["evaluate"], batch_size=batchsize, shuffle=False)
         for x, y in loader:
             y_hat = model(x)
             counter.update()
+        counter.close()
 
         for handle in handles:
             handle.remove()
@@ -148,8 +149,8 @@ def generate(*, modelname, model, targetdir, clean=True, batchsize=64, datasets=
                 stream.write(environment.get_template("layer.html").render(context))
 
             # Generate per-channel pages.
+            counter = manager.counter(total=len(layer["channels"]), desc="Channels", unit="channels", leave=False)
             for channel in layer["channels"]:
-                log.info(f"Generating channel {channel['name']}.")
                 context["channel"] = channel
 
                 channeldir = os.path.join(layerdir, "channels", channel["name"])
@@ -158,6 +159,8 @@ def generate(*, modelname, model, targetdir, clean=True, batchsize=64, datasets=
 
                     with open(os.path.join(channeldir, "index.html"), "w") as stream:
                         stream.write(environment.get_template("channel.html").render(context))
+                counter.update()
+            counter.close()
 
         # Generate per-dataset pages.
         for dataset in datasets:
@@ -176,10 +179,12 @@ def generate(*, modelname, model, targetdir, clean=True, batchsize=64, datasets=
             if not os.path.exists(imagedir):
                 os.makedirs(imagedir)
 
+            counter = manager.counter(total=len(dataset["view"]), desc="Images", unit="images", leave=False)
             for index in range(len(dataset["view"])):
                 imagepath = os.path.join(imagedir, f"image-{index}.png")
                 if not os.path.exists(imagepath):
-                    log.info(f"Copying image {index}.")
                     sample = dataset["view"][index]
                     sample[0].save(imagepath)
+                counter.update()
+            counter.close()
 

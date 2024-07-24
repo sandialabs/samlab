@@ -7,18 +7,16 @@
         <link href="{{webroot}}css/bootstrap.min.css" rel="stylesheet">
     </head>
     <body>
-        <nav class="navbar">
-            <div class="container-fluid">
-                <nav aria-label="breadcrumb">
-                    <ol class="breadcrumb">
-                        <li class="breadcrumb-item" aria-current="page"><a href="{{webroot}}">{{modelname}}</a></li>
-                        <li class="breadcrumb-item" aria-current="page"><a href="{{webroot}}layers/{{layer.slug}}">{{layer.name}}</a></li>
-                        <li class="breadcrumb-item active" aria-current="page">Chan {{channel.name}}</li>
-                    </ol>
-                </nav>
-            </div>
-        </nav>
         <div class="container">
+            <div class="row">
+                <span class="h1">
+                    <a style="text-decoration: none" href="{{webroot}}">{{modelname}}</a>
+                    /
+                    <a style="text-decoration: none" href="{{webroot}}layers/{{layer.slug}}">{{layer.name}}</a>
+                    /
+                    Chan {{channel.name}}
+                </span>
+            </div>
             <div class="row">
                 <div class="col-2">
                     <h2>Description</h2>
@@ -32,7 +30,9 @@
                     <div class="d-flex flex-wrap">
                     {% for index in range(examples.images | count) %}
                         <div class="card mb-1 me-1" style="width: 6rem">
+                            <a href="{{webroot}}datasets/{{examples.dataset}}/images/image-{{examples.images[index]}}.png">
                             <img src="{{webroot}}datasets/{{examples.dataset}}/images/image-{{examples.images[index]}}.png" class="card-img-top" loading="lazy">
+                            </a>
                             <div class="card-body">
                                 <div class="card-title" style="font-size: 0.7em">Sample {{examples.images[index]}}</div>
                                 <p style="font-size: 0.6em">Act: {{"%.3f" | format(examples.activations[index])}}</p>

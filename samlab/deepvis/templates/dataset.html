@@ -7,17 +7,14 @@
         <link href="{{webroot}}css/bootstrap.min.css" rel="stylesheet">
     </head>
     <body>
-        <nav class="navbar">
-            <div class="container-fluid">
-                <nav aria-label="breadcrumb">
-                    <ol class="breadcrumb">
-                        <li class="breadcrumb-item" aria-current="page"><a href="{{webroot}}">{{modelname}}</a></li>
-                        <li class="breadcrumb-item active" aria-current="page">{{dataset.name}}</li>
-                    </ol>
-                </nav>
-            </div>
-        </nav>
         <div class="container">
+            <div class="row">
+                <span class="h1">
+                    <a style="text-decoration: none" href="{{webroot}}">{{modelname}}</a>
+                    /
+                    {{dataset.name}}
+                </span>
+            </div>
             <div class="row">
                 <div class="col-2">
                     <h2>Description</h2>
@@ -29,12 +26,14 @@
                     <h2>Images</h2>
                     <div class="d-flex flex-wrap">
                     {% for sample in dataset.view %}
+                        <a href="{{webroot}}datasets/{{dataset.slug}}/images/image-{{loop.index0}}.png">
                         <div class="card mb-1 me-1" style="width: 6rem">
                             <img src="{{webroot}}datasets/{{dataset.slug}}/images/image-{{loop.index0}}.png" class="card-img-top" loading="lazy">
                             <div class="card-body">
                                 <div class="card-title" style="font-size: 0.7em">Sample {{loop.index0}}</div>
                             </div>
                         </div>
+                        </a>
                     {% endfor %}
                     </div>
                 </div>
