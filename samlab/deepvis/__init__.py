@@ -129,6 +129,7 @@ def generate(*, modelname, model, targetdir, device=None, clean=True, batchsize=
             "datasets": datasets,
             "modelname": modelname,
             "model": contextmodel,
+            "examplecount": examples,
         }
 
         environment = jinja2.Environment(
@@ -162,8 +163,9 @@ def generate(*, modelname, model, targetdir, device=None, clean=True, batchsize=
                 if not os.path.exists(channeldir):
                     os.makedirs(channeldir)
 
-                    with open(os.path.join(channeldir, "index.html"), "w") as stream:
-                        stream.write(environment.get_template("channel.html").render(context))
+                with open(os.path.join(channeldir, "index.html"), "w") as stream:
+                    stream.write(environment.get_template("channel.html").render(context))
+
                 counter.update()
             counter.close()
 
