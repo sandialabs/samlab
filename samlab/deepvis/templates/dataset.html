@@ -3,14 +3,14 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>{{modelname}} / {{dataset.name}}</title>
+        <title>{{title}} / {{dataset.name}}</title>
         <link href="{{webroot}}css/bootstrap.min.css" rel="stylesheet">
     </head>
     <body>
         <div class="container">
             <div class="row">
                 <span class="h1">
-                    <a style="text-decoration: none" href="{{webroot}}">{{modelname}}</a>
+                    <a style="text-decoration: none" href="{{webroot}}">{{title}}</a>
                     /
                     {{dataset.name}}
                 </span>
@@ -19,18 +19,18 @@
                 <div class="col-2">
                     <h2>Description</h2>
                     <ul class="list-unstyled">
-                        <li>Samples: {{dataset.view|count}}</li>
+                        <li>Samples: {{dataset.samples|count}}</li>
                     </ul>
                 </div>
                 <div class="col">
                     <h2>Images</h2>
                     <div class="d-flex flex-wrap">
-                    {% for sample in dataset.view %}
-                        <a href="{{webroot}}datasets/{{dataset.slug}}/images/image-{{loop.index0}}">
+                    {% for sample in dataset.samples %}
+                        <a href="{{webroot}}datasets/{{dataset.slug}}/samples/{{sample.index}}">
                         <div class="card mb-1 me-1" style="width: 6rem">
-                            <img src="{{webroot}}datasets/{{dataset.slug}}/images/image-{{loop.index0}}/image.png" class="card-img-top" loading="lazy">
+                            <img src="{{webroot}}datasets/{{dataset.slug}}/samples/{{sample.index}}/image.png" class="card-img-top" loading="lazy">
                             <div class="card-body">
-                                <div class="card-title" style="font-size: 0.7em">Sample {{loop.index0}}</div>
+                                <div class="card-title" style="font-size: 0.7em">Sample {{sample.index}}</div>
                             </div>
                         </div>
                         </a>

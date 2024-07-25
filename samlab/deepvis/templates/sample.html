@@ -3,24 +3,24 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>{{modelname}} / {{dataset.name}} / {{image}}</title>
+        <title>{{title}} / {{dataset.name}} / Sample {{sample.index}}</title>
         <link href="{{webroot}}css/bootstrap.min.css" rel="stylesheet">
     </head>
     <body>
         <div class="container">
             <div class="row">
                 <span class="h1">
-                    <a style="text-decoration: none" href="{{webroot}}">{{modelname}}</a>
+                    <a style="text-decoration: none" href="{{webroot}}">{{title}}</a>
                     /
-                    {{dataset.name}}
+                    <a style="text-decoration: none" href="{{webroot}}datasets/{{dataset.slug}}">{{dataset.name}}</a>
                     /
-                    {{image}}
+                    Sample {{sample.index}}
                 </span>
             </div>
             <div class="row">
                 <div class="col">
                     <h2>Image</h2>
-                    <img src="{{webroot}}datasets/{{dataset.slug}}/images/image-{{image}}/image.png">
+                    <img src="{{webroot}}datasets/{{dataset.slug}}/samples/{{sample.index}}/image.png">
                     <h2>Examples</h2>
                 </div>
             </div>

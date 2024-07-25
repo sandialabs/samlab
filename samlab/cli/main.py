@@ -72,13 +72,13 @@ def main():
     if arguments.command == "deepvis":
         match arguments.model:
             case "vgg19":
-                modelname = "VGG-19"
+                title = "VGG-19"
                 model = torchvision.models.vgg19(weights="IMAGENET1K_V1")
             case "resnet50":
-                modelname = "ResNet-50"
+                title = "ResNet-50"
                 model = torchvision.models.resnet50(weights="IMAGENET1K_V2")
             case "inceptionv1":
-                modelname = "Inception v1"
+                title = "Inception v1"
                 model = torchvision.models.googlenet(weights="IMAGENET1K_V1")
             case _:
                 raise NotImplementedError(f"Unsupported model: {arguments.model}")
@@ -108,12 +108,7 @@ def main():
                 evaluate = torch.utils.data.Subset(evaluate, indices)
                 view = torch.utils.data.Subset(view, indices)
 
-            datasets.append({
-                "name": "ImageNet 2012",
-                "slug": "imagenet2012",
-                "evaluate": evaluate,
-                "view": view,
-                })
+            datasets.append(samlab.deepvis.Namespace(name="ImageNet 2012", slug="imagenet2012", evaluate=evaluate, view=view))
 
         # Generate the website.
         samlab.deepvis.generate(
@@ -125,9 +120,10 @@ def main():
             examples=arguments.examples,
             html=not arguments.no_html,
             model=model,
-            modelname=modelname,
             seed=arguments.seed,
             targetdir=arguments.output,
+            title=title,
+            webroot="/",
             )
 
     # version

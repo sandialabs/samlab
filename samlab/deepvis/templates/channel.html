@@ -3,18 +3,18 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>{{modelname}} / {{layer.name}} / {{channel.name}}</title>
+        <title>{{title}} / {{layer.name}} / {{channel.name}}</title>
         <link href="{{webroot}}css/bootstrap.min.css" rel="stylesheet">
     </head>
     <body>
         <div class="container">
             <div class="row">
                 <span class="h1">
-                    <a style="text-decoration: none" href="{{webroot}}">{{modelname}}</a>
+                    <a style="text-decoration: none" href="{{webroot}}">{{title}}</a>
                     /
                     <a style="text-decoration: none" href="{{webroot}}layers/{{layer.slug}}">{{layer.name}}</a>
                     /
-                    Chan {{channel.name}}
+                    Channel {{channel.name}}
                 </span>
             </div>
             <div class="row">
@@ -32,8 +32,8 @@
                     <div class="d-flex flex-wrap">
                     {% for index in range(examples.images | count) %}
                         <div class="card mb-1 me-1" style="width: 6rem">
-                            <a href="{{webroot}}datasets/{{examples.dataset}}/images/image-{{examples.images[index]}}">
-                            <img src="{{webroot}}datasets/{{examples.dataset}}/images/image-{{examples.images[index]}}/image.png" class="card-img-top" loading="lazy">
+                            <a href="{{webroot}}datasets/{{examples.dataset}}/samples/{{examples.images[index]}}">
+                            <img src="{{webroot}}datasets/{{examples.dataset}}/samples/{{examples.images[index]}}/image.png" class="card-img-top" loading="lazy">
                             </a>
                             <div class="card-body">
                                 <div class="card-title" style="font-size: 0.7em">Sample {{examples.images[index]}}</div>
