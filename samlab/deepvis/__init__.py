@@ -30,21 +30,28 @@ class Namespace(types.SimpleNamespace):
         return self.__dict__[key]
 
 
-def createcontext(*, activations, datasets, examples, model, title, webroot):
+def createcontext(*, batchsize, datasets, device, examples, model, title, webroot):
+    # Create the global context.
     context = Namespace(
         datasets=datasets,
         model=Namespace(layers=[]),
         title=title,
+        url=webroot,
         webroot=webroot,
-#        examplecount=examples,
     )
 
-    # Add dataset samples.
+    # Expand the dataset model.
     for dataset in context.datasets:
-        dataset.samples = [Namespace(index=index) for index in range(len(dataset.view))]
+        dataset.url = f"{webroot}datasets/{dataset.slug}"
+        dataset.samples = []
+        for index in range(len(dataset.view)):
+            dataset.samples.append(Namespace(
+                imageurl=f"{webroot}datasets/{dataset.slug}/samples/{index}/image.png",
+                index=index,
+                url=f"{webroot}datasets/{dataset.slug}/samples/{index}",
+                ))
 
-    # Add layer data.
-    layerindex = 0
+    # Create the layer model.
     for name, module in model.named_modules():
         if not name:
             continue
@@ -53,11 +60,11 @@ def createcontext(*, activations, datasets, examples, model, title, webroot):
             continue
 
         layer = Namespace(
-            name=name,
-            index=layerindex,
-            type=str(module.__class__).split(".")[-1].split("'")[0],
             channels=[],
             conv=None,
+            module=module,
+            name=name,
+            type=str(module.__class__).split(".")[-1].split("'")[0],
         )
 
         if isinstance(module, torch.nn.Conv2d):
@@ -68,77 +75,37 @@ def createcontext(*, activations, datasets, examples, model, title, webroot):
             size = module.get_parameter("weight").size()
             layer.channels = [Namespace(index=index) for index in range(size[0])]
 
-        for channel in layer.channels:
-            channel.examples = []
-            for dataset in activations:
-                layeract = activations[dataset][layer.name]
-                channelact = layeract.T[channel.index]
-                images = torch.argsort(channelact, descending=True)[:examples]
-                acts = channelact[images]
-                channel.examples.append(Namespace(
-                    dataset=dataset,
-                    images=images.tolist(),
-                    activations=acts.tolist(),
-                ))
-
         context.model.layers.append(layer)
-        layerindex += 1
 
-    return context
+    # Expand the layer model.
+    for index, layer in enumerate(context.model.layers):
+        layer.activations = []
+        layer.index = index
+        layer.url=f"{webroot}layers/{index}"
 
+    # Expand the channel model.
+    for layer in context.model.layers:
+        for channel in layer.channels:
+            channel.url = f"{webroot}layers/{layer.index}/channels/{channel.index}"
 
-def generate(*,
-    activations,
-    batchsize,
-    clean,
-    datasets,
-    device,
-    examples,
-    html,
-    model,
-    seed,
-    targetdir,
-    title,
-    webroot,
-    ):
-
-    log.info(f"Generating deep visualization of {title} in {targetdir}")
-
-    if clean and os.path.exists(targetdir):
-        log.info(f"Cleaning {targetdir}")
-        shutil.rmtree(targetdir)
-
-    if not os.path.exists(targetdir):
-        os.makedirs(targetdir)
-
-    # Record channel activations.
-    activations = {}
-
+    # Compute activations.
     model.to(device)
 
-    def hook_fn(dataname, layername, module, inputs, outputs):
+    def hook_fn(layer, module, inputs, outputs):
         if outputs.ndim == 2:
-            activations[dataname][layername].append(outputs.detach().cpu())
+            layer.activations[-1].values.append(outputs.detach().cpu())
         elif outputs.ndim == 4:
-            activations[dataname][layername].append(torch.amax(outputs, dim=(2, 3)).detach().cpu())
+            layer.activations[-1].values.append(torch.amax(outputs, dim=(2, 3)).detach().cpu())
 
-    manager = enlighten.get_manager()
-    for dataset in datasets:
+    for dataset in context.datasets:
         log.info(f"Generating activations for dataset {dataset.name}")
 
-        activations[dataset.slug] = collections.defaultdict(list)
-
         handles = []
-        for layername, module in model.named_modules():
-            if not layername:
-                continue
+        for layer in context.model.layers:
+            layer.activations.append(Namespace(dataset=dataset, values=[]))
+            handles.append(layer.module.register_forward_hook(functools.partial(hook_fn, layer)))
 
-            if isinstance(module, torch.nn.Sequential):
-                continue
-
-            handles.append(module.register_forward_hook(functools.partial(hook_fn, dataset.slug, layername)))
-
-        counter = manager.counter(total=math.ceil(len(dataset.evaluate) / batchsize), desc="Activations", unit="batches", leave=False)
+        counter = enlighten.get_manager().counter(total=math.ceil(len(dataset.evaluate) / batchsize), desc="Activations", unit="batches", leave=False)
         loader = torch.utils.data.DataLoader(dataset.evaluate, batch_size=batchsize, shuffle=False)
         for x, y in loader:
             y_hat = model(x.to(device))
@@ -148,82 +115,118 @@ def generate(*,
         for handle in handles:
             handle.remove()
 
-    for dataset in activations:
-        activations[dataset] = {layer: torch.cat(activations[dataset][layer]) for layer in activations[dataset]}
-
-
-    # Generate HTML
-    if html:
-        context = createcontext(activations=activations, datasets=datasets, examples=examples, model=model, title=title, webroot=webroot)
-
-        # Copy assets to the target dir.
-        log.info(f"Copying assets to {targetdir}")
-        shutil.copytree(os.path.join(__path__[0], "templates", "css"), os.path.join(targetdir, "css"), dirs_exist_ok=True)
-        shutil.copytree(os.path.join(__path__[0], "templates", "js"), os.path.join(targetdir, "js"), dirs_exist_ok=True)
-
-        environment = jinja2.Environment(
-            loader=jinja2.PackageLoader("samlab.deepvis"),
-            autoescape=jinja2.select_autoescape(),
-            )
-
-        # Generate the home page.
-        log.info(f"Generating home page.")
-        with open(os.path.join(targetdir, "index.html"), "w") as stream:
-            stream.write(environment.get_template("index.html").render(context))
-
-        # Generate per-layer pages.
         for layer in context.model.layers:
-            log.info(f"Generating layer {layer.name}")
-            context.layer = layer
+            layer.activations[-1].values = torch.cat(layer.activations[-1].values)
 
-            layerdir = os.path.join(targetdir, "layers", str(layer.index))
-            if not os.path.exists(layerdir):
-                os.makedirs(layerdir)
+    # Assign activations to channels.
+    for layer in context.model.layers:
+        for channel in layer.channels:
+            channel.examples = []
+            for activations in layer.activations:
+                values = activations.values.T[channel.index]
+                samples = torch.argsort(values, descending=True)[:examples]
+                channel.examples.append(Namespace(
+                    dataset=activations.dataset,
+                    samples=[activations.dataset.samples[index] for index in samples],
+                    activations=values[samples].tolist(),
+                ))
 
-            with open(os.path.join(layerdir, "index.html"), "w") as stream:
-                stream.write(environment.get_template("layer.html").render(context))
+    return context
 
-            # Generate per-channel pages.
-            counter = manager.counter(total=len(layer.channels), desc="Channels", unit="channels", leave=False)
-            for channel in layer.channels:
-                context.channel = channel
 
-                channeldir = os.path.join(layerdir, "channels", str(channel.index))
-                if not os.path.exists(channeldir):
-                    os.makedirs(channeldir)
+def generate(*,
+    batchsize,
+    clean,
+    datasets,
+    device,
+    examples,
+    model,
+    targetdir,
+    title,
+    webroot,
+    ):
 
-                with open(os.path.join(channeldir, "index.html"), "w") as stream:
-                    stream.write(environment.get_template("channel.html").render(context))
+    # Create the object model that will be used by Jinja templates.
+    context = createcontext(batchsize=batchsize, datasets=datasets, device=device, examples=examples, model=model, title=title, webroot=webroot)
 
-                counter.update()
-            counter.close()
+    # Optionally remove the target directory.
+    if clean and os.path.exists(targetdir):
+        log.info(f"Removing {targetdir}")
+        shutil.rmtree(targetdir)
 
-        # Generate per-dataset pages.
-        for dataset in context.datasets:
-            log.info(f"Generating dataset {dataset.name}.")
-            context.dataset = dataset
+    # Create the target directory.
+    log.info(f"Creating {targetdir}")
+    if not os.path.exists(targetdir):
+        os.makedirs(targetdir)
 
-            datasetdir = os.path.join(targetdir, "datasets", dataset.slug)
-            if not os.path.exists(datasetdir):
-                os.makedirs(datasetdir)
+    # Copy assets to the target directory.
+    log.info(f"Copying assets to {targetdir}")
+    shutil.copytree(os.path.join(__path__[0], "templates", "css"), os.path.join(targetdir, "css"), dirs_exist_ok=True)
+    shutil.copytree(os.path.join(__path__[0], "templates", "js"), os.path.join(targetdir, "js"), dirs_exist_ok=True)
 
-            with open(os.path.join(datasetdir, "index.html"), "w") as stream:
-                stream.write(environment.get_template("dataset.html").render(context))
+    environment = jinja2.Environment(
+        loader=jinja2.PackageLoader("samlab.deepvis"),
+        autoescape=jinja2.select_autoescape(),
+        )
 
-            # Generate per-sample pages.
-            counter = manager.counter(total=len(dataset.samples), desc="Samples", unit="samples", leave=False)
-            for sample in dataset.samples:
-                context.sample = sample
+    # Generate the home page.
+    log.info(f"Generating home page.")
+    with open(os.path.join(targetdir, "index.html"), "w") as stream:
+        stream.write(environment.get_template("index.html").render(context))
 
-                sampledir = os.path.join(datasetdir, "samples", f"{sample.index}")
-                if not os.path.exists(sampledir):
-                    os.makedirs(sampledir)
+    # Generate per-layer pages.
+    for layer in context.model.layers:
+        log.info(f"Generating layer {layer.name}")
+        context.layer = layer
 
-                with open(os.path.join(sampledir, "index.html"), "w") as stream:
-                    stream.write(environment.get_template("sample.html").render(context))
+        layerdir = os.path.join(targetdir, "layers", str(layer.index))
+        if not os.path.exists(layerdir):
+            os.makedirs(layerdir)
 
-                imagepath = os.path.join(sampledir, f"image.png")
-                dataset.view[sample.index][0].save(imagepath)
-                counter.update()
-            counter.close()
+        with open(os.path.join(layerdir, "index.html"), "w") as stream:
+            stream.write(environment.get_template("layer.html").render(context))
+
+        # Generate per-channel pages.
+        counter = enlighten.get_manager().counter(total=len(layer.channels), desc="Channels", unit="channels", leave=False)
+        for channel in layer.channels:
+            context.channel = channel
+
+            channeldir = os.path.join(layerdir, "channels", str(channel.index))
+            if not os.path.exists(channeldir):
+                os.makedirs(channeldir)
+
+            with open(os.path.join(channeldir, "index.html"), "w") as stream:
+                stream.write(environment.get_template("channel.html").render(context))
+
+            counter.update()
+        counter.close()
+
+    # Generate per-dataset pages.
+    for dataset in context.datasets:
+        log.info(f"Generating dataset {dataset.name}.")
+        context.dataset = dataset
+
+        datasetdir = os.path.join(targetdir, "datasets", dataset.slug)
+        if not os.path.exists(datasetdir):
+            os.makedirs(datasetdir)
+
+        with open(os.path.join(datasetdir, "index.html"), "w") as stream:
+            stream.write(environment.get_template("dataset.html").render(context))
+
+        # Generate per-sample pages.
+        counter = enlighten.get_manager().counter(total=len(dataset.samples), desc="Samples", unit="samples", leave=False)
+        for sample in dataset.samples:
+            context.sample = sample
+
+            sampledir = os.path.join(datasetdir, "samples", f"{sample.index}")
+            if not os.path.exists(sampledir):
+                os.makedirs(sampledir)
+
+            with open(os.path.join(sampledir, "index.html"), "w") as stream:
+                stream.write(environment.get_template("sample.html").render(context))
+
+            imagepath = os.path.join(sampledir, f"image.png")
+            dataset.view[sample.index][0].save(imagepath)
+            counter.update()
+        counter.close()
 

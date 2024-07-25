@@ -1,46 +1,38 @@
-<!doctype html>
-<html lang="en">
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>{{title}}</title>
-        <link href="{{webroot}}css/bootstrap.min.css" rel="stylesheet">
-    </head>
-    <body>
-        <div class="container">
-            <div class="row">
-                <span class="h1">{{title}}</span>
-            </div>
-            <div class="row">
-                <div class="col-2">
-                    <h2>Model</h2>
-                    {% for layer in model.layers %}
-                    <div class="card mb-2">
-                        <div class="card-body">
-                            <a href="{{webroot}}layers/{{layer.index}}">
-                                <h5 class="card-title">{{layer.name}}</h5>
-                            </a>
-                            <h6 class="card-subtitle text-body-secondary mb-2">{{layer.type}}</h6>
-                            <p class="card-text">Channels: {{layer.channels|count}}<br/>Convolution: {{layer.conv}}</p>
-                        </div>
-                    </div>
-                    {% endfor %}
-                </div>
-                <div class="col">
-                    <h2>Datasets</h2>
-                    {% for dataset in datasets %}
-                    <div class="card mb-2">
-                        <div class="card-body">
-                            <a href="{{webroot}}datasets/{{dataset.slug}}">
-                                <h5 class="card-title">{{dataset.name}}</h5>
-                            </a>
-                            <p class="card-text">Samples: {{dataset.samples|count}}</p>
-                        </div>
-                    </div>
-                    {% endfor %}
+{% extends "base.html" %}
+{% block title %}{{title}}{% endblock %}
+{% block body %}
+<div class="container">
+    <div class="row">
+        <span class="h1">{{title}}</span>
+    </div>
+    <div class="row">
+        <div class="col-2">
+            <h2>Model</h2>
+            {% for layer in model.layers %}
+            <div class="card mb-2">
+                <div class="card-body">
+                    <a href="{{layer.url}}">
+                        <h5 class="card-title">{{layer.name}}</h5>
+                    </a>
+                    <h6 class="card-subtitle text-body-secondary mb-2">{{layer.type}}</h6>
+                    <p class="card-text">Channels: {{layer.channels|count}}<br/>Convolution: {{layer.conv}}</p>
                 </div>
             </div>
+            {% endfor %}
         </div>
-        <script src="{{webroot}}js/bootstrap.bundle.min.js"></script>
-    </body>
-</html>
+        <div class="col">
+            <h2>Datasets</h2>
+            {% for dataset in datasets %}
+            <div class="card mb-2">
+                <div class="card-body">
+                    <a href="{{dataset.url}}">
+                        <h5 class="card-title">{{dataset.name}}</h5>
+                    </a>
+                    <p class="card-text">Samples: {{dataset.samples|count}}</p>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

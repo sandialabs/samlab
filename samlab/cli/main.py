@@ -45,8 +45,6 @@ deepvis_subparser.add_argument("--device", default="cpu", help="PyTorch device t
 deepvis_subparser.add_argument("--examples", type=int, default=100, help="Number of examples to display for each channel. Default: %(default)s")
 deepvis_subparser.add_argument("--imagenet", help="Specify the path to the ImageNet 2012 classification dataset, and use it for testing.")
 deepvis_subparser.add_argument("--imagenet-count", type=int, help="Number of ImageNet 2012 images to use for testing. Default: all")
-deepvis_subparser.add_argument("--no-activations", action="store_true", help="Don't calculate channel activations.")
-deepvis_subparser.add_argument("--no-html", action="store_true", help="Don't generate HTML output.")
 deepvis_subparser.add_argument("--seed", type=int, default=1234, help="Random seed. Default: %(default)s")
 deepvis_subparser.add_argument("model", choices=["vgg19", "resnet50", "inceptionv1"], help="Model to analyze.")
 deepvis_subparser.add_argument("output", help="Target directory to receive results.")
@@ -112,15 +110,12 @@ def main():
 
         # Generate the website.
         samlab.deepvis.generate(
-            activations=not arguments.no_activations,
             batchsize=arguments.batch_size,
             clean=arguments.clean,
             datasets=datasets,
             device=torch.device(arguments.device),
             examples=arguments.examples,
-            html=not arguments.no_html,
             model=model,
-            seed=arguments.seed,
             targetdir=arguments.output,
             title=title,
             webroot="/",

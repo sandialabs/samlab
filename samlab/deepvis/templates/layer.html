@@ -1,50 +1,42 @@
-<!doctype html>
-<html lang="en">
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>{{title}} / {{layer.name}}</title>
-        <link href="{{webroot}}css/bootstrap.min.css" rel="stylesheet">
-    </head>
-    <body>
-        <div class="container">
-            <div class="row">
-                <span class="h1">
-                    <a style="text-decoration: none" href="{{webroot}}">{{title}}</a>
-                    /
-                    {{layer.name}}
-                </span>
-            </div>
-            <div class="row">
-                <div class="col-2">
-                    <h2>Description</h2>
-                    <ul class="list-unstyled">
-                        <li>Type: {{layer.type}}</li>
-                        <li>Channels: {{layer.channels|count}}</li>
-                        <li>Convolution: {{layer.conv}}</li>
-                    </ul>
-                </div>
-                <div class="col">
-                    <h2>Channels</h2>
-                    <div class="d-flex flex-wrap">
-                    {% for channel in layer.channels %}
-                        <a style="text-decoration: none" href="{{webroot}}layers/{{layer.index}}/channels/{{channel.index}}">
-                        <div class="card mb-1 me-1" style="width: 6rem">
-                            <div class="card-body" style="padding: 0.4rem">
-                                <div class="card-title" style="font-size: 0.7rem">Chan {{channel.index}}</div>
-                                {% for examples in channel.examples %}
-                                {% for index in range(3) %}
-                                    <img src="{{webroot}}datasets/{{examples.dataset}}/samples/{{examples.images[index]}}/image.png" style="width: 1.5rem" loading="lazy">
-                                {% endfor %}
-                                {% endfor %}
-                            </div>
-                        </div>
-                        </a>
-                    {% endfor %}
+{% extends "base.html" %}
+{% block title %}{{title}} / {{layer.name}}{% endblock %}
+{% block body %}
+<div class="container">
+    <div class="row">
+        <span class="h1">
+            <a style="text-decoration: none" href="{{url}}">{{title}}</a>
+            /
+            {{layer.name}}
+        </span>
+    </div>
+    <div class="row">
+        <div class="col-2">
+            <h2>Description</h2>
+            <ul class="list-unstyled">
+                <li>Type: {{layer.type}}</li>
+                <li>Channels: {{layer.channels|count}}</li>
+                <li>Convolution: {{layer.conv}}</li>
+            </ul>
+        </div>
+        <div class="col">
+            <h2>Channels</h2>
+            <div class="d-flex flex-wrap">
+            {% for channel in layer.channels %}
+                <a style="text-decoration: none" href="{{channel.url}}">
+                <div class="card mb-1 me-1" style="width: 6rem">
+                    <div class="card-body" style="padding: 0.4rem">
+                        <div class="card-title" style="font-size: 0.7rem">Chan {{channel.index}}</div>
+                        {% for examples in channel.examples[:1] %}
+                        {% for sample in examples.samples[:3] %}
+                            <img src="{{sample.imageurl}}" style="width: 1.5rem" loading="lazy">
+                        {% endfor %}
+                        {% endfor %}
                     </div>
                 </div>
+                </a>
+            {% endfor %}
             </div>
         </div>
-        <script src="{{webroot}}js/bootstrap.bundle.min.js"></script>
-    </body>
-</html>
+    </div>
+</div>
+{% endblock %}
