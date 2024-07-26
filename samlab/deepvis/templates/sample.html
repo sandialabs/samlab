@@ -4,14 +4,20 @@
 <div class="container">
     <div class="row">
         <span class="h1">
-            <a style="text-decoration: none" href="{{url}}">{{title}}</a>
+            <a href="{{url}}">{{title}}</a>
             /
-            <a style="text-decoration: none" href="{{dataset.url}}">{{dataset.name}}</a>
+            <a href="{{dataset.url}}">{{dataset.name}}</a>
             /
             Sample {{sample.index}}
         </span>
     </div>
     <div class="row">
+        <div class="col-2">
+            <h2>Description</h2>
+            <ul class="list-unstyled">
+                <li>Category: {{sample.category}}</li>
+            </ul>
+        </div>
         <div class="col">
             <h2>Image</h2>
             <img src="{{sample.imageurl}}">

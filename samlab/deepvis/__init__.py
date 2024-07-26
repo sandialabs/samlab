@@ -45,7 +45,9 @@ def createcontext(*, batchsize, datasets, device, examples, model, title, webroo
         dataset.url = f"{webroot}datasets/{dataset.slug}"
         dataset.samples = []
         for index in range(len(dataset.view)):
+            image, category = dataset.view[index]
             dataset.samples.append(Namespace(
+                category=category,
                 imageurl=f"{webroot}datasets/{dataset.slug}/samples/{index}/image.png",
                 index=index,
                 url=f"{webroot}datasets/{dataset.slug}/samples/{index}",

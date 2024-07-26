@@ -4,7 +4,7 @@
 <div class="container">
     <div class="row">
         <span class="h1">
-            <a style="text-decoration: none" href="{{url}}">{{title}}</a>
+            <a href="{{url}}">{{title}}</a>
             /
             {{dataset.name}}
         </span>
@@ -24,7 +24,8 @@
                 <div class="card mb-1 me-1" style="width: 6rem">
                     <img src="{{sample.imageurl}}" class="card-img-top" loading="lazy">
                     <div class="card-body">
-                        <div class="card-title" style="font-size: 0.7em">Sample {{sample.index}}</div>
+                        <div class="card-title" style="font-size: 0.7rem">Sample {{sample.index}}</div>
+                        <p style="font-size: 0.6rem">Category: {{sample.category}}</p>
                     </div>
                 </div>
                 </a>

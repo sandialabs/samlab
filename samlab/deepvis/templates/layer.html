@@ -4,7 +4,7 @@
 <div class="container">
     <div class="row">
         <span class="h1">
-            <a style="text-decoration: none" href="{{url}}">{{title}}</a>
+            <a href="{{url}}">{{title}}</a>
             /
             {{layer.name}}
         </span>
@@ -22,7 +22,7 @@
             <h2>Channels</h2>
             <div class="d-flex flex-wrap">
             {% for channel in layer.channels %}
-                <a style="text-decoration: none" href="{{channel.url}}">
+                <a href="{{channel.url}}">
                 <div class="card mb-1 me-1" style="width: 6rem">
                     <div class="card-body" style="padding: 0.4rem">
                         <div class="card-title" style="font-size: 0.7rem">Chan {{channel.index}}</div>
