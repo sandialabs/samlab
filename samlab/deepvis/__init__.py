@@ -65,6 +65,7 @@ def createcontext(*, batchsize, datasets, device, examples, model, title, webroo
             categories.add(category)
 
             dataset.samples.append(Namespace(
+                activations=[],
                 category=category,
                 imageurl=f"{webroot}datasets/{dataset.slug}/samples/{index}/image.png",
                 index=index,
@@ -154,11 +155,17 @@ def createcontext(*, batchsize, datasets, device, examples, model, title, webroo
 
     # Assign activations to dataset samples.
     for layer in context.model.layers:
+        if not len(layer.channels):
+            continue
         for activations in layer.activations:
-            #for sample in activations.dataset.samples:
-            print(layer.name, activations.dataset.name, activations.values.shape)
-            pass
-
+            #print(layer.name, activations.dataset.name, activations.values.shape)
+            for sample, values in zip(activations.dataset.samples, activations.values):
+                channels = torch.argsort(values, descending=True)[:10]
+                sample.activations.append(Namespace(
+                    layer=layer,
+                    channels=[layer.channels[index] for index in channels],
+                    values = values[channels].tolist(),
+                    ))
 
     return context
 
