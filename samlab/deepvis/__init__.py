@@ -58,14 +58,19 @@ def createcontext(*, batchsize, datasets, device, examples, model, title, webroo
     for dataset in context.datasets:
         dataset.url = f"{webroot}datasets/{dataset.slug}"
         dataset.samples = []
+
+        categories = set()
         for index in range(len(dataset.view)):
             image, category = dataset.view[index]
+            categories.add(category)
+
             dataset.samples.append(Namespace(
                 category=category,
                 imageurl=f"{webroot}datasets/{dataset.slug}/samples/{index}/image.png",
                 index=index,
                 url=f"{webroot}datasets/{dataset.slug}/samples/{index}",
                 ))
+        dataset.categories = [Namespace(name=category) for category in categories]
 
     # Create the layer model.
     for name, module in model.named_modules():
@@ -151,7 +156,7 @@ def createcontext(*, batchsize, datasets, device, examples, model, title, webroo
     for layer in context.model.layers:
         for activations in layer.activations:
             #for sample in activations.dataset.samples:
-            #print(layer.name, activations.dataset.name, activations.values.shape)
+            print(layer.name, activations.dataset.name, activations.values.shape)
             pass
 
 

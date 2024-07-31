@@ -88,11 +88,16 @@ def main():
 
             if arguments.imagenet_count is not None:
                 weights = torch.ones(len(dataset))
-                indices = torch.multinomial(weights, arguments.imagenet_count, generator=generator)
+                indices = torch.sort(torch.multinomial(weights, arguments.imagenet_count, generator=generator))[0]
                 evaluate = torch.utils.data.Subset(evaluate, indices)
                 view = torch.utils.data.Subset(view, indices)
 
-            datasets.append(samlab.deepvis.Namespace(name="ImageNet 2012", slug="imagenet2012", evaluate=evaluate, view=view))
+            datasets.append(samlab.deepvis.Namespace(
+                name="ImageNet 2012",
+                slug="imagenet2012",
+                evaluate=evaluate,
+                view=view,
+                ))
 
         # Generate the website.
         samlab.deepvis.generate(

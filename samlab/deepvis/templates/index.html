@@ -15,7 +15,10 @@
                         <h5 class="card-title">{{layer.name}}</h5>
                     </a>
                     <h6 class="card-subtitle text-body-secondary mb-2">{{layer.type}}</h6>
-                    <p class="card-text">Channels: {{layer.channels|count}}<br/>Convolution: {{layer.conv}}</p>
+                    <ul class="list-unstyled">
+                        <li>Channels: {{layer.channels|count}}</li>
+                        <li>Convolution: {{layer.conv}}</li>
+                    </ul>
                 </div>
             </div>
             {% endfor %}
@@ -28,7 +31,10 @@
                     <a href="{{dataset.url}}">
                         <h5 class="card-title">{{dataset.name}}</h5>
                     </a>
-                    <p class="card-text">Samples: {{dataset.samples|count}}</p>
+                    <ul class="list-unstyled">
+                        <li>Samples: {{dataset.samples|count}}</li>
+                        <li>Categories: {{dataset.categories|count}}</li>
+                    </ul>
                 </div>
             </div>
             {% endfor %}
