@@ -30,6 +30,20 @@ class Namespace(types.SimpleNamespace):
         return self.__dict__[key]
 
 
+class TransformedDataset(torch.utils.data.Dataset):
+    def __init__(self, dataset, transform):
+        self._dataset = dataset
+        self._transform = transform
+
+    def __len__(self):
+        return self._dataset.__len__()
+
+    def __getitem__(self, key):
+        item = self._dataset.__getitem__(key)
+        item = (self._transform(item[0]), item[1])
+        return item
+
+
 def createcontext(*, batchsize, datasets, device, examples, model, title, webroot):
     # Create the global context.
     context = Namespace(
@@ -137,7 +151,8 @@ def createcontext(*, batchsize, datasets, device, examples, model, title, webroo
     for layer in context.model.layers:
         for activations in layer.activations:
             #for sample in activations.dataset.samples:
-            print(layer.name, activations.dataset.name, activations.values.shape)
+            #print(layer.name, activations.dataset.name, activations.values.shape)
+            pass
 
 
     return context
@@ -154,6 +169,7 @@ def generate(*,
     title,
     webroot,
     ):
+    log.info(f"Generating deep visualization {title} in {targetdir}.")
 
     # Create the object model that will be used by Jinja templates.
     context = createcontext(batchsize=batchsize, datasets=datasets, device=device, examples=examples, model=model, title=title, webroot=webroot)

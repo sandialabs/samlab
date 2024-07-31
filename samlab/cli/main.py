@@ -19,20 +19,6 @@ import samlab
 import samlab.deepvis
 
 
-class TransformedDataset(torch.utils.data.Dataset):
-    def __init__(self, dataset, transform):
-        self._dataset = dataset
-        self._transform = transform
-
-    def __len__(self):
-        return self._dataset.__len__()
-
-    def __getitem__(self, key):
-        item = self._dataset.__getitem__(key)
-        item = (self._transform(item[0]), item[1])
-        return item
-
-
 # Setup the command line user interface.
 parser = argparse.ArgumentParser(description="SAMLAB tools.")
 subparsers = parser.add_subparsers(title="commands (choose one)", dest="command")
@@ -87,7 +73,7 @@ def main():
         if arguments.imagenet is not None:
             dataset = torchvision.datasets.ImageNet(arguments.imagenet)
 
-            evaluate = TransformedDataset(dataset, transform=torchvision.transforms.v2.Compose([
+            evaluate = samlab.deepvis.TransformedDataset(dataset, transform=torchvision.transforms.v2.Compose([
                     torchvision.transforms.v2.ToImage(),
                     torchvision.transforms.v2.CenterCrop((224, 224)),
                     torchvision.transforms.v2.ToDtype(torch.float32, scale=True),
@@ -95,7 +81,7 @@ def main():
                     ]),
                 )
 
-            view = TransformedDataset(dataset, transform=torchvision.transforms.v2.Compose([
+            view = samlab.deepvis.TransformedDataset(dataset, transform=torchvision.transforms.v2.Compose([
                     torchvision.transforms.v2.CenterCrop((224, 224)),
                     ]),
                 )
