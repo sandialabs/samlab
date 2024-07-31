@@ -123,15 +123,22 @@ def createcontext(*, batchsize, datasets, device, examples, model, title, webroo
     # Assign activations to channels.
     for layer in context.model.layers:
         for channel in layer.channels:
-            channel.examples = []
+            channel.activations = []
             for activations in layer.activations:
                 values = activations.values.T[channel.index]
                 samples = torch.argsort(values, descending=True)[:examples]
-                channel.examples.append(Namespace(
+                channel.activations.append(Namespace(
                     dataset=activations.dataset,
                     samples=[activations.dataset.samples[index] for index in samples],
-                    activations=values[samples].tolist(),
+                    values=values[samples].tolist(),
                 ))
+
+    # Assign activations to dataset samples.
+    for layer in context.model.layers:
+        for activations in layer.activations:
+            #for sample in activations.dataset.samples:
+            print(layer.name, activations.dataset.name, activations.values.shape)
+
 
     return context
 
