@@ -61,12 +61,12 @@ def createcontext(*, batchsize, datasets, device, examples, model, title, webroo
 
         categories = set()
         for index in range(len(dataset.view)):
-            image, category = dataset.view[index]
-            categories.add(category)
+            x, y = dataset.view[index]
+            categories.add(y)
 
             dataset.samples.append(Namespace(
                 activations=[],
-                category=category,
+                category=y,
                 imageurl=f"{webroot}datasets/{dataset.slug}/samples/{index}/image.png",
                 index=index,
                 url=f"{webroot}datasets/{dataset.slug}/samples/{index}",
@@ -130,7 +130,8 @@ def createcontext(*, batchsize, datasets, device, examples, model, title, webroo
         counter = enlighten.get_manager().counter(total=math.ceil(len(dataset.evaluate) / batchsize), desc="Activations", unit="batches", leave=False)
         loader = torch.utils.data.DataLoader(dataset.evaluate, batch_size=batchsize, shuffle=False)
         for x, y in loader:
-            y_hat = model(x.to(device))
+            x = (item.to(device) for item in x)
+            y_hat = model(*x)
             counter.update()
         counter.close()
 
@@ -262,7 +263,8 @@ def generate(*,
                 stream.write(environment.get_template("sample.html").render(context))
 
             imagepath = os.path.join(sampledir, f"image.png")
-            dataset.view[sample.index][0].save(imagepath)
+            x, y = dataset.view[sample.index]
+            x[0].save(imagepath)
             counter.update()
         counter.close()
 
