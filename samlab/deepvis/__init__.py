@@ -158,7 +158,6 @@ def createcontext(*, batchsize, datasets, device, examples, model, title, webroo
         if not len(layer.channels):
             continue
         for activations in layer.activations:
-            #print(layer.name, activations.dataset.name, activations.values.shape)
             for sample, values in zip(activations.dataset.samples, activations.values):
                 channels = torch.argsort(values, descending=True)[:10]
                 sample.activations.append(Namespace(
