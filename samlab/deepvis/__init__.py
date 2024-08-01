@@ -39,9 +39,8 @@ class TransformedDataset(torch.utils.data.Dataset):
         return self._dataset.__len__()
 
     def __getitem__(self, key):
-        item = self._dataset.__getitem__(key)
-        item = (self._transform(item[0]), item[1])
-        return item
+        x, y = self._dataset.__getitem__(key)
+        return ((self._transform(x),), y)
 
 
 def createcontext(*, batchsize, datasets, device, examples, model, title, webroot):
