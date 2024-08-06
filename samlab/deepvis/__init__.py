@@ -55,10 +55,12 @@ def createcontext(*, batchsize, datasets, device, examples, model, title, webroo
 
     # Expand the dataset model.
     for dataset in context.datasets:
+        log.info(f"Scanning dataset {dataset.name}")
         dataset.url = f"{webroot}datasets/{dataset.slug}"
         dataset.samples = []
 
         categories = set()
+        counter = enlighten.get_manager().counter(total=len(dataset.view), desc="Samples", unit="samples", leave=False)
         for index in range(len(dataset.view)):
             x, y = dataset.view[index]
             categories.add(y)
@@ -70,7 +72,9 @@ def createcontext(*, batchsize, datasets, device, examples, model, title, webroo
                 index=index,
                 url=f"{webroot}datasets/{dataset.slug}/samples/{index}",
                 ))
+            counter.update()
         dataset.categories = [Namespace(name=category) for category in categories]
+        counter.close()
 
     # Create the layer model.
     for name, module in model.named_modules():
