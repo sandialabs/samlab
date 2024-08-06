@@ -60,7 +60,7 @@ def createcontext(*, batchsize, datasets, device, examples, model, title, webroo
         dataset.samples = []
 
         categories = set()
-        counter = enlighten.get_manager().counter(total=len(dataset.view), desc="Samples", unit="samples", leave=False)
+        counter = enlighten.get_manager().counter(total=len(dataset.view), desc="Scan", unit="samples", leave=False)
         for index in range(len(dataset.view)):
             x, y = dataset.view[index]
             categories.add(y)
@@ -107,11 +107,15 @@ def createcontext(*, batchsize, datasets, device, examples, model, title, webroo
         layer.activations = []
         layer.index = index
         layer.url=f"{webroot}layers/{index}"
+        layer.nexturl=f"{webroot}layers/{(index+1) % len(context.model.layers)}"
+        layer.prevurl=f"{webroot}layers/{(index-1) % len(context.model.layers)}"
 
     # Expand the channel model.
     for layer in context.model.layers:
         for channel in layer.channels:
             channel.url = f"{webroot}layers/{layer.index}/channels/{channel.index}"
+            channel.nexturl = f"{webroot}layers/{layer.index}/channels/{(channel.index + 1) % len(layer.channels)}"
+            channel.prevurl = f"{webroot}layers/{layer.index}/channels/{(channel.index - 1) % len(layer.channels)}"
 
     # Compute activations.
     model.to(device)
@@ -130,7 +134,7 @@ def createcontext(*, batchsize, datasets, device, examples, model, title, webroo
             layer.activations.append(Namespace(dataset=dataset, values=[]))
             handles.append(layer.module.register_forward_hook(functools.partial(hook_fn, layer)))
 
-        counter = enlighten.get_manager().counter(total=math.ceil(len(dataset.evaluate) / batchsize), desc="Activations", unit="batches", leave=False)
+        counter = enlighten.get_manager().counter(total=math.ceil(len(dataset.evaluate) / batchsize), desc="Evaluate", unit="batches", leave=False)
         loader = torch.utils.data.DataLoader(dataset.evaluate, batch_size=batchsize, shuffle=False)
         for x, y in loader:
             x = (item.to(device) for item in x)
@@ -227,7 +231,7 @@ def generate(*,
             stream.write(environment.get_template("layer.html").render(context))
 
         # Generate per-channel pages.
-        counter = enlighten.get_manager().counter(total=len(layer.channels), desc="Channels", unit="channels", leave=False)
+        counter = enlighten.get_manager().counter(total=len(layer.channels), desc="Generate", unit="channels", leave=False)
         for channel in layer.channels:
             context.channel = channel
 
@@ -254,7 +258,7 @@ def generate(*,
             stream.write(environment.get_template("dataset.html").render(context))
 
         # Generate per-sample pages.
-        counter = enlighten.get_manager().counter(total=len(dataset.samples), desc="Samples", unit="samples", leave=False)
+        counter = enlighten.get_manager().counter(total=len(dataset.samples), desc="Generate", unit="samples", leave=False)
         for sample in dataset.samples:
             context.sample = sample
 
