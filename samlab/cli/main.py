@@ -71,8 +71,6 @@ def main():
 
         # Optionally use ImageNet for testing.
         if arguments.imagenet is not None:
-            #dataset = torchvision.datasets.ImageNet(arguments.imagenet)
-
             evaluate = torchvision.datasets.ImageNet(
                 arguments.imagenet,
                 transform=torchvision.transforms.v2.Compose([
