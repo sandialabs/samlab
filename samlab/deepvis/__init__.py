@@ -56,8 +56,8 @@ def createcontext(*, batchsize, datasets, device, examples, model, title, webroo
     # Expand the dataset model.
     for dataset in context.datasets:
         log.info(f"Scanning dataset {dataset.name}")
-        dataset.url = f"{webroot}datasets/{dataset.slug}"
         dataset.samples = []
+        dataset.url = f"{webroot}datasets/{dataset.slug}"
 
         categories = set()
         counter = enlighten.get_manager().counter(total=len(dataset.view), desc="Scan", unit="samples", leave=False)
@@ -84,43 +84,35 @@ def createcontext(*, batchsize, datasets, device, examples, model, title, webroo
         if isinstance(module, torch.nn.Sequential):
             continue
 
+        index = len(context.model.layers)
+
         layer = Namespace(
+            activations=[],
             channels=[],
             conv=None,
+            index=index,
             module=module,
             name=name,
+            nchannels=0,
             type=str(module.__class__).split(".")[-1].split("'")[0],
+            url=f"{webroot}layers/{index}",
         )
 
         if isinstance(module, torch.nn.Conv2d):
-            size = module.get_parameter("weight").size()
-            layer.channels = [Namespace(index=index) for index in range(size[0])]
-            layer.conv = (int(size[2]), int(size[3]))
-        elif isinstance(module, torch.nn.Linear):
-            size = module.get_parameter("weight").size()
-            layer.channels = [Namespace(index=index) for index in range(size[0])]
+            layer.conv = tuple(module.get_parameter("weight").size()[2:4])
 
         context.model.layers.append(layer)
 
-    # Expand the layer model.
-    for index, layer in enumerate(context.model.layers):
-        layer.activations = []
-        layer.index = index
-        layer.url=f"{webroot}layers/{index}"
-        layer.nexturl=f"{webroot}layers/{(index+1) % len(context.model.layers)}"
-        layer.prevurl=f"{webroot}layers/{(index-1) % len(context.model.layers)}"
-
-    # Expand the channel model.
+    # Add layer navigation fields.
     for layer in context.model.layers:
-        for channel in layer.channels:
-            channel.url = f"{webroot}layers/{layer.index}/channels/{channel.index}"
-            channel.nexturl = f"{webroot}layers/{layer.index}/channels/{(channel.index + 1) % len(layer.channels)}"
-            channel.prevurl = f"{webroot}layers/{layer.index}/channels/{(channel.index - 1) % len(layer.channels)}"
+        layer.nexturl=f"{webroot}layers/{(layer.index+1) % len(context.model.layers)}"
+        layer.prevurl=f"{webroot}layers/{(layer.index-1) % len(context.model.layers)}"
 
     # Compute activations.
     model.to(device)
 
     def hook_fn(layer, module, inputs, outputs):
+        layer.nchannels = outputs.shape[1]
         if outputs.ndim == 2:
             layer.activations[-1].values.append(outputs.detach().cpu())
         elif outputs.ndim == 4:
@@ -147,6 +139,16 @@ def createcontext(*, batchsize, datasets, device, examples, model, title, webroo
 
         for layer in context.model.layers:
             layer.activations[-1].values = torch.cat(layer.activations[-1].values)
+
+    # Create the channel model.
+    for layer in context.model.layers:
+        for index in range(layer.nchannels):
+            layer.channels.append(Namespace(
+                index=index,
+                url=f"{webroot}layers/{layer.index}/channels/{index}",
+                nexturl=f"{webroot}layers/{layer.index}/channels/{(index+1) % layer.nchannels}",
+                prevurl = f"{webroot}layers/{layer.index}/channels/{(index-1) % layer.nchannels}",
+                ))
 
     # Assign activations to channels.
     for layer in context.model.layers:
