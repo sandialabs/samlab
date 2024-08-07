@@ -71,23 +71,33 @@ def main():
 
         # Optionally use ImageNet for testing.
         if arguments.imagenet is not None:
-            dataset = torchvision.datasets.ImageNet(arguments.imagenet)
+            #dataset = torchvision.datasets.ImageNet(arguments.imagenet)
 
-            evaluate = samlab.deepvis.TransformedDataset(dataset, transform=torchvision.transforms.v2.Compose([
+            evaluate = torchvision.datasets.ImageNet(
+                arguments.imagenet,
+                transform=torchvision.transforms.v2.Compose([
                     torchvision.transforms.v2.ToImage(),
                     torchvision.transforms.v2.CenterCrop((224, 224)),
                     torchvision.transforms.v2.ToDtype(torch.float32, scale=True),
                     torchvision.transforms.v2.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
+                    lambda x: (x,),
                     ]),
                 )
 
-            view = samlab.deepvis.TransformedDataset(dataset, transform=torchvision.transforms.v2.Compose([
+            classes = evaluate.classes
+
+            view = torchvision.datasets.ImageNet(
+                arguments.imagenet,
+                transform=torchvision.transforms.v2.Compose([
                     torchvision.transforms.v2.CenterCrop((224, 224)),
+                    lambda x: (x,),
                     ]),
+                target_transform=lambda y: f"{classes[y][0]} ({y})",
                 )
+
 
             if arguments.imagenet_count is not None:
-                weights = torch.ones(len(dataset))
+                weights = torch.ones(len(view))
                 indices = torch.sort(torch.multinomial(weights, arguments.imagenet_count, generator=generator))[0]
                 evaluate = torch.utils.data.Subset(evaluate, indices)
                 view = torch.utils.data.Subset(view, indices)
