@@ -30,6 +30,44 @@ class Namespace(types.SimpleNamespace):
         return self.__dict__[key]
 
 
+def caltech101(path, count, generator):
+    evaluate = torchvision.datasets.Caltech101(
+        path,
+        transform=torchvision.transforms.v2.Compose([
+            torchvision.transforms.v2.ToImage(),
+            torchvision.transforms.v2.CenterCrop((224, 224)),
+            torchvision.transforms.v2.ToDtype(torch.float32, scale=True),
+            torchvision.transforms.v2.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
+            lambda x: (x,),
+            ]),
+        )
+
+    dictionary = [item for item in evaluate.categories]
+
+    view = torchvision.datasets.Caltech101(
+        path,
+        transform=torchvision.transforms.v2.Compose([
+            torchvision.transforms.v2.CenterCrop((224, 224)),
+            lambda x: (x,),
+            ]),
+        target_transform=map_classes(dictionary),
+        )
+
+
+    if count is not None:
+        weights = torch.ones(len(view))
+        indices = torch.sort(torch.multinomial(weights, min(len(view), count), generator=generator))[0]
+        evaluate = torch.utils.data.Subset(evaluate, indices)
+        view = torch.utils.data.Subset(view, indices)
+
+    return Namespace(
+        name="Caltech 101",
+        slug="caltech101",
+        evaluate=evaluate,
+        view=view,
+        )
+
+
 def createcontext(*, batchsize, channelnames, datasets, device, examples, model, title, webroot):
     # Create the global context.
     context = Namespace(
@@ -294,7 +332,7 @@ def imagenet2012(path, count, generator):
 
     if count is not None:
         weights = torch.ones(len(view))
-        indices = torch.sort(torch.multinomial(weights, count, generator=generator))[0]
+        indices = torch.sort(torch.multinomial(weights, min(len(view), count), generator=generator))[0]
         evaluate = torch.utils.data.Subset(evaluate, indices)
         view = torch.utils.data.Subset(view, indices)
 
@@ -338,12 +376,12 @@ def places365(path, count, generator):
 
     if count is not None:
         weights = torch.ones(len(view))
-        indices = torch.sort(torch.multinomial(weights, count, generator=generator))[0]
+        indices = torch.sort(torch.multinomial(weights, min(len(view), count), generator=generator))[0]
         evaluate = torch.utils.data.Subset(evaluate, indices)
         view = torch.utils.data.Subset(view, indices)
 
     return Namespace(
-        name="Places",
+        name="Places 365",
         slug="places365",
         evaluate=evaluate,
         view=view,

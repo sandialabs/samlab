@@ -26,6 +26,9 @@ subparsers = parser.add_subparsers(title="commands (choose one)", dest="command"
 # deepvis
 deepvis_subparser = subparsers.add_parser("deepvis", help="Generate a deep visualization website.")
 deepvis_subparser.add_argument("--batch-size", type=int, default=64, help="Batch size for evaluation. Default: %(default)s")
+deepvis_subparser.add_argument("--caltech", action="store_true", help="Use Caltech 101 for testing.")
+deepvis_subparser.add_argument("--caltech-count", type=int, help="Number of Caltech 101 images to use for testing. Default: all")
+deepvis_subparser.add_argument("--caltech-path", help="Specify the path to the Caltech 101 classification dataset.")
 deepvis_subparser.add_argument("--clean", action="store_true", help="Delete the target directory before generating.")
 deepvis_subparser.add_argument("--device", default="cpu", help="PyTorch device to use for evaluation. Default: %(default)s")
 deepvis_subparser.add_argument("--examples", type=int, default=100, help="Number of examples to display for each channel. Default: %(default)s")
@@ -76,6 +79,11 @@ def main():
                 raise NotImplementedError(f"Unsupported model: {arguments.model}")
 
         datasets = []
+
+        # Optionally use Caltech 101 for testing.
+        if arguments.caltech:
+            datasets.append(samlab.deepvis.caltech101(arguments.caltech_path, arguments.caltech_count, generator))
+
 
         # Optionally use ImageNet for testing.
         if arguments.imagenet:
