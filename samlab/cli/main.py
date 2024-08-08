@@ -29,8 +29,12 @@ deepvis_subparser.add_argument("--batch-size", type=int, default=64, help="Batch
 deepvis_subparser.add_argument("--clean", action="store_true", help="Delete the target directory before generating.")
 deepvis_subparser.add_argument("--device", default="cpu", help="PyTorch device to use for evaluation. Default: %(default)s")
 deepvis_subparser.add_argument("--examples", type=int, default=100, help="Number of examples to display for each channel. Default: %(default)s")
-deepvis_subparser.add_argument("--imagenet", help="Specify the path to the ImageNet 2012 classification dataset, and use it for testing.")
+deepvis_subparser.add_argument("--imagenet", action="store_true", help="Use ImageNet 2012 for testing.")
 deepvis_subparser.add_argument("--imagenet-count", type=int, help="Number of ImageNet 2012 images to use for testing. Default: all")
+deepvis_subparser.add_argument("--imagenet-path", help="Specify the path to the ImageNet 2012 classification dataset.")
+deepvis_subparser.add_argument("--places", action="store_true", help="Use Places365 for testing.")
+deepvis_subparser.add_argument("--places-count", type=int, help="Number of Places365 images to use for testing. Default: all")
+deepvis_subparser.add_argument("--places-path", help="Specify the path to the Places365 classification dataset.")
 deepvis_subparser.add_argument("--seed", type=int, default=1234, help="Random seed. Default: %(default)s")
 deepvis_subparser.add_argument("model", choices=["vgg19", "resnet50", "inceptionv1"], help="Model to analyze.")
 deepvis_subparser.add_argument("output", help="Target directory to receive results.")
@@ -58,58 +62,33 @@ def main():
             case "vgg19":
                 title = "VGG-19"
                 model = torchvision.models.vgg19(weights="IMAGENET1K_V1")
+                imagenet = torchvision.datasets.ImageNet(arguments.imagenet_path)
+                channelnames = {"classifier.6": [classes[0] for classes in imagenet.classes]}
             case "resnet50":
                 title = "ResNet-50"
                 model = torchvision.models.resnet50(weights="IMAGENET1K_V2")
+                channelnames = {}
             case "inceptionv1":
                 title = "Inception v1"
                 model = torchvision.models.googlenet(weights="IMAGENET1K_V1")
+                channelnames = {}
             case _:
                 raise NotImplementedError(f"Unsupported model: {arguments.model}")
 
         datasets = []
 
         # Optionally use ImageNet for testing.
-        if arguments.imagenet is not None:
-            evaluate = torchvision.datasets.ImageNet(
-                arguments.imagenet,
-                transform=torchvision.transforms.v2.Compose([
-                    torchvision.transforms.v2.ToImage(),
-                    torchvision.transforms.v2.CenterCrop((224, 224)),
-                    torchvision.transforms.v2.ToDtype(torch.float32, scale=True),
-                    torchvision.transforms.v2.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
-                    lambda x: (x,),
-                    ]),
-                )
+        if arguments.imagenet:
+            datasets.append(samlab.deepvis.imagenet2012(arguments.imagenet_path, arguments.imagenet_count, generator))
 
-            classes = evaluate.classes
-
-            view = torchvision.datasets.ImageNet(
-                arguments.imagenet,
-                transform=torchvision.transforms.v2.Compose([
-                    torchvision.transforms.v2.CenterCrop((224, 224)),
-                    lambda x: (x,),
-                    ]),
-                target_transform=lambda y: f"{classes[y][0]} ({y})",
-                )
-
-
-            if arguments.imagenet_count is not None:
-                weights = torch.ones(len(view))
-                indices = torch.sort(torch.multinomial(weights, arguments.imagenet_count, generator=generator))[0]
-                evaluate = torch.utils.data.Subset(evaluate, indices)
-                view = torch.utils.data.Subset(view, indices)
-
-            datasets.append(samlab.deepvis.Namespace(
-                name="ImageNet 2012",
-                slug="imagenet2012",
-                evaluate=evaluate,
-                view=view,
-                ))
+        # Optionally use Places365 for testing.
+        if arguments.places:
+            datasets.append(samlab.deepvis.places365(arguments.places_path, arguments.places_count, generator))
 
         # Generate the website.
         samlab.deepvis.generate(
             batchsize=arguments.batch_size,
+            channelnames=channelnames,
             clean=arguments.clean,
             datasets=datasets,
             device=torch.device(arguments.device),

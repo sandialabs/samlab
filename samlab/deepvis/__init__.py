@@ -30,20 +30,7 @@ class Namespace(types.SimpleNamespace):
         return self.__dict__[key]
 
 
-class TransformedDataset(torch.utils.data.Dataset):
-    def __init__(self, dataset, transform):
-        self._dataset = dataset
-        self._transform = transform
-
-    def __len__(self):
-        return self._dataset.__len__()
-
-    def __getitem__(self, key):
-        x, y = self._dataset.__getitem__(key)
-        return ((self._transform(x),), y)
-
-
-def createcontext(*, batchsize, datasets, device, examples, model, title, webroot):
+def createcontext(*, batchsize, channelnames, datasets, device, examples, model, title, webroot):
     # Create the global context.
     context = Namespace(
         datasets=datasets,
@@ -67,13 +54,14 @@ def createcontext(*, batchsize, datasets, device, examples, model, title, webroo
 
             dataset.samples.append(Namespace(
                 activations=[],
-                category=y,
+                category=Namespace(index=y[0], name=y[1]),
                 imageurl=f"{webroot}datasets/{dataset.slug}/samples/{index}/image.png",
                 index=index,
+                name=f"Sample {index}",
                 url=f"{webroot}datasets/{dataset.slug}/samples/{index}",
                 ))
             counter.update()
-        dataset.categories = [Namespace(name=category) for category in categories]
+        dataset.categories = [Namespace(index=index, name=name) for index, name in categories]
         counter.close()
 
     # Create the layer model.
@@ -145,6 +133,7 @@ def createcontext(*, batchsize, datasets, device, examples, model, title, webroo
         for index in range(layer.nchannels):
             layer.channels.append(Namespace(
                 index=index,
+                name=channelnames[layer.name][index] if layer.name in channelnames else f"Channel {index}",
                 url=f"{webroot}layers/{layer.index}/channels/{index}",
                 nexturl=f"{webroot}layers/{layer.index}/channels/{(index+1) % layer.nchannels}",
                 prevurl = f"{webroot}layers/{layer.index}/channels/{(index-1) % layer.nchannels}",
@@ -181,6 +170,7 @@ def createcontext(*, batchsize, datasets, device, examples, model, title, webroo
 
 def generate(*,
     batchsize,
+    channelnames,
     clean,
     datasets,
     device,
@@ -193,7 +183,7 @@ def generate(*,
     log.info(f"Generating deep visualization {title} in {targetdir}.")
 
     # Create the object model that will be used by Jinja templates.
-    context = createcontext(batchsize=batchsize, datasets=datasets, device=device, examples=examples, model=model, title=title, webroot=webroot)
+    context = createcontext(batchsize=batchsize, channelnames=channelnames, datasets=datasets, device=device, examples=examples, model=model, title=title, webroot=webroot)
 
     # Optionally remove the target directory.
     if clean and os.path.exists(targetdir):
@@ -276,4 +266,87 @@ def generate(*,
             x[0].save(imagepath)
             counter.update()
         counter.close()
+
+
+def imagenet2012(path, count, generator):
+    evaluate = torchvision.datasets.ImageNet(
+        path,
+        transform=torchvision.transforms.v2.Compose([
+            torchvision.transforms.v2.ToImage(),
+            torchvision.transforms.v2.CenterCrop((224, 224)),
+            torchvision.transforms.v2.ToDtype(torch.float32, scale=True),
+            torchvision.transforms.v2.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
+            lambda x: (x,),
+            ]),
+        )
+
+    dictionary = [item[0] for item in evaluate.classes]
+
+    view = torchvision.datasets.ImageNet(
+        path,
+        transform=torchvision.transforms.v2.Compose([
+            torchvision.transforms.v2.CenterCrop((224, 224)),
+            lambda x: (x,),
+            ]),
+        target_transform=map_classes(dictionary),
+        )
+
+
+    if count is not None:
+        weights = torch.ones(len(view))
+        indices = torch.sort(torch.multinomial(weights, count, generator=generator))[0]
+        evaluate = torch.utils.data.Subset(evaluate, indices)
+        view = torch.utils.data.Subset(view, indices)
+
+    return Namespace(
+        name="ImageNet 2012",
+        slug="imagenet2012",
+        evaluate=evaluate,
+        view=view,
+        )
+
+
+def map_classes(dictionary):
+    def implementation(index):
+        return (index, dictionary[index])
+    return implementation
+
+
+def places365(path, count, generator):
+    evaluate = torchvision.datasets.Places365(
+        path,
+        transform=torchvision.transforms.v2.Compose([
+            torchvision.transforms.v2.ToImage(),
+            torchvision.transforms.v2.CenterCrop((224, 224)),
+            torchvision.transforms.v2.ToDtype(torch.float32, scale=True),
+            torchvision.transforms.v2.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
+            lambda x: (x,),
+            ]),
+        )
+
+    dictionary = ["/".join(item.split("/")[2:]) for item in evaluate.classes]
+
+    view = torchvision.datasets.Places365(
+        path,
+        transform=torchvision.transforms.v2.Compose([
+            torchvision.transforms.v2.CenterCrop((224, 224)),
+            lambda x: (x,),
+            ]),
+        target_transform=map_classes(dictionary),
+        )
+
+
+    if count is not None:
+        weights = torch.ones(len(view))
+        indices = torch.sort(torch.multinomial(weights, count, generator=generator))[0]
+        evaluate = torch.utils.data.Subset(evaluate, indices)
+        view = torch.utils.data.Subset(view, indices)
+
+    return Namespace(
+        name="Places",
+        slug="places365",
+        evaluate=evaluate,
+        view=view,
+        )
+
 

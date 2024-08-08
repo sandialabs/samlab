@@ -15,7 +15,8 @@
         <div class="col-2">
             <h2>Description</h2>
             <ul class="list-unstyled">
-                <li>Class: {{sample.category}}</li>
+                <li>{{sample.category.name}}</li>
+                <li>Class {{sample.category.index}}</li>
             </ul>
         </div>
         <div class="col">
@@ -29,7 +30,7 @@
                 <a href="{{channel.url}}">
                 <div class="card mb-1 me-1" style="width: 6rem">
                     <div class="card-body" style="padding: 0.4rem">
-                        <div class="card-title" style="font-size: 0.7rem">Chan {{channel.index}}</div>
+                        <div class="card-title" style="font-size: 0.7rem" title="Channel {{channel.index}}">{{channel.name}}</div>
                         <ul class="list-unstyled" style="font-size: 0.6rem">
                             <li>Act: {{"%.3f" | format(activations.values[loop.index0])}}</li>
                         </ul>

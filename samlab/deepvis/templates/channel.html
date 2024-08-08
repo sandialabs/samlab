@@ -10,38 +10,42 @@
             <a class="btn btn-outline-secondary btn-sm" href="{{layer.prevurl}}/channels/{{channel.index}}">&lt;</a>
             <a class="btn btn-outline-secondary btn-sm" href="{{layer.nexturl}}/channels/{{channel.index}}">&gt;</a>
             /
-            Channel {{channel.index}}
+            {{channel.name}}
             <a class="btn btn-outline-secondary btn-sm" href="{{channel.prevurl}}">&lt;</a>
             <a class="btn btn-outline-secondary btn-sm" href="{{channel.nexturl}}">&gt;</a>
         </span>
     </div>
     <div class="row">
-        <div class="col-2">
+        <div class="col">
             <h2>Description</h2>
             <p>
             Displays the top <i>n</i> images from each dataset, ordered by how strongly they
             activate this channel.
             </p>
         </div>
+    </div>
+    <div class="row">
         <div class="col">
             <h2>Activations</h2>
             {% for activations in channel.activations %}
             <h3><a href="{{activations.dataset.url}}">{{activations.dataset.name}}</a></h3>
-            <div class="d-flex flex-wrap">
-            {% for sample in activations.samples %}
-                <div class="card mb-1 me-1" style="width: 6rem">
-                    <a href="{{sample.url}}">
-                    <img src="{{sample.imageurl}}" class="card-img-top" loading="lazy">
-                    </a>
-                    <div class="card-body">
-                        <div class="card-title" style="font-size: 0.7em">Sample {{sample.index}}</div>
-                        <ul class="list-unstyled" style="font-size: 0.6em">
-                            <li>Class: {{sample.category}}</li>
-                            <li>Act: {{"%.3f" | format(activations.values[loop.index0])}}</li>
-                        </ul>
+            <div class="container-fluid overflow-x-scroll">
+                <div class="d-flex flex-row flex-nowrap">
+                {% for sample in activations.samples %}
+                    <div class="card mb-1 me-1" style="min-width: 6rem">
+                        <a href="{{sample.url}}">
+                        <img src="{{sample.imageurl}}" class="card-img-top" loading="lazy">
+                        </a>
+                        <div class="card-body">
+                            <div class="card-title" style="font-size: 0.7em">{{sample.name}}</div>
+                            <div class="card-subtitle" style="font-size: 0.7em" title="Class {{sample.category.index}}">{{sample.category.name}}</div>
+                            <ul class="list-unstyled" style="font-size: 0.6em">
+                                <li>Act: {{"%.3f" | format(activations.values[loop.index0])}}</li>
+                            </ul>
+                        </div>
                     </div>
+                {% endfor %}
                 </div>
-            {% endfor %}
             </div>
             {% endfor %}
         </div>

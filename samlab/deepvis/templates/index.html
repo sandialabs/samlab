@@ -6,23 +6,29 @@
         <span class="h1">{{title}}</span>
     </div>
     <div class="row">
-        <div class="col-2">
+        <div class="col">
             <h2>Model</h2>
-            {% for layer in model.layers %}
-            <div class="card mb-2">
-                <div class="card-body">
-                    <a href="{{layer.url}}">
-                        <h5 class="card-title">{{layer.name}}</h5>
-                    </a>
-                    <h6 class="card-subtitle text-body-secondary mb-2">{{layer.type}}</h6>
-                    <ul class="list-unstyled">
-                        <li>Channels: {{layer.channels|count}}</li>
-                        <li>Convolution: {{layer.conv}}</li>
-                    </ul>
+            <div class="container-fluid overflow-x-scroll">
+                <div class="d-flex flex-row flex-nowrap">
+                    {% for layer in model.layers %}
+                    <div class="card mb-2 me-2" style="min-width: 12rem">
+                        <div class="card-body">
+                            <a href="{{layer.url}}">
+                                <h5 class="card-title">{{layer.name}}</h5>
+                            </a>
+                            <h6 class="card-subtitle text-body-secondary mb-2">{{layer.type}}</h6>
+                            <ul class="list-unstyled">
+                                <li>Channels: {{layer.channels|count}}</li>
+                                <li>Convolution: {{layer.conv}}</li>
+                            </ul>
+                        </div>
+                    </div>
+                    {% endfor %}
                 </div>
             </div>
-            {% endfor %}
         </div>
+    </div>
+    <div class="row">
         <div class="col">
             <h2>Datasets</h2>
             {% for dataset in datasets %}
