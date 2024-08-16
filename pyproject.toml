@@ -22,7 +22,7 @@ dependencies=[
     "torch",
     "torchvision",
 ]
-description="Library for analyzing computer vision models."
+description="The Sandia Machine Learning Laboratory: tools for analyzing computer vision models."
 dynamic = ["version"]
 maintainers = [{name="Timothy M. Shead", email="tshead@sandia.gov"}]
 name="samlab"
