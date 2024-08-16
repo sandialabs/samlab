@@ -31,6 +31,7 @@ requires-python = ">=3.10"
 [project.optional-dependencies]
 all = [
     "behave",
+	"coverage",
     "sphinx >= 3.5",
     "sphinx_rtd_theme",
 ]

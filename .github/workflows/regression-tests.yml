@@ -12,23 +12,22 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: [3.7, 3.8, 3.9]
+        python-version: ["3.8", "3.9", "3.10", "3.11", "3.12"]
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
     - name: Setup Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v2
+      uses: actions/setup-python@v5
       with:
         python-version: ${{ matrix.python-version }}
     - name: Install Dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install arrow behave blessings coverage coveralls flask flask-socketio gevent gevent-websocket ldap3 requests selenium scipy toyplot watchdog
-        python setup.py develop
+        pip install coveralls
+        pip install .[all]
     - name: Run tests
       run: |
-        coverage run --parallel-mode --source samlab -m behave
-        coverage combine
+        coverage run --source samlab -m behave
         coverage report
     - name: Upload coverage to Coveralls
       run: coveralls --service=github
