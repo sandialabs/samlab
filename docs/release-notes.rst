@@ -7,6 +7,21 @@
 Release Notes
 =============
 
+Samlab 0.4.0 - August 16th, 2024
+--------------------------------
+
+Because there has been a proliferation of machine learning development
+platforms, we are removing the Samlab Dashboard to focus on computer vision
+model analysis. The new `samlab deepvis` command generates browser-based
+analyses of popular models and datasets inspired by the proprietary "OpenAI
+Microscope". Alternatively, you can use the `samlab.deepvis` module to
+programmatically generate analyses for custom models and datasets.
+
+Samlab 0.3.1 - August 16th, 2024
+--------------------------------
+
+* Final Samlab version that includes the Dashboard.
+
 Samlab 0.3.0 - October 25th, 2021
 ---------------------------------
 
