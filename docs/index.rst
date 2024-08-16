@@ -5,9 +5,8 @@
 Welcome!
 ========
 
-Welcome to Samlab: the Sandia Machine Learning Laboratory.  Samlab provides a
-set of tools for creating, monitoring, and analyzing machine learning
-experiments.
+Welcome to Samlab: the Sandia Machine Learning Laboratory.  Samlab provides
+tools for analyzing machine learning models, particularly computer vision models.
 
 Documentation
 =============

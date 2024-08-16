@@ -38,34 +38,17 @@ release = samlab.__version__
 import sphinx_rtd_theme
 
 extensions = [
-#    "nbsphinx",
     "sphinx.ext.autodoc",
     "sphinx.ext.intersphinx",
-#    "sphinx.ext.mathjax",
     "sphinx.ext.napoleon",
-#    "sphinx.ext.viewcode",
-#    "sphinx_gallery.load_style",
-#    "sphinx_rtd_theme",
 ]
 
 
 autodoc_mock_imports = [
-#"IPython",
-#"arrow",
-#"flask_socketio",
-#"ldap3",
-#"numpy",
-#"requests",
-#"scipy",
-#"torch",
-#"toyplot",
-#"tqdm",
-#"watchdog",
 ]
 
 
 intersphinx_mapping = {
-    "arrow": ("http://arrow.readthedocs.io/en/latest", "arrow.inv"),
     "numpy": ("http://docs.scipy.org/doc/numpy-1.13.0", "numpy.inv"),
     "python": ("http://docs.python.org/3.6", "python.inv"),
     }
